@@ -29,6 +29,24 @@ const SIDENAV_TEACHER = (classId) => [
     className: 'members',
     path: `/classes/${classId}/members`,
   },
+  {
+    id: 4,
+    label: 'Activities',
+    className: 'activities',
+    path: `/classes/${classId}/activities`,
+  },
+  {
+    id: 5,
+    label: 'All Projects',
+    className: 'allprojects',
+    path: `/classes/${classId}/allprojects`,
+  },
+  {
+    id: 6,
+    label: 'Teknoplat',
+    className: 'teknoplat',
+    path: `/classes/${classId}/teknoplat`,
+  },
 ];
 
 const SIDENAV_CLASSMEMBER = (classId) => [
@@ -49,6 +67,30 @@ const SIDENAV_CLASSMEMBER = (classId) => [
     label: 'Peer Evals',
     className: 'peer-evals',
     path: `/classes/${classId}/evals`,
+  },
+  {
+    id: 4,
+    label: 'Activities',
+    className: 'activities',
+    path: `/classes/${classId}/activities`,
+  },
+  {
+    id: 5,
+    label: 'Projects',
+    className: 'projects',
+    path: `/classes/${classId}/projects`,
+  },
+  {
+    id: 6,
+    label: 'All Projects',
+    className: 'allprojects',
+    path: `/classes/${classId}/allprojects`,
+  },
+  {
+    id: 5,
+    label: 'Teknoplat',
+    className: 'teknoplat',
+    path: `/classes/${classId}/teknoplat`,
   },
 ];
 

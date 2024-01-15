@@ -18,6 +18,10 @@ import Teams from './screens/team_management/teams';
 import PeerEval from './screens/peer_evaluation/view_peer_eval';
 import StudentPeerEval from './screens/peer_evaluation/view_student_peer_eval';
 import ClassroomLayout from './components/Layouts/ClassroomLayouts';
+import ActivityManagement from './screens/activity_management/activities';
+import SpringBoardProjects from './screens/springboard/projects';
+import SpringBoardAllProjects from './screens/springboard/all_projects';
+import TeknoPlat from './screens/teknoplat';
 
 // Style Imports
 import './App.css';
@@ -94,6 +98,38 @@ function App() {
               element={
                 <PrivateRoute>
                   <StudentPeerEval />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="activities"
+              element={
+                <PrivateRoute>
+                  <ActivityManagement />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="projects"
+              element={
+                <PrivateRoute>
+                  <SpringBoardProjects />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="allprojects"
+              element={
+                <PrivateRoute>
+                  <SpringBoardAllProjects />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="teknoplat"
+              element={
+                <PrivateRoute>
+                  <TeknoPlat />
                 </PrivateRoute>
               }
             />
