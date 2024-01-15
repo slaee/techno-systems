@@ -1,1 +1,1 @@
-CREATE DATABASE wildforge_db;
+CREATE DATABASE techno_db;
