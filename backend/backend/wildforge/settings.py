@@ -24,7 +24,7 @@ API_REPO_DIR = BASE_DIR.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-(pzk9w5d45r1%hw3@ys^$q(+9vt6froa&o#pw04g@y+96ab!3@'
+SECRET_KEY = os.getenv('API_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
