@@ -1,0 +1,55 @@
+# This docker compose file is used to run the backend project only.
+# The actual docker compose will cover the whole project (backend + frontend + database)
+# in github.com/slaee/wildforge-app repository
+
+version: "3.8"
+services:
+  mysql:
+    build: ./mysql
+    image: mysql
+    container_name: wildforge-db
+    ports:
+      - 3306:3306
+    env_file:
+      - ./env/mysql.env
+    networks:
+      - wildforge-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 1s
+      timeout: 5s
+      retries: 15
+
+  phpmyadmin:
+    image: phpmyadmin
+    container_name: phpmyadmin
+    links:
+      - mysql
+    environment:
+      PMA_HOST: wildforge-db
+      PMA_PORT: 3306
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: unless-stopped
+    ports:
+      - "8088:80"
+    networks:
+      - wildforge-network
+
+  # backend:
+  #   build: ./
+  #   image: wildforge-api
+  #   container_name: wildforge-api
+  #   ports:
+  #     - 8000:8000
+  #   env_file:
+  #     - ./env/backend.env
+  #   networks:
+  #     - wildforge-network
+  #   depends_on:
+  #     - mysql
+
+networks:
+  wildforge-network:
+    driver: bridge
