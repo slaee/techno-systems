@@ -6,11 +6,31 @@ Merged systems:
 - Spring board
 - Teknoplat 
 
-## Build
+## Dev Build
 
 Requirements:
 - Docker
 - Docker Compose
+- node & npm
+
+Run `npm install` first in the `frontend` folder to install all the dependencies to avoid eslint errors.
+
+To auto fix eslint errors open your VSCode User Settings JSON and add the following:
+```json
+"[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+},
+"editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+},
+"editor.formatOnSave": true, 
+"eslint.validate": [
+    "json",
+    "javascript",
+    "javascriptreact",
+    "html"
+],
+```
 
 To build and run the system use command:
 ```
