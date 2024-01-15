@@ -21,3 +21,7 @@ If you are changing some files and are not being updated in a specific container
 ```
 docker-compose up -d --no-deps --build <service_name>
 ```
+
+## Run demo
+React App:                  http://127.0.0.1:3000/
+Django API with swagger:    http://127.0.0.1:8000/swagger/
