@@ -22,9 +22,10 @@
 /frontend/yarn-debug.log*
 /frontend/yarn-error.log*
 
-/backend/__pycache__
+/backend/__pycache__/
 /backend/venv
 /backend/py_client
 
 /backend/backend/api/migrations/*
+/backend/backend/api/migrations/__pycache__/
 !/backend/backend/api/migrations/__init__.py

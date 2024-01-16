@@ -23,6 +23,9 @@ API_REPO_DIR = BASE_DIR.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
+# if run without docker load the nondocker.env
+# load_dotenv(os.path.join(API_REPO_DIR, 'nondocker.env'))
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('API_SECRET_KEY')
 
