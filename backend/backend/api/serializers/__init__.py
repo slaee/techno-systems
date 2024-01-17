@@ -24,3 +24,8 @@ from .ClassRoomPESerializer import ClassRoomPETakerSerializer
 
 from .PeerEvalSerializer import PeerEvalSerializer
 from .PeerEvalSerializer import AssignPeerEvalSerializer
+
+from .ActivitySerializer import ActivitySerializer
+from .ActivityWorkAttachmentSerializer import ActivityWorkAttachmentSerializer
+from .ActivityCommentSerializer import ActivityCommentSerializer
+from .ActivityTemplateSerializer import ActivityTemplateSerializer
