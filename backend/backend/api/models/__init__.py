@@ -15,5 +15,9 @@ __all__ = [
     'TeamMember',
     'PeerEval',
     'ClassRoomPE',
-    'ClassRoomPETaker'
+    'ClassRoomPETaker',
+    'Activity',
+    'ActivityComment',
+    'ActivityWorkAttachment',
+    'ActivityTemplate'
 ]
