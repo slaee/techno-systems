@@ -1,7 +1,10 @@
 from rest_framework import serializers
-from rest_framework_nested.relations import NestedHyperlinkedRelatedField
 
 from api.models import Meeting
+
+from .MeetingPresentorSerializer import MeetingPresentorSerializer
+from .MeetingCommentSerializer import MeetingCommentSerializer
+from .MeetingCriteriaSerializer import MeetingCriteriaSerializer
 
 class MeetingSerializer(serializers.ModelSerializer):
     presentors = serializers.SerializerMethodField(read_only=True)
@@ -13,13 +16,14 @@ class MeetingSerializer(serializers.ModelSerializer):
         fields = '__all__'
         
     def get_presentors(self, obj):
-        return PitchSerializer(obj.presentor_id, many=True, context=self.context).data
+        return MeetingPresentorSerializer(obj.presentor_id, many=True).data
     
     def get_comments(self, obj):
-        return CommentSerializer(obj.meeting_comment_id, many=True).data
+        return MeetingCommentSerializer(obj.meeting_comment_id, many=True).data
     
     def get_criterias(self, obj):
         return MeetingCriteriaSerializer(obj.meeting_criteria_id, many=True).data
-    
-class PitchSerializer(serializers.ModelSerializer):
-    
+            
+
+
+
