@@ -29,3 +29,4 @@ from .ActivitySerializer import ActivitySerializer
 from .ActivityWorkAttachmentSerializer import ActivityWorkAttachmentSerializer
 from .ActivityCommentSerializer import ActivityCommentSerializer
 from .ActivityTemplateSerializer import ActivityTemplateSerializer
+from.ActivitySerializer import ActivityCreateFromTemplateSerializer
