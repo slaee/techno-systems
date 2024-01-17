@@ -1,8 +1,8 @@
 from rest_framework import serializers
 from api.models import ActivityTemplate
 
-class TemplateSerializer(serializers.ModelSerializer):
+class ActivityTemplateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ActivityTemplate
-        fields = ('__all__')
+        fields = ('id', 'course_name', 'title', 'description')
