@@ -5,7 +5,7 @@ class Activity(models.Model):
     title = models.CharField(max_length=100, default="", null=False)
     description = models.TextField(max_length=10000, default="", null=False)
     submission_status = models.BooleanField(default=False)
-    date_created = models.DateTimeField(auto_now_add=True, editable=False)
+    date_created = models.DateTimeField(auto_now=True)
     due_date = models.DateTimeField(null=True)
     evaluation = models.IntegerField(null=True)
     total_score = models.IntegerField(default=100, null=False)
