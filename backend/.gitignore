@@ -1,7 +1,0 @@
-# ignore __pycache__ files
-__pycache__
-venv
-py_client
-
-backend/api/migrations/*
-!backend/api/migrations/__init__.py
