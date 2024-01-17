@@ -124,3 +124,17 @@ class ActivityTemplateController(viewsets.GenericViewSet,
             return Response(status=status.HTTP_204_NO_CONTENT)
         except ActivityTemplate.DoesNotExist:
             return Response({"error": "Template not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+    @swagger_auto_schema(
+        operation_summary="List all activity templates",
+        operation_description="GET /activity-templates",
+        responses={
+            status.HTTP_200_OK: ActivityTemplateSerializer(many=True),
+            status.HTTP_401_UNAUTHORIZED: "Unauthorized",
+            status.HTTP_500_INTERNAL_SERVER_ERROR: "Internal Server Error",
+        }
+    )
+    def list(self, request, *args, **kwargs):
+        templates = ActivityTemplate.objects.all()
+        serializer = self.get_serializer(templates, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
