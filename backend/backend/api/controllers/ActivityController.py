@@ -27,13 +27,14 @@ class ActivityController(viewsets.GenericViewSet,
     serializer_class = ActivitySerializer
     authentication_classes = [JWTAuthentication]
 
-    # def get_permissions(self):
-    #     if self.action in ['create', 'create_from_template', 'destroy', 'get_activities_by_class', 
-    #                        'get_submitted_activities_by_class', 'add_evaluation', 'delete_evaluation'
-    #                        ]:
-    #         return [permissions.IsAuthenticated(), IsTeacher()]
-    #     else:
-    #         return [permissions.IsAuthenticated()]
+    def get_permissions(self):
+        if self.action in ['create', 'create_from_template', 'list', 
+                           'update', 'partial_update', 
+                           'destroy',
+                           ]:
+            return [permissions.IsAuthenticated(), IsTeacher()]
+        else:
+            return [permissions.IsAuthenticated()]
 
     @swagger_auto_schema(
         operation_summary="Creates a new activity",
@@ -94,7 +95,6 @@ class ActivityController(viewsets.GenericViewSet,
                 return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:
             return Response({'error': 'Class ID not provided'}, status=status.HTTP_400_BAD_REQUEST)
-        
     
     @swagger_auto_schema(
     operation_summary="Create activity from template",
@@ -108,7 +108,7 @@ class ActivityController(viewsets.GenericViewSet,
         status.HTTP_500_INTERNAL_SERVER_ERROR: openapi.Response('Internal Server Error', message='Internal Server Error. An unexpected error occurred.'),
     }
     )
-    @action(detail=False, methods=['POST'], url_path='from_template')
+    @action(detail=False, methods=['POST'])
     def create_from_template(self, request, class_pk=None, pk=None):
         template_id = request.data.get('template_id', None)
         team_ids = request.data.get('team_ids', [])  # Updated to team_ids
@@ -164,73 +164,7 @@ class ActivityController(viewsets.GenericViewSet,
                 return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
         else:
             return Response({"error": "Template ID or Class ID not provided"}, status=status.HTTP_400_BAD_REQUEST)
-
-
-    # @swagger_auto_schema(
-    #     operation_summary="Create an activity from a template",
-    #     operation_description="POST /activities/from_template/{template_pk}",
-    #     responses={
-    #     status.HTTP_200_OK: openapi.Response('OK', ActivitySerializer(many=True)),
-    #     status.HTTP_400_BAD_REQUEST: openapi.Response('Bad Request', message='Bad Request. Either class ID or team ID is missing or invalid.'),
-    #     status.HTTP_401_UNAUTHORIZED: openapi.Response('Unauthorized', message='Unauthorized. Authentication required.'),
-    #     status.HTTP_403_FORBIDDEN: openapi.Response('Forbidden', message='Forbidden. You do not have permission to access this resource.'),
-    #     status.HTTP_404_NOT_FOUND: openapi.Response('Not Found', message='Not Found. Either class or team not found.'),
-    #     status.HTTP_500_INTERNAL_SERVER_ERROR: openapi.Response('Internal Server Error', message='Internal Server Error. An unexpected error occurred.'),
-    # }
-    # )    
-    # @action(detail=True, methods=['POST'])
-    # def from_template(self, request, *args, **kwargs):
-    #     template_id = request.data.get('template_id', None)
-    #     team_ids = request.data.get('team_ids', [])  # Updated to team_ids
-    #     classroom_id = request.data.get('classroom_id', None)
-    #     due_date = request.data.get('due_date', None)
-    #     evaluation = request.data.get('evaluation', None)
-    #     total_score = request.data.get('total_score', None)
-
-    #     if template_id is not None and classroom_id is not None:
-    #         try:
-    #             template = ActivityTemplate.objects.get(pk=template_id)
-
-    #             # Create a new activity based on the template
-    #             new_activity = Activity.create_activity_from_template(template)
-
-    #             # Update additional fields, such as the team and other desired fields
-    #             if team_ids:
-    #                 try:
-    #                     teams = Team.objects.filter(pk__in=team_ids)
-    #                     new_activity.team_id.set(teams)  # Set the many-to-many relationship
-    #                 except Team.DoesNotExist:
-    #                     return Response({"error": "One or more teams not found"}, status=status.HTTP_404_NOT_FOUND)
-
-    #             # Update due_date, evaluation, and total_score
-    #             if due_date:
-    #                 new_activity.due_date = due_date
-    #             if evaluation:
-    #                 new_activity.evaluation = evaluation
-    #             if total_score:
-    #                 new_activity.total_score = total_score
-
-    #             # Save the updated activity
-    #             new_activity.save()
-
-    #             # Serialize the template and activity
-    #             template_serializer = ActivityTemplateSerializer(template)
-    #             activity_serializer = ActivitySerializer(new_activity)
-
-    #             return Response(
-    #                 {
-    #                     "success": "Activity created from template",
-    #                     "activity": activity_serializer.data,
-    #                     "template": template_serializer.data
-    #                 },
-    #                 status=status.HTTP_201_CREATED
-    #             )
-    #         except ActivityTemplate.DoesNotExist:
-    #             return Response({"error": "Template not found"}, status=status.HTTP_404_NOT_FOUND)
-    #     else:
-    #         return Response({"error": "Template ID or Classroom ID not provided"}, status=status.HTTP_400_BAD_REQUEST)
-    
-
+            
 class TeamActivitiesController(viewsets.GenericViewSet,
                       mixins.CreateModelMixin,
                       mixins.RetrieveModelMixin,
@@ -318,3 +252,119 @@ class TeamActivitiesController(viewsets.GenericViewSet,
 
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+    @swagger_auto_schema(
+    operation_summary="Submit or unsubmit an activity",
+    operation_description="POST /classes/{class_pk}/teams/{team_pk}/activities/{activity_pk}/submit",
+    request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'submission_status': openapi.Schema(type=openapi.TYPE_BOOLEAN, description='Submissin status. True for submit, False for unsubmit'),
+            },
+            required=['evaluation'],
+        ),
+    responses={
+        status.HTTP_200_OK: openapi.Response('OK', ActivitySerializer),
+        status.HTTP_400_BAD_REQUEST: openapi.Response('Bad Request', message='Bad Request. Activity not found or invalid action.'),
+        status.HTTP_401_UNAUTHORIZED: openapi.Response('Unauthorized', message='Unauthorized. Authentication required.'),
+        status.HTTP_403_FORBIDDEN: openapi.Response('Forbidden', message='Forbidden. You do not have permission to access this resource.'),
+        status.HTTP_500_INTERNAL_SERVER_ERROR: openapi.Response('Internal Server Error', message='Internal Server Error. An unexpected error occurred.'),
+    }
+    )
+    @action(detail=True, methods=['POST'])
+    def submit(self, request, class_pk=None, team_pk=None, pk=None):
+        try:
+            activity = Activity.objects.get(classroom_id=class_pk, team_id=team_pk, pk=pk)
+            # Toggle the submission status
+            activity.submission_status = not activity.submission_status
+            activity.save()
+
+            serializer = self.get_serializer(activity)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Activity.DoesNotExist:
+            return Response({'error': 'Activity not found'}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+    @swagger_auto_schema(
+        operation_summary="Add evaluation for an activity",
+        operation_description="POST /classes/{class_pk}/teams/{team_pk}/activities/{activity_pk}/add-evaluation",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'evaluation': openapi.Schema(type=openapi.TYPE_INTEGER, description='Evaluation score.'),
+            },
+            required=['evaluation'],
+        ),
+        responses={
+            status.HTTP_200_OK: openapi.Response('OK', ActivitySerializer),
+            status.HTTP_400_BAD_REQUEST: openapi.Response('Bad Request', message='Bad Request. Activity not found, invalid data, or submission status is false.'),
+            status.HTTP_401_UNAUTHORIZED: openapi.Response('Unauthorized', message='Unauthorized. Authentication required.'),
+            status.HTTP_403_FORBIDDEN: openapi.Response('Forbidden', message='Forbidden. You do not have permission to access this resource.'),
+            status.HTTP_500_INTERNAL_SERVER_ERROR: openapi.Response('Internal Server Error', message='Internal Server Error. An unexpected error occurred.'),
+        }
+    )
+    @action(detail=True, methods=['POST'])
+    def add_evaluation(self, request, class_pk=None, team_pk=None, pk=None):
+        try:
+            activity = Activity.objects.get(classroom_id=class_pk, team_id=team_pk, pk=pk)
+
+            # Check if submission status is true
+            if not activity.submission_status:
+                return Response({'error': 'Cannot add evaluation for an activity with submission status as false.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            evaluation = request.data.get('evaluation', None)
+
+            if evaluation is not None:
+                # Add evaluation
+                activity.evaluation = evaluation
+                activity.save()
+            else:
+                return Response({'error': 'Evaluation score not provided'}, status=status.HTTP_400_BAD_REQUEST)
+
+            serializer = self.get_serializer(activity)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Activity.DoesNotExist:
+            return Response({'error': 'Activity not found'}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+    @swagger_auto_schema(
+        operation_summary="Delete evaluation for an activity",
+        operation_description="POST /classes/{class_pk}/teams/{team_pk}/activities/{activity_pk}/delete-evaluation",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'evaluation': openapi.Schema(type=openapi.TYPE_INTEGER, description='Evaluation score.'),
+            },
+            required=['evaluation'],
+        ),
+        responses={
+            status.HTTP_200_OK: openapi.Response('OK', ActivitySerializer),
+            status.HTTP_400_BAD_REQUEST: openapi.Response('Bad Request', message='Bad Request. Activity not found, invalid data, or submission status is false.'),
+            status.HTTP_401_UNAUTHORIZED: openapi.Response('Unauthorized', message='Unauthorized. Authentication required.'),
+            status.HTTP_403_FORBIDDEN: openapi.Response('Forbidden', message='Forbidden. You do not have permission to access this resource.'),
+            status.HTTP_500_INTERNAL_SERVER_ERROR: openapi.Response('Internal Server Error', message='Internal Server Error. An unexpected error occurred.'),
+        }
+    )
+    @action(detail=True, methods=['DELETE'])
+    def delete_evaluation(self, request, class_pk=None, team_pk=None, pk=None):
+        try:
+            activity = Activity.objects.get(classroom_id=class_pk, team_id=team_pk, pk=pk)
+
+            # Check if submission status is true
+            if not activity.submission_status:
+                return Response({'error': 'Cannot delete evaluation for an activity with submission status as false.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Delete evaluation
+            activity.evaluation = None
+            activity.save()
+
+            serializer = self.get_serializer(activity)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Activity.DoesNotExist:
+            return Response({'error': 'Activity not found'}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
