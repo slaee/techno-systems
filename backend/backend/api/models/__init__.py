@@ -9,6 +9,7 @@ from .ClassRoomPETaker import ClassRoomPETaker
 from .Activity import Activity
 from .ActivityComment import ActivityComment
 from .ActivityWorkAttachment import ActivityWorkAttachment
+from .ActivityTemplate import ActivityTemplate
 
 __all__ = [
     'User',
@@ -22,4 +23,5 @@ __all__ = [
     'Activity',
     'ActivityComment',
     'ActivityWorkAttachment',
+    'ActivityTemplate',
 ]
