@@ -5,7 +5,7 @@ class Meeting(models.Model):
     owner_id = models.ForeignKey('ClassMember', on_delete=models.CASCADE)
     presentor_id = models.ManyToManyField('Pitch', through='MeetingPresentor')
     meeting_criteria_id = models.ManyToManyField('Criteria', through='MeetingCriteria')
-    meeting_comment_id = models.ManyToManyField('Comment')
+    meeting_comment_id = models.ManyToManyField('MeetingComment')
 
     name = models.CharField(max_length=100)
     description = models.TextField()

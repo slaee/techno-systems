@@ -1,6 +1,6 @@
 from django.db import models
 
-class Comment(models.Model):
+class MeetingComment(models.Model):
     classmember_id = models.ForeignKey('ClassMember', on_delete=models.CASCADE)
     comment = models.TextField()
 
