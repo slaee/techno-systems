@@ -31,7 +31,7 @@ class ActivityController(viewsets.GenericViewSet,
 
     def get_permissions(self):
         if self.action in ['create', 'create_from_template', 
-                           'destroy',
+                           'destroy', 'add_evaluation', 'delete_evaluation',
                            ]:
             return [permissions.IsAuthenticated(), IsTeacher()]
         else:
@@ -167,6 +167,13 @@ class TeamActivitiesController(viewsets.GenericViewSet,
     queryset = Activity.objects.all()
     serializer_class = ActivitySerializer
     authentication_classes = [JWTAuthentication]
+
+    def get_permissions(self):
+        if self.action in ['add_evaluation', 'delete_evaluation',
+                           ]:
+            return [permissions.IsAuthenticated(), IsTeacher()]
+        else:
+            return [permissions.IsAuthenticated()]
 
     @swagger_auto_schema(
         operation_summary="Lists all activities of a team",
@@ -356,31 +363,4 @@ class TeamActivitiesController(viewsets.GenericViewSet,
             return Response({'error': 'Activity not found'}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-    @swagger_auto_schema(
-        operation_summary="Add work attachment to an activity",
-        operation_description="POST /classes/{class_pk}/teams/{team_pk}/activities/{activity_pk}/add-work",
-        request_body=ActivityWorkAttachmentSerializer,
-        responses={
-            status.HTTP_201_CREATED: openapi.Response('Created', ActivityWorkAttachmentSerializer),
-            status.HTTP_400_BAD_REQUEST: openapi.Response('Bad Request', message='Bad Request. Invalid or missing data in the request.'),
-            status.HTTP_404_NOT_FOUND: openapi.Response('Not Found', message='Not Found. Associated Activity not found.'),
-            status.HTTP_500_INTERNAL_SERVER_ERROR: openapi.Response('Internal Server Error', message='Internal Server Error. An unexpected error occurred.'),
-        }
-    )
-    @action(detail=True, methods=['POST'])
-    def add_work(self, request, class_pk=None, team_pk=None, activity_pk=None):
-        serializer = ActivityWorkAttachmentSerializer(data=request.data)
-
-        if serializer.is_valid():
-            try:
-                activity = Activity.objects.get(classroom_id=class_pk, team_id=team_pk, pk=activity_pk)
-
-                serializer.save(activity=activity)
-
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            except Activity.DoesNotExist:
-                return Response({'error': 'Associated Activity not found'}, status=status.HTTP_404_NOT_FOUND)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
