@@ -13,6 +13,8 @@ router.register(r'users', UsersController, basename='users')
 router.register(r'evals', PeerEvalsController, basename='eval')
 router.register(r'classes', ClassRoomsController, basename='class')
 router.register(r'activity-templates', ActivityTemplateController, basename='activity-templates')
+router.register(r'activity-work-attachments', ActivityWorkAttachmentController, basename='activity-work-attachments')
+router.register(r'activity-comments', ActivityCommentController, basename='activity-comments')
 
 
 classes_router = routers.NestedSimpleRouter(router, r'classes', lookup='class')
