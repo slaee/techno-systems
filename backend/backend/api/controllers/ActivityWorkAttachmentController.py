@@ -32,15 +32,6 @@ class ActivityWorkAttachmentController(viewsets.GenericViewSet,
     @swagger_auto_schema(
         operation_summary="Add work attachment to an activity",
         operation_description="POST /activity-work-attachments",
-        request_body=openapi.Schema(
-            type=openapi.TYPE_OBJECT,
-            properties={
-                'activity_id': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID of the associated activity'),
-                'description': openapi.Schema(type=openapi.TYPE_STRING, description='Description of the work attachment'),
-                'file_attachment': openapi.Schema(type=openapi.TYPE_FILE, description='File attachment'),
-            },
-            required=['activity_id', 'description', 'file_attachment'],
-        ),
         responses={
             status.HTTP_201_CREATED: openapi.Response('Created', ActivityWorkAttachmentSerializer),
             status.HTTP_400_BAD_REQUEST: openapi.Response('Bad Request', message='Bad Request. Invalid or missing data in the request.'),
@@ -111,7 +102,7 @@ class ActivityWorkAttachmentController(viewsets.GenericViewSet,
             status.HTTP_500_INTERNAL_SERVER_ERROR: openapi.Response('Internal Server Error', message='Internal Server Error. An unexpected error occurred.'),
         }
     )
-    @action(detail=False, methods=['GET'], url_name='activity', url_path='activity/(?P<activity_id>[^/.]+)')
+    @action(detail=False, methods=['GET'], url_path='activities/(?P<activity_id>[^/.]+)')
     def activity_work_attachments(self, request, *args, **kwargs):
         activity_id = kwargs.get('activity_id', None)
         if activity_id is not None:
