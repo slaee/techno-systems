@@ -8,7 +8,7 @@ from .ClassRoomSerializer import ClassRoomSerializer
 from .ClassRoomSerializer import JoinClassRoomSerializer
 
 
-# User Model Serializers 
+# User Model Serializers
 from .UserSerializer import UserSerializer
 from .UserSerializer import SuperUserSerializer
 from .UserSerializer import LoginSerializer
@@ -24,3 +24,8 @@ from .ClassRoomPESerializer import ClassRoomPETakerSerializer
 
 from .PeerEvalSerializer import PeerEvalSerializer
 from .PeerEvalSerializer import AssignPeerEvalSerializer
+
+# SpringBoard Serializers
+from .SpringProjectSerializer import SpringProjectSerializer
+from .SpringProjectBoardSerializer import SpringProjectBoardSerializer
+from .SpringBoardTemplateSerializer import SpringBoardTemplateSerializer
