@@ -328,3 +328,163 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiY
 ### Accept Student E to Team A by Student A
 PUT http://127.0.0.1:8000/classes/1/teams/1/members/5/accept
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzA1Mzg3NjcxLCJpYXQiOjE3MDUzODczNzEsImp0aSI6IjdhNjQ3ZGUxNmI4MjQ1ZTQ5YTNkN2Y4NDNhOWM3MWMwIiwidXNlcl9pZCI6MiwiZW1haWwiOiJhQG1haWwuY29tIiwiZmlyc3RfbmFtZSI6IlN0dWRlbnQiLCJsYXN0X25hbWUiOiJBIiwicm9sZSI6Mn0.QyqNlxGikYWCum7b20wqhTJ2PJmZYQ5CVIIqJ1lkmGI
+
+
+###### ACTIVITY RELATED REQUESTSSS #############################################################
+
+## ACTIVITY TEMPLATE #######################################################
+# Create Activity Template (Teacher)
+POST http://127.0.0.1:8000/activity-templates
+Content-Type: application/json
+Authorization: Bearer <Your_Auth_Token>
+
+{
+    "course_name": "Software Engineering 1",
+    "title": "Work Breakdown Structure",
+    "description": "There could be links for files here and or description about the activity."
+}
+
+# Get Activity Templates by Course (Teacher)
+GET http://127.0.0.1:8000/activity-templates/by-course?course_name=Math%20101
+Authorization: Bearer <Your_Auth_Token>
+
+# Retrieve Activity Template (Teacher)
+GET http://127.0.0.1:8000/activity-templates/1
+Authorization: Bearer <Your_Auth_Token>
+
+# Update Activity Template (Teacher)
+PUT http://127.0.0.1:8000/activity-templates/1
+Content-Type: application/json
+Authorization: Bearer <Your_Auth_Token>
+
+{
+    "course_name": "Software Engineering 01",
+    "title": "Software Requirements Specification",
+    "description": "Updated! There could be links for files here and or description about the activity."
+}
+
+# Delete Activity Template (Teacher)
+DELETE http://127.0.0.1:8000/activity-templates/1
+Authorization: Bearer <Your_Auth_Token>
+
+# List all Activity Templates (Teacher)
+GET http://127.0.0.1:8000/activity-templates
+Authorization: Bearer <Your_Auth_Token>
+
+## ACTIVITY ##########################################################################################
+# Create Activity (Teacher)
+POST http://127.0.0.1:8000/activities
+Content-Type: application/json
+Authorization: Bearer <Your_Auth_Token>
+
+{
+    "classroom_id": 1,
+    "team_id": [1, 2],
+    "title": "Activity 1",
+    "description": "Description for Activity 1",
+    "due_date": "2024-02-01T12:00:00Z",
+    "total_score": 100
+}
+
+# List Activities for a Class (Teacher and Student)
+GET http://127.0.0.1:8000/classes/1/activities
+Authorization: Bearer <Your_Auth_Token>
+
+# Create Activity from Template (Teacher)
+POST http://127.0.0.1:8000/classes/1/activities/from_template
+Content-Type: application/json
+Authorization: Bearer <Your_Auth_Token>
+
+{
+    "template_id": 1,
+    "team_ids": [1, 2],
+    "due_date": "2024-02-01T12:00:00Z",
+    "total_score": 100
+}
+
+# Submit or Unsubmit an Activity (Student)
+POST http://127.0.0.1:8000/classes/1/teams/1/activities/1/submit
+Content-Type: application/json
+Authorization: Bearer <Your_Auth_Token>
+
+{
+    "submission_status": true
+}
+
+# Add Evaluation to an Activity (Teacher)
+POST http://127.0.0.1:8000/classes/1/teams/1/activities/1/add-evaluation
+Content-Type: application/json
+Authorization: Bearer <Your_Auth_Token>
+
+{
+    "evaluation": 80
+}
+
+# Delete Evaluation for an Activity (Teacher)
+DELETE http://127.0.0.1:8000/classes/1/teams/1/activities/1/delete-evaluation
+Content-Type: application/json
+Authorization: Bearer <Your_Auth_Token>
+
+## ACTIVITY WORK ATTACHMENT ###############################################################################
+# Add Work Attachment to an Activity (Student)
+POST http://127.0.0.1:8000/activity-work-attachments
+Content-Type: application/json
+Authorization: Bearer <Your_Auth_Token>
+
+{
+  "activity_id": 1,
+  "description": "Work attachment description",
+  "file_attachment": "<please insert actual file path>" 
+}
+
+# Update Work Attachment (Student)
+PUT http://127.0.0.1:8000/activity-work-attachments/1
+Content-Type: application/json
+Authorization: Bearer <Your_Auth_Token>
+
+{
+  "activity_id": 1,
+  "description": "Updated work attachment description",
+  "file_attachment": "<please insert actual file path>" 
+}
+
+# Delete Work Attachment (Student)
+DELETE http://127.0.0.1:8000/activity-work-attachments/1
+Authorization: Bearer <Your_Auth_Token>
+
+# Get all Work Attachments for a specific Activity (Student)
+GET http://127.0.0.1:8000/activity-work-attachments/activities/1
+Authorization: Bearer <Your_Auth_Token>
+
+## ACTIVITY WORK ATTACHMENT ###############################################################################
+# Create Activity Comment (Teacher)
+POST http://127.0.0.1:8000/activity-comments
+Content-Type: application/json
+Authorization: Bearer <Your_Auth_Token>
+
+{
+  "user_id": 1,
+  "activity_id": 1,
+  "comment": "This is a test comment"
+}
+
+# Update Activity Comment (Teacher)
+PUT http://127.0.0.1:8000/activity-comments/1
+Content-Type: application/json
+Authorization: Bearer <Your_Auth_Token>
+
+{
+  "comment": "Updated test comment"
+}
+
+# Delete Activity Comment (Teacher)
+DELETE http://127.0.0.1:8000/activity-comments/1
+Authorization: Bearer <Your_Auth_Token>
+
+# Get All Comments for a Specific Activity (Teacher and Student)
+GET http://127.0.0.1:8000/activity-comments/activities/1
+Authorization: Bearer <Your_Auth_Token>
+
+# List All Activity Comments (Teacher)
+GET http://127.0.0.1:8000/activity-comments
+Authorization: Bearer <Your_Auth_Token>

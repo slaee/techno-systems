@@ -6,6 +6,10 @@ from .TeamMember import TeamMember
 from .PeerEval import PeerEval
 from .ClassRoomPE import ClassRoomPE
 from .ClassRoomPETaker import ClassRoomPETaker
+from .Activity import Activity
+from .ActivityComment import ActivityComment
+from .ActivityWorkAttachment import ActivityWorkAttachment
+from .ActivityTemplate import ActivityTemplate
 
 from .Chatbot import Chatbot
 from .Criteria import Criteria
@@ -28,6 +32,11 @@ __all__ = [
     'PeerEval',
     'ClassRoomPE',
     'ClassRoomPETaker',
+
+    'Activity',
+    'ActivityComment',
+    'ActivityWorkAttachment',
+    'ActivityTemplate',
 
     'Chatbot',
     'Criteria',
