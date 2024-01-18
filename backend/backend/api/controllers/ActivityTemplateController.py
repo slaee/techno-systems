@@ -20,6 +20,14 @@ class ActivityTemplateController(viewsets.GenericViewSet,
     serializer_class = ActivityTemplateSerializer
     authentication_classes = [JWTAuthentication]
 
+    def get_permissions(self):
+        if self.action in ['create', 'by_course', 'retrieve', 'update', 
+                           'destroy', 'list',
+                           ]:
+            return [permissions.IsAuthenticated(), IsTeacher()]
+        else:
+            return [permissions.IsAuthenticated()]
+
     @swagger_auto_schema(
         operation_summary="Create a new activity template",
         operation_description="POST /activity-templates",

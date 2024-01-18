@@ -11,7 +11,9 @@ from api.models import Activity
 from api.models import ActivityTemplate
 from api.models import ClassRoom
 from api.models import Team
+from api.models import ActivityWorkAttachment
 
+from api.serializers import ActivityWorkAttachmentSerializer
 from api.serializers import ActivitySerializer
 from api.serializers import ActivityTemplateSerializer
 from api.serializers import ActivityCreateFromTemplateSerializer
@@ -28,8 +30,7 @@ class ActivityController(viewsets.GenericViewSet,
     authentication_classes = [JWTAuthentication]
 
     def get_permissions(self):
-        if self.action in ['create', 'create_from_template', 'list', 
-                           'update', 'partial_update', 
+        if self.action in ['create', 'create_from_template', 
                            'destroy',
                            ]:
             return [permissions.IsAuthenticated(), IsTeacher()]
@@ -53,17 +54,15 @@ class ActivityController(viewsets.GenericViewSet,
         serializer = self.get_serializer(data=request.data)
 
         if serializer.is_valid():
-            # Save the activity without committing to the database
             activity = serializer.save()
             
-            # Get the team_ids from the request data (you may want to validate this)
             team_ids = request.data.get('team_id', [])
             
             if team_ids:
                 try:
                     teams = Team.objects.filter(pk__in=team_ids)
                     activity.team_id.set(teams)  # Set the many-to-many relationship
-                    activity.save()  # Commit the activity to the database with the assigned teams
+                    activity.save() 
                     return Response(serializer.data, status=status.HTTP_201_CREATED)
                 except Team.DoesNotExist:
                     return Response({'error': 'One or more teams not found'}, status=status.HTTP_404_NOT_FOUND)
@@ -111,22 +110,19 @@ class ActivityController(viewsets.GenericViewSet,
     @action(detail=False, methods=['POST'])
     def create_from_template(self, request, class_pk=None, pk=None):
         template_id = request.data.get('template_id', None)
-        team_ids = request.data.get('team_ids', [])  # Updated to team_ids
+        team_ids = request.data.get('team_ids', [])  
         due_date = request.data.get('due_date', None)
         evaluation = request.data.get('evaluation', None)
         total_score = request.data.get('total_score', None)
 
         if template_id is not None and class_pk is not None:
             try:
-                # Retrieve the class
                 class_obj = ClassRoom.objects.get(pk=class_pk)
 
                 template = ActivityTemplate.objects.get(pk=template_id)
 
-                # Create a new activity based on the template
                 new_activity = Activity.create_activity_from_template(template)
 
-                # Update additional fields, such as the team and other desired fields
                 if team_ids:
                     try:
                         teams = Team.objects.filter(pk__in=team_ids)
@@ -145,10 +141,8 @@ class ActivityController(viewsets.GenericViewSet,
                 # Set the class for the new activity
                 new_activity.classroom_id = class_obj
 
-                # Save the updated activity
                 new_activity.save()
 
-                # Serialize the template and activity
                 template_serializer = ActivityTemplateSerializer(template)
                 activity_serializer = ActivitySerializer(new_activity)
 
@@ -188,70 +182,65 @@ class TeamActivitiesController(viewsets.GenericViewSet,
     )
     def list(self, request, class_pk=None, team_pk=None):
         try:
-            # Check if both class_id and team_id are provided
             if class_pk is not None and team_pk is not None:
-                # Check if the specified class_id and team_id exist
                 if not ClassRoom.objects.filter(pk=class_pk).exists():
                     return Response({'error': 'Class not found'}, status=status.HTTP_404_NOT_FOUND)
                 
                 if not Team.objects.filter(pk=team_pk).exists():
                     return Response({'error': 'Team not found'}, status=status.HTTP_404_NOT_FOUND)
 
-                # Retrieve activities for the specified class_id and team_id
                 activities = Activity.objects.filter(classroom_id=class_pk, team_id=team_pk)
                 serializer = self.get_serializer(activities, many=True)
                 return Response(serializer.data)
 
-            # Check if team_id is not provided
             elif team_pk is None:
                 return Response({'error': 'Team ID not provided'}, status=status.HTTP_400_BAD_REQUEST)
 
-            # Check if class_id is not provided
             elif class_pk is None:
                 return Response({'error': 'Class ID not provided'}, status=status.HTTP_400_BAD_REQUEST)
 
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
-    @swagger_auto_schema(
-        operation_summary="Lists all submitted activities of a team",
-        operation_description="GET /classes/{class_pk}/teams/{team_pk}/submitted_activities",
-        responses={
-            status.HTTP_200_OK: openapi.Response('OK', ActivitySerializer(many=True)),
-            status.HTTP_400_BAD_REQUEST: openapi.Response('Bad Request', message='Bad Request. Either class ID or team ID is missing or invalid.'),
-            status.HTTP_401_UNAUTHORIZED: openapi.Response('Unauthorized', message='Unauthorized. Authentication required.'),
-            status.HTTP_403_FORBIDDEN: openapi.Response('Forbidden', message='Forbidden. You do not have permission to access this resource.'),
-            status.HTTP_404_NOT_FOUND: openapi.Response('Not Found', message='Not Found. Either class or team not found.'),
-            status.HTTP_500_INTERNAL_SERVER_ERROR: openapi.Response('Internal Server Error', message='Internal Server Error. An unexpected error occurred.'),
-        }
-    )
-    @action(detail=True, methods=['GET'])
-    def submitted_activities(self, request, class_pk=None, team_pk=None):
-        try:
-            # Check if both class_id and team_id are provided
-            if class_pk is not None and team_pk is not None:
-                # Check if the specified class_id and team_id exist
-                if not ClassRoom.objects.filter(pk=class_pk).exists():
-                    return Response({'error': 'Class not found'}, status=status.HTTP_404_NOT_FOUND)
+    # @swagger_auto_schema(
+    #     operation_summary="Lists all submitted activities of a team",
+    #     operation_description="GET /classes/{class_pk}/teams/{team_pk}/submitted_activities",
+    #     responses={
+    #         status.HTTP_200_OK: openapi.Response('OK', ActivitySerializer(many=True)),
+    #         status.HTTP_400_BAD_REQUEST: openapi.Response('Bad Request', message='Bad Request. Either class ID or team ID is missing or invalid.'),
+    #         status.HTTP_401_UNAUTHORIZED: openapi.Response('Unauthorized', message='Unauthorized. Authentication required.'),
+    #         status.HTTP_403_FORBIDDEN: openapi.Response('Forbidden', message='Forbidden. You do not have permission to access this resource.'),
+    #         status.HTTP_404_NOT_FOUND: openapi.Response('Not Found', message='Not Found. Either class or team not found.'),
+    #         status.HTTP_500_INTERNAL_SERVER_ERROR: openapi.Response('Internal Server Error', message='Internal Server Error. An unexpected error occurred.'),
+    #     }
+    # )
+    # @action(detail=True, methods=['GET'])
+    # def submitted_activities(self, request, class_pk=None, team_pk=None):
+    #     try:
+    #         # Check if both class_id and team_id are provided
+    #         if class_pk is not None and team_pk is not None:
+    #             # Check if the specified class_id and team_id exist
+    #             if not ClassRoom.objects.filter(pk=class_pk).exists():
+    #                 return Response({'error': 'Class not found'}, status=status.HTTP_404_NOT_FOUND)
                 
-                if not Team.objects.filter(pk=team_pk).exists():
-                    return Response({'error': 'Team not found'}, status=status.HTTP_404_NOT_FOUND)
+    #             if not Team.objects.filter(pk=team_pk).exists():
+    #                 return Response({'error': 'Team not found'}, status=status.HTTP_404_NOT_FOUND)
 
-                # Retrieve submitted activities for the specified class_id and team_id
-                submitted_activities = Activity.objects.filter(classroom_id=class_pk, team_id=team_pk, submission_status=True)
-                serializer = self.get_serializer(submitted_activities, many=True)
-                return Response(serializer.data, status=status.HTTP_200_OK)
+    #             # Retrieve submitted activities for the specified class_id and team_id
+    #             submitted_activities = Activity.objects.filter(classroom_id=class_pk, team_id=team_pk, submission_status=True)
+    #             serializer = self.get_serializer(submitted_activities, many=True)
+    #             return Response(serializer.data, status=status.HTTP_200_OK)
 
-            # Check if team_id is not provided
-            elif team_pk is None:
-                return Response({'error': 'Team ID not provided'}, status=status.HTTP_400_BAD_REQUEST)
+    #         # Check if team_id is not provided
+    #         elif team_pk is None:
+    #             return Response({'error': 'Team ID not provided'}, status=status.HTTP_400_BAD_REQUEST)
 
-            # Check if class_id is not provided
-            elif class_pk is None:
-                return Response({'error': 'Class ID not provided'}, status=status.HTTP_400_BAD_REQUEST)
+    #         # Check if class_id is not provided
+    #         elif class_pk is None:
+    #             return Response({'error': 'Class ID not provided'}, status=status.HTTP_400_BAD_REQUEST)
 
-        except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    #     except Exception as e:
+    #         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
     @swagger_auto_schema(
     operation_summary="Submit or unsubmit an activity",
@@ -367,4 +356,31 @@ class TeamActivitiesController(viewsets.GenericViewSet,
             return Response({'error': 'Activity not found'}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    @swagger_auto_schema(
+        operation_summary="Add work attachment to an activity",
+        operation_description="POST /classes/{class_pk}/teams/{team_pk}/activities/{activity_pk}/add-work",
+        request_body=ActivityWorkAttachmentSerializer,
+        responses={
+            status.HTTP_201_CREATED: openapi.Response('Created', ActivityWorkAttachmentSerializer),
+            status.HTTP_400_BAD_REQUEST: openapi.Response('Bad Request', message='Bad Request. Invalid or missing data in the request.'),
+            status.HTTP_404_NOT_FOUND: openapi.Response('Not Found', message='Not Found. Associated Activity not found.'),
+            status.HTTP_500_INTERNAL_SERVER_ERROR: openapi.Response('Internal Server Error', message='Internal Server Error. An unexpected error occurred.'),
+        }
+    )
+    @action(detail=True, methods=['POST'])
+    def add_work(self, request, class_pk=None, team_pk=None, activity_pk=None):
+        serializer = ActivityWorkAttachmentSerializer(data=request.data)
+
+        if serializer.is_valid():
+            try:
+                activity = Activity.objects.get(classroom_id=class_pk, team_id=team_pk, pk=activity_pk)
+
+                serializer.save(activity=activity)
+
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            except Activity.DoesNotExist:
+                return Response({'error': 'Associated Activity not found'}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

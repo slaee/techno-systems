@@ -26,6 +26,14 @@ class ActivityCommentController(viewsets.GenericViewSet,
             return CommentCreateSerializer
         else:
             return ActivityCommentSerializer
+        
+    def get_permissions(self):
+        if self.action in ['create', 'update', 'partial_update', 
+                           'destroy',
+                           ]:
+            return [permissions.IsAuthenticated(), IsTeacher()]
+        else:
+            return [permissions.IsAuthenticated()]
 
     @swagger_auto_schema(
         operation_summary="Create an activity comment",
@@ -41,7 +49,6 @@ class ActivityCommentController(viewsets.GenericViewSet,
         serializer = self.get_serializer(data=request.data)
 
         if serializer.is_valid():
-            # Get the user_id and activity_id from the request data (you may want to validate these)
             user_id = request.data.get('user_id', None)
             activity_id = request.data.get('activity_id', None)
 

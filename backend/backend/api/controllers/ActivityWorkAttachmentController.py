@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
-from api.custom_permissions import IsTeacher
+from api.custom_permissions import IsTeacher, IsStudent
 
 from api.models import Activity
 from api.models import ActivityTemplate
@@ -28,6 +28,14 @@ class ActivityWorkAttachmentController(viewsets.GenericViewSet,
     queryset = ActivityWorkAttachment.objects.all()
     serializer_class = ActivityWorkAttachmentSerializer
     authentication_classes = [JWTAuthentication]
+
+    def get_permissions(self):
+        if self.action in ['create', 'update', 
+                           'destroy',
+                           ]:
+            return [permissions.IsAuthenticated(), IsStudent()]
+        else:
+            return [permissions.IsAuthenticated()]
 
     @swagger_auto_schema(
         operation_summary="Add work attachment to an activity",
