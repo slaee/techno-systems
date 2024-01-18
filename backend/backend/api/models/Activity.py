@@ -2,7 +2,7 @@ from django.db import models
 
 class Activity(models.Model):
     classroom_id = models.ForeignKey('ClassRoom', on_delete=models.CASCADE, null=True)
-    team_id = models.ForeignKey('Team', on_delete=models.CASCADE, null=True)
+    team_id = models.ManyToManyField('Team', null=True)
     title = models.CharField(max_length=100, default="", null=False)
     description = models.TextField(max_length=10000, default="", null=False)
     submission_status = models.BooleanField(default=False)
