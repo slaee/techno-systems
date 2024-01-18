@@ -69,7 +69,7 @@ class DeleteTemplate(generics.DestroyAPIView):
 
         try:
             template = SpringBoardTemplate.objects.get(id=template_id)
-            SpringBoardTemplate.delete()
+            template.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         except SpringBoardTemplate.DoesNotExist:
             return Response({"error": "Template not found"}, status=status.HTTP_404_NOT_FOUND)
