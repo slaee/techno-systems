@@ -5,3 +5,7 @@ from .ClassMembersController import ClassMembersController
 from .TeamsController import TeamsController
 from .TeamMembersController import TeamMembersController
 from .PeerEvalsController import PeerEvalsController
+from .ActivityController import ActivityController
+from .ActivityTemplateController import ActivityTemplateController
+from .ActivityWorkAttachmentController import ActivityWorkAttachmentController
+from .ActivityCommentController import ActivityCommentController

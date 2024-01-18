@@ -6,6 +6,10 @@ from .TeamMember import TeamMember
 from .PeerEval import PeerEval
 from .ClassRoomPE import ClassRoomPE
 from .ClassRoomPETaker import ClassRoomPETaker
+from .Activity import Activity
+from .ActivityComment import ActivityComment
+from .ActivityWorkAttachment import ActivityWorkAttachment
+from .ActivityTemplate import ActivityTemplate
 
 __all__ = [
     'User',
@@ -15,5 +19,9 @@ __all__ = [
     'TeamMember',
     'PeerEval',
     'ClassRoomPE',
-    'ClassRoomPETaker'
+    'ClassRoomPETaker',
+    'Activity',
+    'ActivityComment',
+    'ActivityWorkAttachment',
+    'ActivityTemplate',
 ]

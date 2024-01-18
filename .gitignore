@@ -29,3 +29,8 @@
 /backend/backend/api/migrations/*
 /backend/backend/api/migrations/__pycache__/
 !/backend/backend/api/migrations/__init__.py
+
+backend/backend/api/__pycache__/
+backend/backend/api/controllers/__pycache__/
+backend/backend/api/models/__pycache__/
+backend/backend/api/serializers/__pycache__/
