@@ -8,3 +8,4 @@ from .PeerEvalsController import PeerEvalsController
 from .ActivityController import ActivityController
 from .ActivityTemplateController import ActivityTemplateController
 from .ActivityWorkAttachmentController import ActivityWorkAttachmentController
+from .ActivityCommentController import ActivityCommentController
