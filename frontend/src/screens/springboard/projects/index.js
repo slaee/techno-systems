@@ -1,17 +1,174 @@
-import React from 'react';
-import { useOutletContext } from 'react-router-dom';
-
+import React, { useEffect, useState } from 'react';
+import { useOutletContext, useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
+import Swal from 'sweetalert2';
+import Card from '../components/Card/Card';
+import { useClassMemberTeam, useProjects } from '../../../hooks';
 import 'primeicons/primeicons.css';
 import './index.scss';
 
 function SpringBoardProjects() {
-  const { user, classId, classRoom } = useOutletContext();
+  const { user, classId, classRoom, classMember } = useOutletContext();
+  const { team } = useClassMemberTeam(classId, classMember?.id);
+  const { teamProjects, createProjects, deleteProjects } = useProjects();
+  const [projects, setProjects] = useState();
+  const [refresh, setRefresh] = useState(true);
+  const navigate = useNavigate();
 
-  // TODO: Your screens
+  useEffect(() => {
+    const fetchProjects = async () => {
+      const result = await teamProjects(team?.id);
+      if (result.success) {
+        setProjects(result.data);
+      } else {
+        console.error('Error fetching team projects:', result.error);
+      }
+    };
+
+    if (team?.id) {
+      fetchProjects();
+    }
+  }, [team?.id, refresh]);
+
+  const showCreateProjectModal = () => {
+    if (projects.length >= 3) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Project Limit Reached',
+        html: 'You have reached the project limit.<br>Only 3 projects per group are allowed.',
+        confirmButtonColor: '#8A252C',
+      });
+    } else {
+      Swal.fire({
+        html: `
+          <span style="font-size: 20px">Create a New Project</span>
+          <br>
+          <input type="text" id="input1" placeholder="Enter new project name" class="swal2-input" style="height: 35px; width: 86%; font-size: 16px; font-family: 'Calibri', sans-serif; display: flex;"/>
+          <br>
+          <textarea id="input2" placeholder="Enter project description" class="swal2-textarea" style="margin: 0 auto; width: 86%; height: 100px; resize: none; font-size: 16px; font-family: 'Calibri', sans-serif;"></textarea>
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'Create',
+        confirmButtonColor: '#9c7b16',
+        cancelButtonText: 'Cancel',
+        cancelButtonColor: 'rgb(181, 178, 178)',
+        preConfirm: async () => {
+          const input1Value = document.getElementById('input1').value;
+          const input2Value = document.getElementById('input2').value;
+          try {
+            if (!input1Value) {
+              throw new Error('Project name cannot be empty');
+            } else if (!input2Value) {
+              throw new Error('Please enter the project description.');
+            }
+            await createProjects({
+              body: {
+                name: input1Value,
+                description: input2Value,
+                team_id: team.id,
+                reason: 'Created recently',
+                is_active: false,
+              },
+            });
+            return true;
+          } catch (error) {
+            Swal.showValidationMessage(
+              `Project with the name '${input1Value}' already exists. Please enter another project name.`
+            );
+            return false;
+          }
+        },
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            title: 'Project Created',
+            icon: 'success',
+            confirmButtonColor: '#9c7b16',
+          });
+          setRefresh(!refresh);
+        }
+      });
+    }
+  };
+
+  const showDeleteProjectModal = (projId) => {
+    Swal.fire({
+      icon: 'warning',
+      title: '<span style="font-size: 20px">Are you sure you want to delete?</span>',
+      html: '<span style="font-size: 15px">This will delete this project permanently. You cannot undo this action.</span>',
+      showCancelButton: true,
+      confirmButtonText: 'Delete',
+      confirmButtonColor: '#8A252C',
+      cancelButtonText: 'Cancel',
+      cancelButtonColor: 'rgb(181, 178, 178)',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await deleteProjects(projId);
+          Swal.fire({
+            title: '<span style="font-size: 20px">Project Sucessfully Deleted</span>',
+            icon: 'success',
+            confirmButtonColor: '#9c7b16',
+            confirmButtonText: 'OK',
+          });
+          setRefresh(!refresh);
+        } catch {
+          Swal.fire({
+            title: '<span style="font-size: 20px">Error Project Delete</span>',
+            icon: 'error',
+            confirmButtonColor: '#9c7b16',
+            confirmButtonText: 'OK',
+          });
+        }
+      }
+    });
+  };
+
+  const onNavigate = (projId) => {
+    navigate(`/classes/${classId}/project/${projId}`);
+  };
+
+  if (!projects) {
+    return <p>Loading</p>;
+  }
 
   return (
     <div className="px-5">
-      <h1>Render your view here</h1>
+      <h1>Team Projects</h1>
+      {projects &&
+        projects.map((project) => (
+          <div key={project.id}>
+            <Card
+              className="mt-3"
+              onClick={() => onNavigate(project.id)}
+              style={{ cursor: 'pointer' }}
+            >
+              <div className="d-flex justify-content-between">
+                <h2>{project.name}</h2>
+                <span
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    showDeleteProjectModal(project.id);
+                  }}
+                >
+                  <FontAwesomeIcon icon={faTrash} />
+                </span>
+              </div>
+              <p>{project.description}</p>
+            </Card>
+          </div>
+        ))}
+      {projects.length !== 3 && (
+        <Card
+          className="mt-3 d-flex align-items-center flex-row"
+          style={{ cursor: 'pointer' }}
+          onClick={showCreateProjectModal}
+        >
+          <FontAwesomeIcon icon={faPlus} size="lg" />
+          <h3 className="mx-3 text-dark">Create Project</h3>
+        </Card>
+      )}
     </div>
   );
 }
