@@ -3,7 +3,7 @@ from django.db import models
 class Meeting(models.Model):
     classroom_id = models.ForeignKey('ClassRoom', on_delete=models.CASCADE)
     owner_id = models.ForeignKey('ClassMember', on_delete=models.CASCADE)
-    presentor_id = models.ManyToManyField('Pitch', through='MeetingPresentor')
+    meeting_presentor_id = models.ManyToManyField('Pitch', through='MeetingPresentor')
     meeting_criteria_id = models.ManyToManyField('Criteria', through='MeetingCriteria')
     meeting_comment_id = models.ManyToManyField('MeetingComment')
 
