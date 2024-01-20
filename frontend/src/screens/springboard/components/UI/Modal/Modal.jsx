@@ -1,11 +1,11 @@
-import React from "react";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Modal from "@mui/material/Modal";
-import Backdrop from "@mui/material/Backdrop";
-import Fade from "@mui/material/Fade";
+import React from 'react';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Modal from '@mui/material/Modal';
+import Backdrop from '@mui/material/Backdrop';
+import Fade from '@mui/material/Fade';
 
-const ModalCustom = (props) => {
+function ModalCustom(props) {
   return (
     <Modal
       open={props.isOpen}
@@ -23,13 +23,13 @@ const ModalCustom = (props) => {
       <Fade in={props.isOpen}>
         <Box
           sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
             width: props.width,
-            bgcolor: "background.paper",
-            borderRadius: "20px",
+            bgcolor: 'background.paper',
+            borderRadius: '20px',
             boxShadow: 24,
             p: 4,
           }}
@@ -39,6 +39,6 @@ const ModalCustom = (props) => {
       </Fade>
     </Modal>
   );
-};
+}
 
 export default ModalCustom;
