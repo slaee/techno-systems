@@ -1,10 +1,10 @@
-import React from "react";
-import styles from "./Button.module.css";
+import React from 'react';
+import styles from './Button.module.css';
 
-const Button = (props) => {
+function Button(props) {
   return (
     <button
-      type={props.type || "button"}
+      type={props.type || 'button'}
       className={`${styles.button} ${props.className}`}
       style={props.style}
       onClick={props.onClick}
@@ -13,6 +13,6 @@ const Button = (props) => {
       {props.children}
     </button>
   );
-};
+}
 
 export default Button;

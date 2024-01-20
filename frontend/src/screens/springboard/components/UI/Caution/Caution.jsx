@@ -1,15 +1,15 @@
-import React from "react";
-import styles from "./Caution.module.css";
+import React from 'react';
+import styles from './Caution.module.css';
 
-const Caution = () => {
+function Caution() {
   return (
     <div className={styles.sa}>
-      <div className={styles["sa-warning"]}>
-        <div className={styles["sa-warning-body"]}></div>
-        <div className={styles["sa-warning-dot"]}></div>
+      <div className={styles['sa-warning']}>
+        <div className={styles['sa-warning-body']} />
+        <div className={styles['sa-warning-dot']} />
       </div>
     </div>
   );
-};
+}
 
 export default Caution;
