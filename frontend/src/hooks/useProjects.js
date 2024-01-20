@@ -11,6 +11,7 @@ const useProjects = (classId) => {
       return { success: false, error: error?.response?.status };
     }
   };
+
   const teamProjects = async (teamId) => {
     try {
       const res = await SpringBoardService.getProjectsByTeamId(teamId);
@@ -19,6 +20,7 @@ const useProjects = (classId) => {
       return { success: false, error: error?.response?.status };
     }
   };
+
   const createProjects = async ({ body }) => {
     try {
       const res = await SpringBoardService.projectCreate(body);
@@ -28,6 +30,26 @@ const useProjects = (classId) => {
       return false;
     }
   };
+
+  const updateProjects = async (projId, { body }) => {
+    try {
+      const res = await SpringBoardService.projectUpdate(projId, body);
+      return true;
+    } catch (error) {
+      console.error('API Error:', error);
+      return false;
+    }
+  };
+
+  const getProject = async (projId) => {
+    try {
+      const res = await SpringBoardService.getProjectById(projId);
+      return { success: true, data: res.data };
+    } catch (error) {
+      return { success: false, error: error?.response?.status };
+    }
+  };
+
   const deleteProjects = async (projId) => {
     try {
       const res = await SpringBoardService.deleteProject(projId);
@@ -38,7 +60,24 @@ const useProjects = (classId) => {
     }
   };
 
-  return { teamProjects, createProjects, deleteProjects, allclassteamproj };
+  const getProjectBoard = async (projId) => {
+    try {
+      const res = await SpringBoardService.getProjectBoards(projId);
+      return { success: true, data: res.data };
+    } catch (error) {
+      return { success: false, error: error?.response?.status };
+    }
+  };
+
+  return {
+    allclassteamproj,
+    teamProjects,
+    createProjects,
+    getProject,
+    updateProjects,
+    deleteProjects,
+    getProjectBoard,
+  };
 };
 
 export default useProjects;
