@@ -21,7 +21,7 @@ import ClassroomLayout from './components/Layouts/ClassroomLayouts';
 import ActivityManagement from './screens/activity_management/activities';
 import SpringBoardProjects from './screens/springboard/projects';
 import SpringBoardAllProjects from './screens/springboard/all_projects';
-import ProjectContent from './screens/springboard/project_content';
+import ProjectView from './screens/springboard/project_view';
 import TeknoPlat from './screens/teknoplat';
 
 // Style Imports
@@ -119,10 +119,10 @@ function App() {
               }
             />
             <Route
-              path="project/:id"
+              path="project/:projId"
               element={
                 <PrivateRoute>
-                  <ProjectContent />
+                  <ProjectView />
                 </PrivateRoute>
               }
             />

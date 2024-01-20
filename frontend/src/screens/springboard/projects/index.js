@@ -3,7 +3,7 @@ import { useOutletContext, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import Swal from 'sweetalert2';
-import Card from '../components/Card/Card';
+import Card from '../components/UI/Card/Card';
 import { useClassMemberTeam, useProjects } from '../../../hooks';
 import 'primeicons/primeicons.css';
 import styles from './index.module.css';
@@ -20,7 +20,7 @@ function SpringBoardProjects() {
     const fetchProjects = async () => {
       const result = await teamProjects(team?.id);
       if (result.success) {
-        setProjects(result.data);
+        setProjects(result.data.projects);
       } else {
         console.error('Error fetching team projects:', result.error);
       }
