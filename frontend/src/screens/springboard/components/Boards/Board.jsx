@@ -24,7 +24,6 @@ function Board({ selected, project, onProjectUpdate, setBoardTemplateIds, projec
         setLoadCount((prevLoadCount) => prevLoadCount + 1);
         if (selected !== null && selected !== undefined) {
           const boardsResponse = await getProjectBoardByProjId(selected);
-          console.log(boardsResponse);
           const boardsTemp = boardsResponse.data;
           // Set the templateIds
           // this checks what templates are already accomplished and pass it to BoardCreation
@@ -43,7 +42,7 @@ function Board({ selected, project, onProjectUpdate, setBoardTemplateIds, projec
   }, [selected, projectUpdateKey]);
 
   const onClickView = (id) => {
-    navigate(`/board/${id}`);
+    navigate(`/project/${project.id}/board/${id}`);
   };
 
   if (!team) {
