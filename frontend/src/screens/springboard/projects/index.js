@@ -6,7 +6,7 @@ import Swal from 'sweetalert2';
 import Card from '../components/Card/Card';
 import { useClassMemberTeam, useProjects } from '../../../hooks';
 import 'primeicons/primeicons.css';
-import './index.scss';
+import styles from './index.module.css';
 
 function SpringBoardProjects() {
   const { user, classId, classRoom, classMember } = useOutletContext();
@@ -42,11 +42,12 @@ function SpringBoardProjects() {
     } else {
       Swal.fire({
         html: `
-          <span style="font-size: 20px">Create a New Project</span>
-          <br>
-          <input type="text" id="input1" placeholder="Enter new project name" class="swal2-input" style="height: 35px; width: 86%; font-size: 16px; font-family: 'Calibri', sans-serif; display: flex;"/>
-          <br>
-          <textarea id="input2" placeholder="Enter project description" class="swal2-textarea" style="margin: 0 auto; width: 86%; height: 100px; resize: none; font-size: 16px; font-family: 'Calibri', sans-serif;"></textarea>
+        <span style="font-size: 20px">Create a New Project</span>
+        <br>
+        <input type="text" id="input1" placeholder="Enter new project name" class="swal2-input" style="height: 35px; width: 86%; font-size: 16px; font-family: 'Calibri', sans-serif; display: flex;"/>
+        <br>
+        <textarea id="input2" placeholder="Enter project description" class="swal2-textarea" style="margin: 0 auto; width: 86%; height: 100px; resize: none; font-size: 16px; font-family: 'Calibri', sans-serif;" maxlength="200"></textarea>
+        <div id="charCount" style="text-align: right; color: #555; font-size: 12px; margin-top: 5px;">0/200 characters</div>
         `,
         showCancelButton: true,
         confirmButtonText: 'Create',
@@ -89,6 +90,31 @@ function SpringBoardProjects() {
           setRefresh(!refresh);
         }
       });
+    }
+
+    const input2 = document.getElementById('input2');
+    const charCount = document.getElementById('charCount');
+
+    input2.addEventListener('input', () => {
+      const currentLength = input2.value.length;
+      charCount.innerText = `${currentLength}/200 characters`;
+
+      if (currentLength > 200) {
+        input2.value = input2.value.slice(0, 200);
+      }
+    });
+  };
+
+  const handleCreateProject = () => {
+    if (projects.length >= 3) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Project Limit Reached',
+        html: 'You have reached the project limit.<br>Only 3 projects per group are allowed.',
+        confirmButtonColor: '#8A252C',
+      });
+    } else {
+      showCreateProjectModal();
     }
   };
 
@@ -135,40 +161,46 @@ function SpringBoardProjects() {
 
   return (
     <div className="px-5">
-      <h1>Team Projects</h1>
-      {projects &&
-        projects.map((project) => (
-          <div key={project.id}>
-            <Card
-              className="mt-3"
-              onClick={() => onNavigate(project.id)}
-              style={{ cursor: 'pointer' }}
-            >
-              <div className="d-flex justify-content-between">
-                <h2>{project.name}</h2>
-                <span
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    showDeleteProjectModal(project.id);
-                  }}
-                >
-                  <FontAwesomeIcon icon={faTrash} />
-                </span>
-              </div>
-              <p>{project.description}</p>
-            </Card>
+      <div className={styles.topBar}>
+        <h1>Team Projects</h1>
+
+        <div className={`${styles.cardContainer} mt-3`} onClick={handleCreateProject}>
+          <Card className={styles.cardBut}>
+            <FontAwesomeIcon className={styles.iconFont} icon={faPlus} />
+            <h6 className={styles.createBut}>Create Project</h6>
+          </Card>
+        </div>
+      </div>
+
+      <div className={styles.projectsCon}>
+        {projects && projects.length > 0 ? (
+          projects.map((project) => (
+            <div key={project.id}>
+              <Card className={styles.cardProj} onClick={() => onNavigate(project.id)}>
+                <div className={styles.topCon}>
+                  <h2>{project.name}</h2>
+                  <span
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      showDeleteProjectModal(project.id);
+                    }}
+                  >
+                    <FontAwesomeIcon className={styles.iconFon} icon={faTrash} />
+                  </span>
+                </div>
+                <p>{project.description}</p>
+              </Card>
+            </div>
+          ))
+        ) : (
+          <div className={styles.noCreated}>
+            <p>It looks like you haven't created any projects yet.</p>
+            <p>
+              Click on the "Create Project" button to get started and create your first project.
+            </p>
           </div>
-        ))}
-      {projects.length !== 3 && (
-        <Card
-          className="mt-3 d-flex align-items-center flex-row"
-          style={{ cursor: 'pointer' }}
-          onClick={showCreateProjectModal}
-        >
-          <FontAwesomeIcon icon={faPlus} size="lg" />
-          <h3 className="mx-3 text-dark">Create Project</h3>
-        </Card>
-      )}
+        )}
+      </div>
     </div>
   );
 }
