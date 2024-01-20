@@ -13,6 +13,7 @@ const ProjectContents = (props) => {
   const { getProject } = useProjects();
   const { getAllTemplate } = useBoardTemplate();
 
+  const currentPath = window.location.pathname;
   const [refresh, setRefresh] = useState(true);
 
   const [allTemplate, setAllTemplate] = useState();
@@ -33,6 +34,7 @@ const ProjectContents = (props) => {
       const templateResponse = await getAllTemplate();
       setAllTemplate(templateResponse.data);
       setNumTemplates(templateResponse.data.length);
+      sessionStorage.setItem('goToClass', currentPath);
     };
     fetchData();
   }, [props.selected, refresh]);

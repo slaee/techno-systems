@@ -60,12 +60,42 @@ const useProjects = (classId) => {
     }
   };
 
-  const getProjectBoard = async (projId) => {
+  const getProjectBoardByProjId = async (projId) => {
     try {
       const res = await SpringBoardService.getProjectBoards(projId);
       return { success: true, data: res.data };
     } catch (error) {
       return { success: false, error: error?.response?.status };
+    }
+  };
+
+  const createProjectBoard = async (projId, { body }) => {
+    try {
+      const res = await SpringBoardService.createProjectBoard(projId, body);
+      return res;
+    } catch (error) {
+      console.error('API Error:', error);
+      return false;
+    }
+  };
+
+  const getProjectBoardById = async (projbrdId) => {
+    try {
+      const res = await SpringBoardService.getProjectBoardById(projbrdId);
+      return res;
+    } catch (error) {
+      console.error('API Error:', error);
+      return false;
+    }
+  };
+
+  const getVersionProjectBoards = async (projbrdId) => {
+    try {
+      const res = await SpringBoardService.getVersionProjectBoards(projbrdId);
+      return res;
+    } catch (error) {
+      console.error('API Error:', error);
+      return false;
     }
   };
 
@@ -76,7 +106,10 @@ const useProjects = (classId) => {
     getProject,
     updateProjects,
     deleteProjects,
-    getProjectBoard,
+    getProjectBoardByProjId,
+    createProjectBoard,
+    getProjectBoardById,
+    getVersionProjectBoards,
   };
 };
 

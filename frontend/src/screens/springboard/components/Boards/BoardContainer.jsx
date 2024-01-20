@@ -57,16 +57,8 @@ const BoardContainer = ({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // const user = await getUser();
-        // setUserAcc(user);
-        // setStaff(user.is_staff);
-        // if (!user.is_staff) {
-        //   setGroupKey(user.group_fk);
-        // }
-
         setLoadCount((prevLoadCount) => prevLoadCount + 1);
         const result = await teamProjects(project.team_id);
-        console.log(result.data);
         if (result.success) {
           setProjectList(result.data);
         } else {

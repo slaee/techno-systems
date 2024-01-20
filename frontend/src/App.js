@@ -19,9 +19,15 @@ import PeerEval from './screens/peer_evaluation/view_peer_eval';
 import StudentPeerEval from './screens/peer_evaluation/view_student_peer_eval';
 import ClassroomLayout from './components/Layouts/ClassroomLayouts';
 import ActivityManagement from './screens/activity_management/activities';
+
 import SpringBoardProjects from './screens/springboard/projects';
 import SpringBoardAllProjects from './screens/springboard/all_projects';
 import ProjectView from './screens/springboard/project_view';
+import Rules from './screens/springboard/project_board_view/Rules/Rules';
+import AddBoard from './screens/springboard/project_board_view/AddBoard/AddBoard';
+import Result from './screens/springboard/project_board_view/Result/Result';
+import ViewBoard from './screens/springboard/project_board_view/ViewBoard/ViewBoard';
+
 import TeknoPlat from './screens/teknoplat';
 
 // Style Imports
@@ -153,6 +159,60 @@ function App() {
             </PrivateRoute>
           }
         />
+
+        <Route path="/project/:id/create-board">
+          <Route
+            path=":templateid/rules"
+            element={
+              <PrivateRoute>
+                <Rules />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path=":templateid/template"
+            element={
+              <PrivateRoute>
+                <AddBoard />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path=":boardid/result"
+            element={
+              <PrivateRoute>
+                <Result />
+              </PrivateRoute>
+            }
+          />
+        </Route>
+
+        <Route path="project/:id/board/:boardid">
+          <Route
+            index
+            element={
+              <PrivateRoute>
+                <ViewBoard />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="edit"
+            element={
+              <PrivateRoute>
+                <ProjectView />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="edit/result"
+            element={
+              <PrivateRoute>
+                <ProjectView />
+              </PrivateRoute>
+            }
+          />
+        </Route>
       </Routes>
     </AuthProvider>
   );
