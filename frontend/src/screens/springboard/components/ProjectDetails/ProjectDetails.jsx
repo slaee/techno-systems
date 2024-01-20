@@ -80,7 +80,7 @@ const ProjectDetails = ({ project, numTemplates, onProjectUpdate }) => {
             id="projectdesc"
             defaultValue={desc ?? project.description}
             className={styles.textInput}
-            style={{ height: '70px', resize: 'none' }}
+            style={{ height: '80px', resize: 'none' }}
           />
         </div>
         <div className={styles.btmButton}>
@@ -114,7 +114,7 @@ const ProjectDetails = ({ project, numTemplates, onProjectUpdate }) => {
         {numTemplates > 0 ? Math.round((project.score / numTemplates) * 10) : 0} %
       </span>
 
-      <hr style={{ color: '#E5E4E2' }} />
+      <hr />
       <div style={{ margin: '15px 0' }}>
         <p className={styles.title}>
           Project Details &nbsp;
@@ -130,7 +130,7 @@ const ProjectDetails = ({ project, numTemplates, onProjectUpdate }) => {
           )}
         </p>
         <p className={styles.title_body}>Name:</p>
-        <p className={styles.body}>{project.name}</p>
+        <p className={styles.bodyName}>{project.name}</p>
         <p className={styles.title_body}>Description:</p>
         <p className={styles.body}>{project.description}</p>
       </div>

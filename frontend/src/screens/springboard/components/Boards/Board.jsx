@@ -73,7 +73,7 @@ function Board({ selected, project, onProjectUpdate, setBoardTemplateIds, projec
                   <img className={styles.ideaicon} src={IdeaIcon} alt="IdeaIcon" />
                 </div>
 
-                <div>
+                <div className={styles.content}>
                   <h3>Board: {board.title}</h3>
                   <div>
                     <div className={styles.cards}>
@@ -98,9 +98,9 @@ function Board({ selected, project, onProjectUpdate, setBoardTemplateIds, projec
                         </div>
                       </Card>
                     </div>
-                    <Button className={styles.viewbutton} onClick={() => onClickView(board.id)}>
+                    <button className={styles.viewbutton} onClick={() => onClickView(board.id)}>
                       View Board
-                    </Button>
+                    </button>
                   </div>
                 </div>
               </div>
