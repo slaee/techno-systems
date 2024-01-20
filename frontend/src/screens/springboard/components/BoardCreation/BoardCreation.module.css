@@ -12,14 +12,25 @@
   padding: 0 10px;
 }
 
-.textMargin {
+.containersub h5 {
+
+  font-weight: 700;
+}
+
+.containersub p {
+  font-weight: 650;
+  font-size: smaller;
+} 
+
+.textMargin, .textHead {
   margin: 5px;
 }
 
 .container_card {
-  padding: 10px 10px 40px 10px;
+  padding: 30px 10px 40px 10px;
   margin-top: 40px;
-  width: 90%;
+  width: 85%;
+  height: 24rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -28,14 +39,19 @@
   max-width: 50rem;
 }
 
+.container_card h5 {
+  font-weight: 650;
+  font-size: smaller;
+}
+
 .container_board {
   margin: 10px 0;
   padding: 5px 5px 10px 5px;
   display: flex;
   text-align: left;
-  width: 80%;
-  min-height: 10rem;
-  max-height: 10rem;
+  width: 75%;
+  min-height: 9rem;
+  max-height: 9rem;
   background-color: rgba(246, 199, 25);
   cursor: pointer;
 }
@@ -63,8 +79,20 @@
 }
 
 .words {
+  padding-top: 15px;
   padding-left: 25px;
   padding-right: 20px;
+}
+
+.words h4 {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.words p {
+  margin-top: 1rem;
+  font-size: 12px;
+  font-weight: 470;
 }
 
 .back {
