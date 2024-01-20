@@ -12,7 +12,7 @@ function Board({ selected, project, onProjectUpdate, setBoardTemplateIds, projec
   const { user, classId, classRoom, classMember } = useOutletContext();
   const { team } = useClassMemberTeam(classId, classMember?.id);
 
-  const { getProjectBoard } = useProjects();
+  const { getProjectBoardByProjId } = useProjects();
 
   const navigate = useNavigate();
   const [loadCount, setLoadCount] = useState(0);
@@ -23,13 +23,13 @@ function Board({ selected, project, onProjectUpdate, setBoardTemplateIds, projec
       try {
         setLoadCount((prevLoadCount) => prevLoadCount + 1);
         if (selected !== null && selected !== undefined) {
-          const boardsResponse = await getProjectBoard(selected);
+          const boardsResponse = await getProjectBoardByProjId(selected);
           console.log(boardsResponse);
           const boardsTemp = boardsResponse.data;
           // Set the templateIds
           // this checks what templates are already accomplished and pass it to BoardCreation
           if (setBoardTemplateIds) {
-            const templateIds = new Set(boardsTemp.map((board) => board.templateId));
+            const templateIds = new Set(boardsTemp.map((board) => board.template_id));
             setBoardTemplateIds(templateIds);
           }
           const sortedBoards = [...boardsTemp].sort((a, b) => a.templateId - b.templateId);
