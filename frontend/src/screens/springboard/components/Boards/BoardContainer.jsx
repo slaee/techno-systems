@@ -125,7 +125,7 @@ const BoardContainer = ({
             You are activating <b>"{project.name}"</b>
           </h2>
 
-          <div>
+          <div className={styles.deac}>
             {projectList.length > 1 ? (
               <div>
                 <p style={{ fontSize: '14px' }}>
@@ -168,14 +168,14 @@ const BoardContainer = ({
                 setIsModalOpen(false);
               }}
             >
-              Confirm
+              <p className={styles.confirmation}>Confirm</p>
             </Button>
             <Button
               className={styles.button}
               style={{ backgroundColor: 'rgb(181, 178, 178)' }}
               onClick={() => setIsModalOpen(false)}
             >
-              Cancel
+              <p className={styles.confirmation}>Cancel</p>
             </Button>
           </div>
         </div>
@@ -198,10 +198,10 @@ const BoardContainer = ({
               className={styles.button}
               style={{ backgroundColor: '#8A252C' }}
             >
-              Deactivate
+              <p className={styles.confirmation}>Deactivate</p>
             </Button>
             <Button className={styles.button} onClick={() => setIsModalOpen(false)}>
-              Cancel
+              <p className={styles.confirmation}>Cancel</p>
             </Button>
           </div>
         </div>
@@ -295,10 +295,10 @@ const BoardContainer = ({
                 </div>
               )}
             </div>
-            <hr style={{ color: '#E5E4E2' }} />
+            <hr />
             {user.role !== 1 && team.id === project.team_id && (
               <Button className={styles.butName} onClick={() => setCreateAction(true)}>
-                Create Board
+                <p className={styles.createName}> Create Board</p>
               </Button>
             )}
           </ThemeProvider>

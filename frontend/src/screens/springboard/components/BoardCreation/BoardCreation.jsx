@@ -21,15 +21,13 @@ function BoardCreation({ selected, setCreateAction, boardTemplateIds, allTemplat
       <FontAwesomeIcon icon={faArrowLeft} onClick={goBack} className={styles.back} />
 
       <div className={styles.containersub}>
-        <h2 className={`$${styles.textMargin}`} style={{ color: '#9c7b16' }}>
+        <h5 className={`$${styles.textHead}`} style={{ color: '#9c7b16' }}>
           Create Board
-        </h2>
-        <h5 className={styles.textMargin}>Great! Let's get started on creating your new board.</h5>
+        </h5>
+        <p className={styles.textMargin}>Great! Let's get started on creating your new board.</p>
 
         <Card className={styles.container_card}>
-          <h5>
-            Choose a template from the following predefined selection that best fits your idea:
-          </h5>
+          <p>Choose a template from the following predefined selection that best fits your idea:</p>
 
           <div className={styles.scrollable}>
             {allTemplate.map((template, index) => (
