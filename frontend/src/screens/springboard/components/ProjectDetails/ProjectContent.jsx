@@ -27,7 +27,7 @@ const ProjectContents = (props) => {
     const fetchData = async () => {
       const projectResponse = await getProject(props.selected);
       if (projectResponse.success) {
-        setProject(projectResponse.data.project);
+        setProject(projectResponse.data);
       } else {
         console.error('Error fetching team projects:', projectResponse.error);
       }
@@ -61,7 +61,7 @@ const ProjectContents = (props) => {
           <BoardContainer
             selected={props.selected}
             setSelected={props.setSelected}
-            project={project}
+            project={project.project}
             onProjectUpdate={onProjectUpdate}
             setBoardTemplateIds={setBoardTemplateIds}
             projectUpdateKey={props.projectUpdateKey}
@@ -71,10 +71,10 @@ const ProjectContents = (props) => {
         )}
         {project && (
           <ProjectDetails
-            project={project}
+            project={project.project}
             numTemplates={numTemplates}
             onProjectUpdate={onProjectUpdate}
-            user={user}
+            team_name={project.team_name}
           />
         )}
       </div>
