@@ -55,11 +55,16 @@
 
 .card {
   padding: 0 0 20px 0;
-  height: 215px;
+  height: 180px;
   max-width: 720px;
   border-radius: 30px;
   margin-left: 0.5rem;
   margin-right: 0.5rem;
+  cursor: pointer;
+}
+
+.card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.36);
 }
 
 .smallCard {
@@ -313,7 +318,7 @@
 
 .content h3 {
   margin-top: 1rem;
-  font-size: 21px;
-  font-weight: 700;
+  font-size: 18px;
+  font-weight: 600;
 }
 

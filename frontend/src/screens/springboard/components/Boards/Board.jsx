@@ -66,7 +66,7 @@ function Board({ selected, project, onProjectUpdate, setBoardTemplateIds, projec
         )}
         {boards.map((board) => (
           <div key={board.id}>
-            <Card className={styles.card}>
+            <Card className={styles.card} onClick={() => onClickView(board.id)}>
               <div className={styles.container}>
                 <div className={styles.subcontainer}>
                   <img className={styles.ideaicon} src={IdeaIcon} alt="IdeaIcon" />
@@ -97,9 +97,9 @@ function Board({ selected, project, onProjectUpdate, setBoardTemplateIds, projec
                         </div>
                       </Card>
                     </div>
-                    <button className={styles.viewbutton} onClick={() => onClickView(board.id)}>
+                    {/* <button className={styles.viewbutton} onClick={() => onClickView(board.id)}>
                       View Board
-                    </button>
+                    </button> */}
                   </div>
                 </div>
               </div>
