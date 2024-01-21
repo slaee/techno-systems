@@ -13,5 +13,7 @@
     background-color: #9c7b16;
     font-size: 14px;
     transition: background-color 0.3s;
+    border: none;
+    color: white;
 }
   
