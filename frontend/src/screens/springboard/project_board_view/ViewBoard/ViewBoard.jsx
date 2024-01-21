@@ -112,8 +112,8 @@ function ViewBoard() {
     <div className={styles.body}>
       <Header />
 
-      <div className={styles.body}>
-        <div style={{ width: '70rem' }}>
+      <div className={styles.subbody}>
+        <div className={styles.subsubbody} style={{ width: '70rem' }}>
           <h2>
             <span className={styles.back} onClick={handleBack}>
               <IoArrowBackSharp />
