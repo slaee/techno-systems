@@ -56,7 +56,7 @@ const ResultBoard = ({ boardid }) => {
           </Card>
         </div>
 
-        <div className={styles.adviceDiv} style={{ marginTop: '40px' }}>
+        <div className={styles.adviceDiv} style={{ marginTop: '60px' }}>
           <div className={styles.advice}>
             <h4>Feedback</h4>
             <div className={styles.content}>

@@ -6,8 +6,9 @@
 }
 
 .card{
-  padding: 30px 40px;
-  min-width: 60rem;
+  margin-top: 4rem;
+  padding: 50px 50px 50px 50px;
+  min-width: 65rem;
   align-items: center;
   display: flex;
   flex-direction: column;
@@ -37,7 +38,9 @@
   margin-top: 50px;
   height: 40px;
   background-color: #82c36b;
-  font-size: 14px;
+  font-size: 15px;
+  border: none;
+  color: white;
 }
 
 .textColor {

@@ -15,7 +15,10 @@ const Header = () => {
         <div className={`${styles.img}`} style={{ marginRight: '10px' }}>
           <img src={prof} alt="profwhite" />
         </div>
-        <p style={{ color: 'white' }}>{`${user.first_name} ${user.last_name}`}</p>
+        <p
+          className={styles.text}
+          style={{ color: 'white' }}
+        >{`${user.first_name} ${user.last_name}`}</p>
       </div>
     </div>
   );
