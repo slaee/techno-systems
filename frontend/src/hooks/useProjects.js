@@ -89,6 +89,16 @@ const useProjects = (classId) => {
     }
   };
 
+  const updateProjectBoard = async (projbrdId, { body }) => {
+    try {
+      const res = await SpringBoardService.updateBoard(projbrdId, body);
+      return res;
+    } catch (error) {
+      console.error('API Error:', error);
+      return false;
+    }
+  };
+
   const getVersionProjectBoards = async (projbrdId) => {
     try {
       const res = await SpringBoardService.getVersionProjectBoards(projbrdId);
@@ -109,6 +119,7 @@ const useProjects = (classId) => {
     getProjectBoardByProjId,
     createProjectBoard,
     getProjectBoardById,
+    updateProjectBoard,
     getVersionProjectBoards,
   };
 };
