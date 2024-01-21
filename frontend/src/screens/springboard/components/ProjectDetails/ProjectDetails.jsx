@@ -7,11 +7,11 @@ import Button from '../UI/Button/Button';
 import styles from './ProjectDetails.module.css';
 import { useClassMemberTeam, useProjects } from '../../../../hooks';
 
-const ProjectDetails = ({ project, numTemplates, onProjectUpdate }) => {
+const ProjectDetails = ({ project, numTemplates, onProjectUpdate, team_name }) => {
   const { user, classId, classRoom, classMember } = useOutletContext();
   const { team } = useClassMemberTeam(classId, classMember?.id);
 
-  const { teamProjects, updateProjects } = useProjects();
+  const { updateProjects } = useProjects();
 
   const [group, setGroup] = useState('');
   const [modalContent, setModalContent] = useState(null);
@@ -107,6 +107,10 @@ const ProjectDetails = ({ project, numTemplates, onProjectUpdate }) => {
     );
   };
 
+  if (!team) {
+    return <p>Loading...</p>;
+  }
+
   return (
     <div className={styles.side}>
       <p className={styles.title}>Overall Project Rating</p>
@@ -118,7 +122,7 @@ const ProjectDetails = ({ project, numTemplates, onProjectUpdate }) => {
       <div style={{ margin: '15px 0' }}>
         <p className={styles.title}>
           Project Details &nbsp;
-          {user.group_fk === project.group_fk && (
+          {project.team_id === team.id && (
             <span className={styles.pen} onClick={() => handleEditDetailModal()}>
               <FaPen />
             </span>
@@ -134,10 +138,10 @@ const ProjectDetails = ({ project, numTemplates, onProjectUpdate }) => {
         <p className={styles.title_body}>Description:</p>
         <p className={styles.body}>{project.description}</p>
       </div>
-      {(user.is_staff || user.group_fk !== project.group_fk) && (
+      {(user.role === 1 || project.team_id !== team.id) && (
         <>
           <hr style={{ color: '#E5E4E2' }} />
-          <p className={styles.title_body}>Created by: Group {group}</p>
+          <p className={styles.title_body}>Created by: Group {team_name}</p>
         </>
       )}
     </div>

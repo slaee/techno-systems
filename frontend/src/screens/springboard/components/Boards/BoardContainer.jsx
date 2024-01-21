@@ -17,7 +17,6 @@ import styles from './Board.module.css';
 const BoardContainer = ({
   selected,
   project,
-
   onProjectUpdate,
   setBoardTemplateIds,
   projectUpdateKey,
@@ -35,7 +34,6 @@ const BoardContainer = ({
   const [projectList, setProjectList] = useState([]);
   const [userAcc, setUserAcc] = useState();
   const [staff, setStaff] = useState(false);
-  const [groupKey, setGroupKey] = useState();
   const [selectedProj, setSelectedProj] = useState(selected);
 
   const [dropdownVisible, setDropdownVisible] = useState(false);
@@ -69,6 +67,7 @@ const BoardContainer = ({
       }
     };
     if (team?.id) {
+      sessionStorage.setItem('teamId', team.id);
       fetchData();
     }
   }, [team?.id]);
@@ -233,7 +232,7 @@ const BoardContainer = ({
           <ThemeProvider theme={theme}>
             <div className={styles.alignment}>
               <div className={styles.head}>{project.name} Boards</div>
-              {user.role !== 1 && project.group_fk === groupKey && (
+              {user.role === 2 && project.team_id === team.id && (
                 <div className={`${styles.publish} ${styles.rightAligned}`}>
                   {project.is_active ? 'Activated' : 'Inactive'}
                   <Switch
