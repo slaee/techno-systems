@@ -20,19 +20,19 @@ function ViewBoard() {
   const [activeTab, setActiveTab] = useState('results');
   const [attempt, setAttempt] = useState(0);
   const [boards, setBoards] = useState(null);
-  const [isGrpMem, setIsGrpMem] = useState(true);
+  const [isGrpMem, setIsGrpMem] = useState(false);
 
+  const teamId = sessionStorage.getItem('teamId');
   const { boardid } = useParams();
   const groupIdRef = useRef();
   const navigate = useNavigate();
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const calcAttemp = (versions) => {
-    // first creation or no other versions created
-    if (versions.length === 1) {
-      return 0;
-    }
+  const calcAttempt = (versions) => {
+    // Exclude the first item in the versions array
+    const versionsWithoutFirst = versions.slice(1);
+
     // Get today's date and set its time to 11:59 PM
     const today = new Date();
     today.setHours(23, 59, 59, 999);
@@ -46,10 +46,11 @@ function ViewBoard() {
     yesterday.setDate(today.getDate() - 1);
     const startDate = yesterday;
 
-    const filteredBoards = versions.filter((board) => {
-      const boardCreatedAt = new Date(board.created_at);
+    const filteredBoards = versionsWithoutFirst.filter((board) => {
+      const boardCreatedAt = new Date(board.date_created);
       return boardCreatedAt >= startDate && boardCreatedAt <= endDate;
     });
+
     return filteredBoards.length;
   };
 
@@ -61,10 +62,10 @@ function ViewBoard() {
         const projectData = projectResponse.data.project;
         setBoards(response.data);
         groupIdRef.current = projectData.team_id;
-        if (user.role !== 2 && projectData.team_id !== user.group_fk) {
-          setIsGrpMem(false);
+        if (user.role === 2 && projectData.team_id === parseInt(teamId)) {
+          setIsGrpMem(true);
         }
-        setAttempt(calcAttemp(response.data));
+        setAttempt(calcAttempt(response.data));
       } catch (error) {
         console.error('Error fetching data:', error);
       }
