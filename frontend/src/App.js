@@ -27,6 +27,8 @@ import Rules from './screens/springboard/project_board_view/Rules/Rules';
 import AddBoard from './screens/springboard/project_board_view/AddBoard/AddBoard';
 import Result from './screens/springboard/project_board_view/Result/Result';
 import ViewBoard from './screens/springboard/project_board_view/ViewBoard/ViewBoard';
+import EditBoard from './screens/springboard/project_board_view/EditBoard/EditBoard';
+import EditBoardResult from './screens/springboard/project_board_view/EditBoard/EditBoardResult';
 
 import TeknoPlat from './screens/teknoplat';
 
@@ -200,7 +202,7 @@ function App() {
             path="edit"
             element={
               <PrivateRoute>
-                <ProjectView />
+                <EditBoard />
               </PrivateRoute>
             }
           />
@@ -208,7 +210,7 @@ function App() {
             path="edit/result"
             element={
               <PrivateRoute>
-                <ProjectView />
+                <EditBoardResult />
               </PrivateRoute>
             }
           />
