@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate, useOutletContext } from 'react-router-dom';
+import { useOutletContext } from 'react-router-dom';
 import { FaCaretDown } from 'react-icons/fa';
 import { Switch } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -24,16 +24,14 @@ const BoardContainer = ({
   setSelected,
   isClass,
 }) => {
-  const { user, classId, classRoom, classMember } = useOutletContext();
+  const { user, classId, classMember } = useOutletContext();
   const { team } = !isClass ? useClassMemberTeam(classId, classMember?.id) || { id: 0 } : { id: 0 };
   const teamId = team?.id || 0;
 
   const { teamProjects, updateProjects } = useProjects();
 
-  const navigate = useNavigate();
   const [loadCount, setLoadCount] = useState(0);
   const [projectList, setProjectList] = useState([]);
-  const [userAcc, setUserAcc] = useState();
 
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [modalContent, setModalContent] = useState(null);
@@ -72,7 +70,6 @@ const BoardContainer = ({
   }, [team, selected]);
 
   const updateProjectReason = async (proj, newreason) => {
-    console.log(newreason);
     const newStatus = proj.is_active ? !proj.is_active : proj.is_active;
     try {
       await updateProjects(proj.id, {
@@ -105,7 +102,7 @@ const BoardContainer = ({
     }
   };
 
-  const handleToggleClick = async (event) => {
+  const handleToggleClick = async () => {
     setIsModalOpen(true);
     if (!project.is_active) {
       setModalContent(

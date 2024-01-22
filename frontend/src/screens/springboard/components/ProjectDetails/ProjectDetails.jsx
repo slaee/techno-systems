@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { FaPen } from 'react-icons/fa6';
 import Swal from 'sweetalert2';
@@ -6,16 +6,15 @@ import ModalCustom from '../UI/Modal/Modal';
 import Button from '../UI/Button/Button';
 import styles from './ProjectDetails.module.css';
 import { useClassMemberTeam, useProjects } from '../../../../hooks';
-import Loading from '../../../../components/loading';
 
 const ProjectDetails = ({ project, numTemplates, onProjectUpdate, team_name, isClass }) => {
-  const { user, classId, classRoom, classMember } = useOutletContext();
+  const { user, classId, classMember } = useOutletContext();
   const { team } = !isClass ? useClassMemberTeam(classId, classMember?.id) || { id: 0 } : { id: 0 };
   const teamId = team?.id || 0;
 
   const { updateProjects } = useProjects();
 
-  const [group, setGroup] = useState('');
+  // const [group, setGroup] = useState('');
   const [modalContent, setModalContent] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 

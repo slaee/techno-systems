@@ -3,8 +3,8 @@ import { useParams, useNavigate, useOutletContext } from 'react-router-dom';
 import { IoArrowBackSharp } from 'react-icons/io5';
 import ProjectContents from '../components/ProjectDetails/ProjectContent';
 
-function ProjectView(props) {
-  const { user, classId, classRoom } = useOutletContext();
+function ProjectView() {
+  const { user, classId } = useOutletContext();
   const { projId } = useParams();
   const [disable, setDisable] = useState(false);
   const navigate = useNavigate();

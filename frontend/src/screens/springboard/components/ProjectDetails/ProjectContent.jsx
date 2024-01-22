@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useOutletContext } from 'react-router-dom';
+import { useOutletContext } from 'react-router-dom';
 import styles from './ProjectContents.module.css';
 import BoardContainer from '../Boards/BoardContainer';
 import BoardCreation from '../BoardCreation/BoardCreation';
 import ProjectDetails from './ProjectDetails';
-import { useClassMemberTeam, useProjects, useBoardTemplate } from '../../../../hooks';
+import { useProjects, useBoardTemplate } from '../../../../hooks';
 import Loading from '../../../../components/loading';
 
 const ProjectContents = (props) => {
-  const { user, classId, classRoom, classMember } = useOutletContext();
+  const { user } = useOutletContext();
 
   const { getProject } = useProjects();
   const { getAllTemplate } = useBoardTemplate();
