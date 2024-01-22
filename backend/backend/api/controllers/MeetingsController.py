@@ -34,8 +34,33 @@ class MeetingsController(viewsets.GenericViewSet,
         return super().get_permissions()
     
     @swagger_auto_schema(
+        operation_summary="List all meetings under a classroom.",
+        operation_description="POST /meetings/?classroom=classroom&status=status",
+        request_body=NoneSerializer,
+        responses={
+            status.HTTP_201_CREATED: openapi.Response('Created', MeetingSerializer),
+            status.HTTP_400_BAD_REQUEST: openapi.Response('Bad Request'),
+            status.HTTP_401_UNAUTHORIZED: openapi.Response('Unauthorized'),
+            status.HTTP_403_FORBIDDEN: openapi.Response('Forbidden'),
+            status.HTTP_500_INTERNAL_SERVER_ERROR: openapi.Response('Internal Server Error'),
+        }
+    )
+    def list(self, request):
+        queryset = self.queryset
+        status_param = self.request.query_params.get('status', None)
+        classroom_param = self.request.query_params.get('classroom', None)
+
+        if classroom_param:
+            queryset = queryset.filter(classroom_id=classroom_param)
+
+        if status_param:
+            queryset = queryset.filter(status=status_param)
+
+        return queryset
+
+    @swagger_auto_schema(
         operation_summary="Creates a new comment for the specific meeting.",
-        operation_description="POST /meetings/{id}/comments/",
+        operation_description="POST /meetings/{id}/comments",
         request_body=NoneSerializer,
         responses={
             status.HTTP_201_CREATED: openapi.Response('Created', MeetingCommentSerializer),
@@ -46,7 +71,7 @@ class MeetingsController(viewsets.GenericViewSet,
         }
     )
     @action(detail=True, methods=['POST'])
-    def comments(self, request, *args, **kwargs):
+    def add_comment(self, request, *args, **kwargs):
         meeting = self.get_object()
 
         try:
@@ -66,7 +91,7 @@ class MeetingsController(viewsets.GenericViewSet,
             
     @swagger_auto_schema(
         operation_summary="List comments for the specific meeting.",
-        operation_description="GET /meetings/{id}/comments/",
+        operation_description="GET /meetings/{id}/comments",
         request_body=NoneSerializer,
         responses={
             status.HTTP_201_CREATED: openapi.Response('Created', MeetingCommentSerializer),
@@ -77,7 +102,7 @@ class MeetingsController(viewsets.GenericViewSet,
         }
     )
     @action(detail=True, methods=['GET'])
-    def comments(self, request, *args, **kwargs):
+    def get_comments(self, request, *args, **kwargs):
         meeting = self.get_object()
 
         comment_serializer = MeetingCommentSerializer(meeting.meeting_comment_id.all(), many=True)
@@ -97,7 +122,7 @@ class MeetingsController(viewsets.GenericViewSet,
         }
     )
     @action(detail=True, methods=['POST'])
-    def presentors(self, request, *args, **kwargs):
+    def add_presentor(self, request, *args, **kwargs):
         meeting = self.get_object()
 
         request.data['meeting_id'] = meeting.id
@@ -123,7 +148,7 @@ class MeetingsController(viewsets.GenericViewSet,
         }
     )
     @action(detail=True, methods=['GET'])
-    def presentors(self, request, *args, **kwargs):
+    def get_presentors(self, request, *args, **kwargs):
         meeting = self.get_object()
 
         presentor_serializer = MeetingPresentorSerializer(meeting.meeting_presentor_id.all(), many=True)
@@ -143,7 +168,7 @@ class MeetingsController(viewsets.GenericViewSet,
         }
     )
     @action(detail=True, methods=['POST'])
-    def criterias(self, request, *args, **kwargs):
+    def add_criteria(self, request, *args, **kwargs):
         meeting = self.get_object()
 
         request.data['meeting_id'] = meeting.id
@@ -169,7 +194,7 @@ class MeetingsController(viewsets.GenericViewSet,
         }
     )
     @action(detail=True, methods=['GET'])
-    def criterias(self, request, *args, **kwargs):
+    def get_criterias(self, request, *args, **kwargs):
         meeting = self.get_object()
 
         meeting_criteria_id = MeetingCriteriaSerializer(meeting.meeting_criteria_id.all(), many=True)
@@ -288,12 +313,13 @@ class MeetingsController(viewsets.GenericViewSet,
         }
     )
     @action(detail=True, methods=['GET'])
-    def rating_history(self, request, *args, **kwargs):
+    def get_rating_history(self, request, *args, **kwargs):
         meeting = self.get_object()
 
         presentors = MeetingPresentorSerializer(meeting.meeting_presentor_id.all(), many=True).data
         criterias = MeetingCriteriaSerializer(meeting.meeting_criteria_id.all(), many=True).data
 
+        
         for presentor in presentors:
             ratings = Rating.objects.filter(meeting_id=meeting.id, pitch_id=presentor['pitch_id']).annotate(
                 total_rating=Sum(F('rating') * F('meeting_criteria_id__weight') * (
@@ -302,9 +328,15 @@ class MeetingsController(viewsets.GenericViewSet,
             ).values('meeting_criteria_id__name', 'total_rating')
 
             scores_by_criteria = {criteria['criteria']['name']: 0 for criteria in criterias}
+
             scores_by_criteria.update({rating['meeting_criteria_id__name']: rating['total_rating'] for rating in ratings})
 
+            overall_score = 0
+            for criteria in criterias:
+                overall_score = overall_score + (scores_by_criteria[criteria['criteria']['name']] * criteria['weight'])
+
             presentor['score'] = scores_by_criteria
+            presentor['overall_score'] = overall_score
 
         return Response(presentors, status=status.HTTP_200_OK)
 
@@ -321,7 +353,7 @@ class MeetingsController(viewsets.GenericViewSet,
         }
     )
     @action(detail=True, methods=['GET'])
-    def remark_history(self, request, *args, **kwargs):
+    def get_remark_history(self, request, *args, **kwargs):
         meeting = self.get_object()
 
         presentors = MeetingPresentorSerializer(meeting.meeting_presentor_id.all(), many=True).data
@@ -344,12 +376,12 @@ class MeetingsController(viewsets.GenericViewSet,
         }
     )
     @action(detail=True, methods=['GET'])
-    def feedback_history(self, request, *args, **kwargs):
+    def get_feedback_history(self, request, *args, **kwargs):
         meeting = self.get_object()
 
         presentors = MeetingPresentorSerializer(meeting.meeting_presentor_id.all(), many=True).data
 
         for presentor in presentors:
-            feedback = FeedbackSerializer(Feedback.objects.filter(meeting_id=meeting.id, pitch_id=presentor['pitch_id']), many=True).data   
+            feedback = FeedbackSerializer(Feedback.objects.get(meeting_id=meeting.id, pitch_id=presentor['pitch_id'])).data   
             presentor['feedback'] = feedback
         return Response(presentors, status=status.HTTP_200_OK)
