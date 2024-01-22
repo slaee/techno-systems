@@ -4,7 +4,7 @@ import { IoArrowBackSharp } from 'react-icons/io5';
 import ProjectContents from '../components/ProjectDetails/ProjectContent';
 
 function SearchProject() {
-  const { user, classId, classRoom } = useOutletContext();
+  const { user } = useOutletContext();
   const { projId } = useParams();
   const [disable, setDisable] = useState(false);
   const navigate = useNavigate();

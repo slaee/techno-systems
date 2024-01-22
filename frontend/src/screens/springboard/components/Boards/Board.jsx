@@ -3,13 +3,13 @@ import { useNavigate, useOutletContext } from 'react-router-dom';
 import styles from './Board.module.css';
 import Card from '../UI/Card/Card';
 import IdeaIcon from '../images/idea.png';
-import Button from '../UI/Button/Button';
+// import Button from '../UI/Button/Button';
 import CircularProgressWithLabel from '../UI/ProgressBar/CircularProgressWithLabel';
 import Loading from '../../../../components/loading';
 import { useClassMemberTeam, useProjects } from '../../../../hooks';
 
 function Board({ isClass, selected, project, setBoardTemplateIds, projectUpdateKey }) {
-  const { user, classId, classRoom, classMember } = useOutletContext();
+  const { user, classId, classMember } = useOutletContext();
   const { team } = !isClass ? useClassMemberTeam(classId, classMember?.id) || { id: 0 } : { id: 0 };
   const teamId = team?.id || 0;
 

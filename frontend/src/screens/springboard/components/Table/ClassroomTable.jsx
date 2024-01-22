@@ -6,7 +6,7 @@ import { useBoardTemplate } from '../../../../hooks';
 import styles from './Table.module.css';
 
 const ClassroomTable = (props) => {
-  const { user, classId, classRoom } = useOutletContext();
+  const { classId } = useOutletContext();
   const { getAllTemplate } = useBoardTemplate();
 
   const [teams, setTeams] = useState(null);
@@ -326,7 +326,6 @@ const ClassroomTable = (props) => {
                   className={styles.centerTextName}
                   onClick={() => onClickNavigation(group.team_id)}
                 >
-                  {console.log(group)}
                   {group.team_name}
                 </span>
 

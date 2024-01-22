@@ -9,7 +9,7 @@ import 'primeicons/primeicons.css';
 import styles from './index.module.css';
 
 function SpringBoardProjects() {
-  const { user, classId, classRoom, classMember } = useOutletContext();
+  const { classId, classMember } = useOutletContext();
   const { team } = useClassMemberTeam(classId, classMember?.id);
   const { teamProjects, createProjects, deleteProjects } = useProjects();
   const [projects, setProjects] = useState();

@@ -1,13 +1,13 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, useOutletContext } from 'react-router-dom';
 import { IoArrowBackSharp } from 'react-icons/io5';
 import ProjectContents from '../components/ProjectDetails/ProjectContent';
-import { useClassMemberTeam, useProjects } from '../../../hooks';
+import { useProjects } from '../../../hooks';
 import styles from './TeamProject.module.css';
 
 function TeamProject() {
-  const { id, teamid } = useParams();
-  const { user, classId, classRoom, classMember } = useOutletContext();
+  const { teamid } = useParams();
+  const { user, classId } = useOutletContext();
 
   const { teamProjects } = useProjects();
   const isClass = user.role === 1;

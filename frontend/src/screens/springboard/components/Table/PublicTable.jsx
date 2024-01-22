@@ -7,7 +7,7 @@ import { useBoardTemplate } from '../../../../hooks';
 import styles from './Table.module.css';
 
 function PublicTable(props) {
-  const { user, classId, classRoom } = useOutletContext();
+  const { classId } = useOutletContext();
   const { getAllTemplate } = useBoardTemplate();
   const [teams, setTeams] = useState(null);
   const location = useLocation();
@@ -77,7 +77,6 @@ function PublicTable(props) {
         setFilteredSearchTeam(sortedTeams);
         const searchParams = new URLSearchParams(location.search);
         const searchValue = searchParams.get('search') || '';
-        console.log(searchValue);
         setSearchText(searchValue);
         if (searchValue) {
           handleSearch(searchValue);

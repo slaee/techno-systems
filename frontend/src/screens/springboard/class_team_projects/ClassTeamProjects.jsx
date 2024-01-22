@@ -1,23 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, useOutletContext } from 'react-router-dom';
-import { IoArrowBackSharp } from 'react-icons/io5';
+import { useOutletContext } from 'react-router-dom';
 import ClassroomTable from '../components/Table/ClassroomTable';
 import { useProjects } from '../../../hooks';
 import styles from './ClassTeamProjects.module.css';
 
 function ClassTeamProjects() {
-  const { user, classId, classRoom } = useOutletContext();
+  const { classId } = useOutletContext();
   const { getProjectsByClassId } = useProjects();
 
   const [teams, setTeams] = useState(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await getProjectsByClassId(classId);
         setTeams(response.data);
-        console.log(response.data);
       } catch (error) {
         console.error(`Error fetching data: ${error}`, error);
       }
