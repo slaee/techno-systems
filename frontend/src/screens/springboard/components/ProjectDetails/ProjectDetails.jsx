@@ -10,7 +10,8 @@ import Loading from '../../../../components/loading';
 
 const ProjectDetails = ({ project, numTemplates, onProjectUpdate, team_name, isClass }) => {
   const { user, classId, classRoom, classMember } = useOutletContext();
-  const { team } = !isClass ? useClassMemberTeam(classId, classMember?.id) : {};
+  const { team } = !isClass ? useClassMemberTeam(classId, classMember?.id) || { id: 0 } : { id: 0 };
+  const teamId = team?.id || 0;
 
   const { updateProjects } = useProjects();
 
@@ -108,9 +109,9 @@ const ProjectDetails = ({ project, numTemplates, onProjectUpdate, team_name, isC
     );
   };
 
-  if (!team && !isClass) {
-    return <Loading />;
-  }
+  // if (!team && !isClass) {
+  //   return <Loading />;
+  // }
 
   return (
     <div className={styles.side}>
@@ -124,7 +125,7 @@ const ProjectDetails = ({ project, numTemplates, onProjectUpdate, team_name, isC
         <p className={styles.title}>
           Project Details &nbsp;
           {user.role === 1 ||
-            (project.team_id === team.id && (
+            (project.team_id === teamId && (
               <span className={styles.pen} onClick={() => handleEditDetailModal()}>
                 <FaPen />
               </span>
@@ -140,7 +141,7 @@ const ProjectDetails = ({ project, numTemplates, onProjectUpdate, team_name, isC
         <p className={styles.title_body}>Description:</p>
         <p className={styles.body}>{project.description}</p>
       </div>
-      {(user.role === 1 || project.team_id !== team.id) && (
+      {(user.role === 1 || project.team_id !== teamId) && (
         <>
           <hr style={{ color: '#E5E4E2' }} />
           <p className={styles.title_body}>Created by: Group {team_name}</p>

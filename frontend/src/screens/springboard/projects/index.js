@@ -155,6 +155,20 @@ function SpringBoardProjects() {
     navigate(`/classes/${classId}/project/${projId}`);
   };
 
+  if (!team) {
+    return (
+      <div className="px-5">
+        <div className={styles.topBar}>
+          <h1>Team Projects</h1>
+        </div>
+        <div className={styles.noCreated}>
+          <p>It looks like you haven't joined/accepted in a team.</p>
+          <p>Please join a team first.</p>
+        </div>
+      </div>
+    );
+  }
+
   if (!projects) {
     return <p>Loading</p>;
   }

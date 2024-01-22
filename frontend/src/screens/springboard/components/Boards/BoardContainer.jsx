@@ -25,7 +25,8 @@ const BoardContainer = ({
   isClass,
 }) => {
   const { user, classId, classRoom, classMember } = useOutletContext();
-  const { team } = !isClass ? useClassMemberTeam(classId, classMember?.id) : {};
+  const { team } = !isClass ? useClassMemberTeam(classId, classMember?.id) || { id: 0 } : { id: 0 };
+  const teamId = team?.id || 0;
 
   const { teamProjects, updateProjects } = useProjects();
 
@@ -65,7 +66,7 @@ const BoardContainer = ({
       }
     };
     if (!isClass && team) {
-      sessionStorage.setItem('teamId', team.id);
+      sessionStorage.setItem('teamId', teamId);
     }
     fetchData();
   }, [team, selected]);
@@ -219,7 +220,7 @@ const BoardContainer = ({
     };
   }, []);
 
-  if ((!team && !isClass) || !projectList) {
+  if (!projectList) {
     return <Loading />;
   }
 
@@ -230,7 +231,7 @@ const BoardContainer = ({
           <ThemeProvider theme={theme}>
             <div className={styles.alignment}>
               <div className={styles.head}>{project.name} Boards</div>
-              {user.role === 2 && project.team_id === team.id && (
+              {user.role === 2 && project.team_id === teamId && (
                 <div className={`${styles.publish} ${styles.rightAligned}`}>
                   {project.is_active ? 'Activated' : 'Inactive'}
                   <Switch
@@ -285,7 +286,7 @@ const BoardContainer = ({
               )}
             </div>
             <hr />
-            {user.role !== 1 && team.id === project.team_id && (
+            {user.role !== 1 && teamId === project.team_id && (
               <Button className={styles.butName} onClick={() => setCreateAction(true)}>
                 <p className={styles.createName}> Create Board</p>
               </Button>

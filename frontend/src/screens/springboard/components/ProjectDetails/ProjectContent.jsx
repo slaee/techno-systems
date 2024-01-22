@@ -39,6 +39,12 @@ const ProjectContents = (props) => {
     fetchData();
   }, [props.selected, refresh]);
 
+  useEffect(() => {
+    if (props.setDisable) {
+      props.setDisable(createAction);
+    }
+  }, [createAction]);
+
   const onProjectUpdate = () => {
     setRefresh(!refresh);
   };
@@ -50,7 +56,7 @@ const ProjectContents = (props) => {
   return (
     <div className="px-5">
       <div className={styles.container}>
-        {project && !user.staff && user.group_fk === project.group_fk && createAction ? (
+        {project && user.role === 2 && createAction ? (
           <BoardCreation
             selected={props.selected}
             setCreateAction={setCreateAction}

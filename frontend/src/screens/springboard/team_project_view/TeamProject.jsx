@@ -8,10 +8,11 @@ import styles from './TeamProject.module.css';
 function TeamProject() {
   const { id, teamid } = useParams();
   const { user, classId, classRoom, classMember } = useOutletContext();
+
   const { teamProjects } = useProjects();
   const isClass = user.role === 1;
 
-  const [team, setTeam] = useState('');
+  const [teamName, setTeamName] = useState('');
   const [selected, setSelected] = useState();
 
   const navigate = useNavigate();
@@ -20,13 +21,17 @@ function TeamProject() {
     const fetchData = async () => {
       try {
         const response = await teamProjects(teamid);
+        setTeamName(response.data.team_name);
         if (response.data.projects.length > 0) {
           const activeProject = response.data.projects.find((project) => project.is_active);
+
           if (activeProject) {
             setSelected(activeProject.id);
           } else {
             setSelected(response.data.projects[0].id);
           }
+        } else {
+          setSelected(-1);
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -40,6 +45,22 @@ function TeamProject() {
     navigate(`/classes/${classId}/allteamprojects`);
   };
 
+  if (selected === -1) {
+    return (
+      <div className="px-5 d-flex justify-content-start">
+        <div className="d-flex justify-content-start">
+          <span style={{ cursor: 'pointer' }} onClick={goBack}>
+            <IoArrowBackSharp />
+          </span>
+          <p className={styles.text}>{teamName}</p>
+        </div>
+        <div className={styles.noCreated}>
+          <p>No projects created by this team. </p>
+        </div>
+      </div>
+    );
+  }
+
   if (!selected) {
     return <p>Loading...</p>;
   }
@@ -49,8 +70,10 @@ function TeamProject() {
       <span style={{ cursor: 'pointer' }} onClick={goBack}>
         <IoArrowBackSharp />
       </span>
-      <p className={styles.text}>{team.name}</p>
-      <ProjectContents selected={selected} setSelected={setSelected} isClass={isClass} />
+      <div>
+        <p className={styles.text}>{teamName}</p>
+        <ProjectContents selected={selected} setSelected={setSelected} isClass={isClass} />
+      </div>
     </div>
   );
 }
