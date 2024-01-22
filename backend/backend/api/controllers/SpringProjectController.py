@@ -199,6 +199,7 @@ class GetTeamsAndProjectsByClassId(APIView):
             teams = Team.objects.filter(id__in=team_ids)
 
             for team in teams:
+                team_id = team.id
                 team_name = team.name
 
                 projects = SpringProject.objects.filter(
@@ -206,6 +207,7 @@ class GetTeamsAndProjectsByClassId(APIView):
 
                 if not projects:
                     team_info = {
+                        "team_id": team_id,
                         "team_name": team_name,
                         "projects": []
                     }
@@ -243,6 +245,7 @@ class GetTeamsAndProjectsByClassId(APIView):
                         }
 
                         team_info = {
+                            "team_id": team_id,
                             "team_name": team_name,
                             "projects": [project_data]
                         }
