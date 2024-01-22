@@ -25,6 +25,8 @@ import TeknoPlat from './screens/teknoplat';
 
 // Style Imports
 import './App.css';
+import MeetingsPage from './screens/teknoplat/meetings/MeetingsPage';
+import MeetingDetailsPage from './screens/teknoplat/meeting_details/MeetingDetailsPage';
 
 function App() {
   return (
@@ -132,7 +134,32 @@ function App() {
                   <TeknoPlat />
                 </PrivateRoute>
               }
-            />
+            >
+              <Route
+                index
+                element={
+                  <PrivateRoute>
+                    <MeetingsPage />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="meetings"
+                element={
+                  <PrivateRoute>
+                    <MeetingsPage />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="meetings/:meetingId"
+                element={
+                  <PrivateRoute>
+                    <MeetingDetailsPage />
+                  </PrivateRoute>
+                }
+              />
+            </Route>
           </Route>
         </Route>
 
