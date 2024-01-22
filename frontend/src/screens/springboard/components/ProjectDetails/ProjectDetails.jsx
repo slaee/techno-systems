@@ -62,50 +62,117 @@ const ProjectDetails = ({ project, numTemplates, onProjectUpdate, team_name, isC
   };
 
   // eslint-disable-next-line no-use-before-define
-  const handleEditDetailModal = (projname, desc) => {
-    setIsModalOpen(true);
-    setModalContent(
-      <div style={{ margin: '0 30px' }}>
-        <div style={{ margin: '20px 0' }}>
-          <b>Project Name:</b>
-          <input
-            type="text"
-            id="projectname"
-            defaultValue={projname ?? project.name}
-            className={styles.textInput}
-          />
-        </div>
-        <div>
-          <b>Description:</b>
-          <textarea
-            id="projectdesc"
-            defaultValue={desc ?? project.description}
-            className={styles.textInput}
-            style={{ height: '80px', resize: 'none' }}
-          />
-        </div>
-        <div className={styles.btmButton}>
-          <Button
-            className={styles.button}
-            onClick={() => {
-              const proj = document.getElementById('projectname').value;
-              const projdesc = document.getElementById('projectdesc').value;
-              updateProjectDetails(proj, projdesc);
-            }}
-          >
-            Update
-          </Button>
+  // const handleEditDetailModal = (projname, desc) => {
+  //   setIsModalOpen(true);
+  //   setModalContent(
+  //     <div style={{ margin: '0 30px' }}>
+  //       <div style={{ margin: '20px 0' }}>
+  //         <b>Project Name:</b>
+  //         <input
+  //           type="text"
+  //           id="projectname"
+  //           defaultValue={projname ?? project.name}
+  //           className={styles.textInput}
+  //         />
+  //       </div>
+  //       <div>
+  //         <b>Description:</b>
+  //         <textarea
+  //           id="projectdesc"
+  //           defaultValue={desc ?? project.description}
+  //           className={styles.textInput}
+  //           style={{ height: '80px', resize: 'none' }}
+  //         />
+  //       </div>
+  //       <div className={styles.btmButton}>
+  //         <Button
+  //           className={styles.button}
+  //           onClick={() => {
+  //             const proj = document.getElementById('projectname').value;
+  //             const projdesc = document.getElementById('projectdesc').value;
+  //             updateProjectDetails(proj, projdesc);
+  //           }}
+  //         >
+  //           Update
+  //         </Button>
 
-          <Button
-            className={styles.button}
-            style={{ backgroundColor: '#8A252C' }}
-            onClick={handleCloseModal}
-          >
-            Close
-          </Button>
-        </div>
-      </div>
-    );
+  //         <Button
+  //           className={styles.button}
+  //           style={{ backgroundColor: '#8A252C' }}
+  //           onClick={handleCloseModal}
+  //         >
+  //           Close
+  //         </Button>
+  //       </div>
+  //     </div>
+  //   );
+  // };
+
+  const handleEditDetailModal = (projname, desc) => {
+    Swal.fire({
+      html: `
+      <label style="font-size: 14px; font-weight: 400; ">Project Name:</label>
+        <input type="text" id="input1" value="${
+          projname ?? project.name
+        }" placeholder="Enter new project name" class="swal2-input" style="height: 35px; width: 86%; font-size: 16px; font-family: 'Calibri', sans-serif; display: flex;"/>
+        <br>
+        <label style="font-size: 14px; font-weight: 400; ">Description:</label>
+        <textarea id="input2" placeholder="Enter project description" class="swal2-textarea" style="margin: 0 auto; width: 86%; height: 100px; resize: none; font-size: 16px; font-family: 'Calibri', sans-serif;" >${
+          desc ?? project.description
+        }</textarea>
+        <div id="charCount" style="text-align: right; color: #555; font-size: 12px; margin-top: 5px;">0/200 characters</div>
+      `,
+      showCancelButton: true,
+      confirmButtonText: 'Update',
+      confirmButtonColor: '#9c7b16',
+      cancelButtonText: 'Close',
+      cancelButtonColor: 'rgb(181, 178, 178)',
+      didOpen: () => {
+        const input2 = document.getElementById('input2');
+        const charCount = document.getElementById('charCount');
+
+        const updateCharCount = () => {
+          const currentLength = input2.value.length;
+          charCount.innerText = `${currentLength}/200 characters`;
+
+          if (currentLength > 200) {
+            input2.value = input2.value.slice(0, 200);
+          }
+        };
+
+        updateCharCount();
+
+        input2.addEventListener('input', updateCharCount);
+      },
+      preConfirm: async () => {
+        const input1Value = document.getElementById('input1').value;
+        const input2Value = document.getElementById('input2').value;
+        try {
+          if (!input1Value) {
+            throw new Error('Project name cannot be empty');
+          } else if (!input2Value) {
+            throw new Error('Please enter the project description.');
+          }
+          return true;
+        } catch (error) {
+          Swal.showValidationMessage(
+            `Project with the name '${input1Value}' already exists. Please enter another project name.`
+          );
+          return false;
+        }
+      },
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const input1Value = document.getElementById('input1').value;
+        const input2Value = document.getElementById('input2').value;
+        updateProjectDetails(input1Value, input2Value);
+        Swal.fire({
+          title: 'Project Updated',
+          icon: 'success',
+          confirmButtonColor: '#9c7b16',
+        });
+      }
+    });
   };
 
   // if (!team && !isClass) {
