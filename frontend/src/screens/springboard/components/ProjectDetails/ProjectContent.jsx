@@ -9,7 +9,7 @@ import Loading from '../../../../components/loading';
 
 const ProjectContents = (props) => {
   const { user, classId, classRoom, classMember } = useOutletContext();
-  const { team } = useClassMemberTeam(classId, classMember?.id);
+
   const { getProject } = useProjects();
   const { getAllTemplate } = useBoardTemplate();
 
@@ -75,6 +75,7 @@ const ProjectContents = (props) => {
             numTemplates={numTemplates}
             onProjectUpdate={onProjectUpdate}
             team_name={project.team_name}
+            isClass={props.isClass}
           />
         )}
       </div>
