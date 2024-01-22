@@ -6,10 +6,11 @@ import ModalCustom from '../UI/Modal/Modal';
 import Button from '../UI/Button/Button';
 import styles from './ProjectDetails.module.css';
 import { useClassMemberTeam, useProjects } from '../../../../hooks';
+import Loading from '../../../../components/loading';
 
-const ProjectDetails = ({ project, numTemplates, onProjectUpdate, team_name }) => {
+const ProjectDetails = ({ project, numTemplates, onProjectUpdate, team_name, isClass }) => {
   const { user, classId, classRoom, classMember } = useOutletContext();
-  const { team } = useClassMemberTeam(classId, classMember?.id);
+  const { team } = !isClass ? useClassMemberTeam(classId, classMember?.id) : {};
 
   const { updateProjects } = useProjects();
 
@@ -107,8 +108,8 @@ const ProjectDetails = ({ project, numTemplates, onProjectUpdate, team_name }) =
     );
   };
 
-  if (!team) {
-    return <p>Loading...</p>;
+  if (!team && !isClass) {
+    return <Loading />;
   }
 
   return (
@@ -122,11 +123,12 @@ const ProjectDetails = ({ project, numTemplates, onProjectUpdate, team_name }) =
       <div style={{ margin: '15px 0' }}>
         <p className={styles.title}>
           Project Details &nbsp;
-          {project.team_id === team.id && (
-            <span className={styles.pen} onClick={() => handleEditDetailModal()}>
-              <FaPen />
-            </span>
-          )}
+          {user.role === 1 ||
+            (project.team_id === team.id && (
+              <span className={styles.pen} onClick={() => handleEditDetailModal()}>
+                <FaPen />
+              </span>
+            ))}
           {isModalOpen && (
             <ModalCustom width={500} isOpen={isModalOpen} onClose={handleCloseModal}>
               {modalContent}

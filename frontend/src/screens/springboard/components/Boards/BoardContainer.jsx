@@ -25,7 +25,7 @@ const BoardContainer = ({
   isClass,
 }) => {
   const { user, classId, classRoom, classMember } = useOutletContext();
-  const { team } = useClassMemberTeam(classId, classMember?.id);
+  const { team } = !isClass ? useClassMemberTeam(classId, classMember?.id) : {};
 
   const { teamProjects, updateProjects } = useProjects();
 
@@ -33,8 +33,6 @@ const BoardContainer = ({
   const [loadCount, setLoadCount] = useState(0);
   const [projectList, setProjectList] = useState([]);
   const [userAcc, setUserAcc] = useState();
-  const [staff, setStaff] = useState(false);
-  const [selectedProj, setSelectedProj] = useState(selected);
 
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [modalContent, setModalContent] = useState(null);
@@ -58,7 +56,7 @@ const BoardContainer = ({
         setLoadCount((prevLoadCount) => prevLoadCount + 1);
         const result = await teamProjects(project.team_id);
         if (result.success) {
-          setProjectList(result.data);
+          setProjectList(result.data.projects);
         } else {
           console.error('Error fetching team projects:', result.error);
         }
@@ -66,11 +64,11 @@ const BoardContainer = ({
         console.error(`Error fetching data: ${error}`, error);
       }
     };
-    if (team?.id) {
+    if (!isClass && team) {
       sessionStorage.setItem('teamId', team.id);
-      fetchData();
     }
-  }, [team?.id]);
+    fetchData();
+  }, [team, selected]);
 
   const updateProjectReason = async (proj, newreason) => {
     console.log(newreason);
@@ -221,8 +219,8 @@ const BoardContainer = ({
     };
   }, []);
 
-  if (!team || !projectList) {
-    return <p>Loading..</p>;
+  if ((!team && !isClass) || !projectList) {
+    return <Loading />;
   }
 
   return (
@@ -299,7 +297,7 @@ const BoardContainer = ({
             onProjectUpdate={onProjectUpdate}
             setBoardTemplateIds={setBoardTemplateIds}
             projectUpdateKey={projectUpdateKey}
-            user={userAcc}
+            isClass={isClass}
           />
         </>
       ) : loadCount === 0 ? (

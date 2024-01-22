@@ -37,9 +37,9 @@ const SIDENAV_TEACHER = (classId) => [
   },
   {
     id: 5,
-    label: 'All Projects',
+    label: 'All Team Projects',
     className: 'allprojects',
-    path: `/classes/${classId}/allprojects`,
+    path: `/classes/${classId}/allteamprojects`,
   },
   {
     id: 6,
@@ -82,7 +82,7 @@ const SIDENAV_CLASSMEMBER = (classId) => [
   },
   {
     id: 6,
-    label: 'All Projects',
+    label: 'Project Reference',
     className: 'allprojects',
     path: `/classes/${classId}/allprojects`,
   },
