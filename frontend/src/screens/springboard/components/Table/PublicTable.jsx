@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useOutletContext } from 'react-router-dom';
+import { useNavigate, useOutletContext, useLocation } from 'react-router-dom';
 import Fuse from 'fuse.js';
 import SortButton from '../UI/SortButton/SortButton';
 import Card from '../UI/Card/Card';
@@ -10,6 +10,7 @@ function PublicTable(props) {
   const { user, classId, classRoom } = useOutletContext();
   const { getAllTemplate } = useBoardTemplate();
   const [teams, setTeams] = useState(null);
+  const location = useLocation();
   const [sortOrder, setSortOrder] = useState(true); // true for ascending, false for descending
   const [teamNameSortOrder, setTeamNameSortOrder] = useState(true); // true for ascending, false for descending
   const [projectNameSortOrder, setProjectNameSortOrder] = useState(true); // true for ascending, false for descending
@@ -37,7 +38,7 @@ function PublicTable(props) {
     setSearchText(text);
 
     if (text) {
-      const fuse = new Fuse(teams, {
+      const fuse = new Fuse(props.allProjects, {
         keys: ['projects.project_name', 'projects.project_description'],
         includeScore: true,
         threshold: 0.5,
@@ -74,6 +75,15 @@ function PublicTable(props) {
         });
         setTeams(sortedTeams);
         setFilteredSearchTeam(sortedTeams);
+        const searchParams = new URLSearchParams(location.search);
+        const searchValue = searchParams.get('search') || '';
+        console.log(searchValue);
+        setSearchText(searchValue);
+        if (searchValue) {
+          handleSearch(searchValue);
+        } else {
+          searchParams.set('search', searchText);
+        }
         setSharedState(0);
         activate(0);
       } catch (error) {
@@ -89,7 +99,7 @@ function PublicTable(props) {
     };
 
     fetchData();
-  }, [props]);
+  }, [props, location.search]);
 
   useEffect(() => {
     // Save the current page to localStorage whenever it changes
@@ -200,6 +210,8 @@ function PublicTable(props) {
   };
 
   const onClickNavigation = (projId) => {
+    const currentPathWithQuery = `${window.location.pathname}${window.location.search}`;
+    sessionStorage.setItem('prevUrlSearch', currentPathWithQuery);
     navigate(`/classes/${classId}/search-project/${projId}`);
   };
 
@@ -226,7 +238,12 @@ function PublicTable(props) {
             placeholder="Search"
             onKeyDown={(event) => {
               if (event.key === 'Enter') {
-                handleSearch(searchText);
+                // handleSearch(searchText);
+                const searchParams = new URLSearchParams();
+                searchParams.set('search', searchText);
+
+                // Navigate to the updated URL
+                navigate(`${location.pathname}?${searchParams.toString()}`);
               }
             }}
           />
