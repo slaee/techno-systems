@@ -29,6 +29,9 @@ import Result from './screens/springboard/project_board_view/Result/Result';
 import ViewBoard from './screens/springboard/project_board_view/ViewBoard/ViewBoard';
 import EditBoard from './screens/springboard/project_board_view/EditBoard/EditBoard';
 import EditBoardResult from './screens/springboard/project_board_view/EditBoard/EditBoardResult';
+import ClassTeamProjects from './screens/springboard/class_team_projects/ClassTeamProjects';
+import TeamProject from './screens/springboard/team_project_view/TeamProject';
+import SearchProject from './screens/springboard/search_project/SearchProject';
 
 import TeknoPlat from './screens/teknoplat';
 
@@ -135,10 +138,34 @@ function App() {
               }
             />
             <Route
+              path="allteamprojects"
+              element={
+                <PrivateRoute>
+                  <ClassTeamProjects />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="team/:teamid"
+              element={
+                <PrivateRoute>
+                  <TeamProject />
+                </PrivateRoute>
+              }
+            />
+            <Route
               path="allprojects"
               element={
                 <PrivateRoute>
                   <SpringBoardAllProjects />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="search-project/:projId"
+              element={
+                <PrivateRoute>
+                  <SearchProject />
                 </PrivateRoute>
               }
             />
