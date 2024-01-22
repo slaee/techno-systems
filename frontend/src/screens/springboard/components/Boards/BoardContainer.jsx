@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate, useOutletContext } from 'react-router-dom';
+import { useOutletContext } from 'react-router-dom';
 import { FaCaretDown } from 'react-icons/fa';
 import { Switch } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -24,17 +24,14 @@ const BoardContainer = ({
   setSelected,
   isClass,
 }) => {
-  const { user, classId, classRoom, classMember } = useOutletContext();
-  const { team } = useClassMemberTeam(classId, classMember?.id);
+  const { user, classId, classMember } = useOutletContext();
+  const { team } = !isClass ? useClassMemberTeam(classId, classMember?.id) || { id: 0 } : { id: 0 };
+  const teamId = team?.id || 0;
 
   const { teamProjects, updateProjects } = useProjects();
 
-  const navigate = useNavigate();
   const [loadCount, setLoadCount] = useState(0);
   const [projectList, setProjectList] = useState([]);
-  const [userAcc, setUserAcc] = useState();
-  const [staff, setStaff] = useState(false);
-  const [selectedProj, setSelectedProj] = useState(selected);
 
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [modalContent, setModalContent] = useState(null);
@@ -58,7 +55,7 @@ const BoardContainer = ({
         setLoadCount((prevLoadCount) => prevLoadCount + 1);
         const result = await teamProjects(project.team_id);
         if (result.success) {
-          setProjectList(result.data);
+          setProjectList(result.data.projects);
         } else {
           console.error('Error fetching team projects:', result.error);
         }
@@ -66,14 +63,13 @@ const BoardContainer = ({
         console.error(`Error fetching data: ${error}`, error);
       }
     };
-    if (team?.id) {
-      sessionStorage.setItem('teamId', team.id);
-      fetchData();
+    if (!isClass && team) {
+      sessionStorage.setItem('teamId', teamId);
     }
-  }, [team?.id]);
+    fetchData();
+  }, [team, selected]);
 
   const updateProjectReason = async (proj, newreason) => {
-    console.log(newreason);
     const newStatus = proj.is_active ? !proj.is_active : proj.is_active;
     try {
       await updateProjects(proj.id, {
@@ -106,7 +102,7 @@ const BoardContainer = ({
     }
   };
 
-  const handleToggleClick = async (event) => {
+  const handleToggleClick = async () => {
     setIsModalOpen(true);
     if (!project.is_active) {
       setModalContent(
@@ -221,8 +217,8 @@ const BoardContainer = ({
     };
   }, []);
 
-  if (!team || !projectList) {
-    return <p>Loading..</p>;
+  if (!projectList) {
+    return <Loading />;
   }
 
   return (
@@ -232,7 +228,7 @@ const BoardContainer = ({
           <ThemeProvider theme={theme}>
             <div className={styles.alignment}>
               <div className={styles.head}>{project.name} Boards</div>
-              {user.role === 2 && project.team_id === team.id && (
+              {user.role === 2 && project.team_id === teamId && (
                 <div className={`${styles.publish} ${styles.rightAligned}`}>
                   {project.is_active ? 'Activated' : 'Inactive'}
                   <Switch
@@ -287,7 +283,7 @@ const BoardContainer = ({
               )}
             </div>
             <hr />
-            {user.role !== 1 && team.id === project.team_id && (
+            {user.role !== 1 && teamId === project.team_id && (
               <Button className={styles.butName} onClick={() => setCreateAction(true)}>
                 <p className={styles.createName}> Create Board</p>
               </Button>
@@ -299,7 +295,7 @@ const BoardContainer = ({
             onProjectUpdate={onProjectUpdate}
             setBoardTemplateIds={setBoardTemplateIds}
             projectUpdateKey={projectUpdateKey}
-            user={userAcc}
+            isClass={isClass}
           />
         </>
       ) : loadCount === 0 ? (

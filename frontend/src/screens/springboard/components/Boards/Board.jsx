@@ -3,14 +3,15 @@ import { useNavigate, useOutletContext } from 'react-router-dom';
 import styles from './Board.module.css';
 import Card from '../UI/Card/Card';
 import IdeaIcon from '../images/idea.png';
-import Button from '../UI/Button/Button';
+// import Button from '../UI/Button/Button';
 import CircularProgressWithLabel from '../UI/ProgressBar/CircularProgressWithLabel';
 import Loading from '../../../../components/loading';
 import { useClassMemberTeam, useProjects } from '../../../../hooks';
 
-function Board({ selected, project, onProjectUpdate, setBoardTemplateIds, projectUpdateKey }) {
-  const { user, classId, classRoom, classMember } = useOutletContext();
-  const { team } = useClassMemberTeam(classId, classMember?.id);
+function Board({ isClass, selected, project, setBoardTemplateIds, projectUpdateKey }) {
+  const { user, classId, classMember } = useOutletContext();
+  const { team } = !isClass ? useClassMemberTeam(classId, classMember?.id) || { id: 0 } : { id: 0 };
+  const teamId = team?.id || 0;
 
   const { getProjectBoardByProjId } = useProjects();
 
@@ -22,18 +23,17 @@ function Board({ selected, project, onProjectUpdate, setBoardTemplateIds, projec
     const fetchData = async () => {
       try {
         setLoadCount((prevLoadCount) => prevLoadCount + 1);
-        if (selected !== null && selected !== undefined) {
-          const boardsResponse = await getProjectBoardByProjId(selected);
-          const boardsTemp = boardsResponse.data;
-          // Set the templateIds
-          // this checks what templates are already accomplished and pass it to BoardCreation
-          if (setBoardTemplateIds) {
-            const templateIds = new Set(boardsTemp.map((board) => board.template_id));
-            setBoardTemplateIds(templateIds);
-          }
-          const sortedBoards = [...boardsTemp].sort((a, b) => a.templateId - b.templateId);
-          setBoards(sortedBoards);
+
+        const boardsResponse = await getProjectBoardByProjId(selected);
+        const boardsTemp = boardsResponse.data;
+        // Set the templateIds
+        // this checks what templates are already accomplished and pass it to BoardCreation
+        if (setBoardTemplateIds) {
+          const templateIds = new Set(boardsTemp.map((board) => board.template_id));
+          setBoardTemplateIds(templateIds);
         }
+        const sortedBoards = [...boardsTemp].sort((a, b) => a.templateId - b.templateId);
+        setBoards(sortedBoards);
       } catch (error) {
         console.error(`Error fetching data: ${error}`, error);
       }
@@ -45,21 +45,21 @@ function Board({ selected, project, onProjectUpdate, setBoardTemplateIds, projec
     navigate(`/project/${project.id}/board/${id}`);
   };
 
-  if (!team) {
-    return <p>Loading..</p>;
-  }
+  // if (!team && !isClass) {
+  //   return <p>Loading..</p>;
+  // }
 
   return (
     <div className={styles.board}>
       {loadCount === 0 && <Loading />}
       <div className={styles.scrollable}>
-        {project && boards.length === 0 && user.role !== 1 && team.id === project.team_id && (
+        {project && boards.length === 0 && user.role === 2 && teamId === project.team_id && (
           <p className={styles.centeredText} style={{ width: '45rem' }}>
             It looks like you haven't created any boards yet. <br /> Click on the "Create Board"
             button to get started and create your first board.
           </p>
         )}
-        {project && boards.length === 0 && (user.role === 1 || team.id !== project.team_id) && (
+        {project && boards.length === 0 && (user.role !== 2 || teamId !== project.team_id) && (
           <p className={styles.centeredText} style={{ width: '45rem' }}>
             It looks like the group haven't created any boards yet. <br />
           </p>

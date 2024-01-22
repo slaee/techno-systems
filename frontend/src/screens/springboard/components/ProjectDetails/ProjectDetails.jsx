@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { FaPen } from 'react-icons/fa6';
 import Swal from 'sweetalert2';
@@ -7,13 +7,14 @@ import Button from '../UI/Button/Button';
 import styles from './ProjectDetails.module.css';
 import { useClassMemberTeam, useProjects } from '../../../../hooks';
 
-const ProjectDetails = ({ project, numTemplates, onProjectUpdate, team_name }) => {
-  const { user, classId, classRoom, classMember } = useOutletContext();
-  const { team } = useClassMemberTeam(classId, classMember?.id);
+const ProjectDetails = ({ project, numTemplates, onProjectUpdate, team_name, isClass }) => {
+  const { user, classId, classMember } = useOutletContext();
+  const { team } = !isClass ? useClassMemberTeam(classId, classMember?.id) || { id: 0 } : { id: 0 };
+  const teamId = team?.id || 0;
 
   const { updateProjects } = useProjects();
 
-  const [group, setGroup] = useState('');
+  // const [group, setGroup] = useState('');
   const [modalContent, setModalContent] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -107,9 +108,9 @@ const ProjectDetails = ({ project, numTemplates, onProjectUpdate, team_name }) =
     );
   };
 
-  if (!team) {
-    return <p>Loading...</p>;
-  }
+  // if (!team && !isClass) {
+  //   return <Loading />;
+  // }
 
   return (
     <div className={styles.side}>
@@ -122,11 +123,12 @@ const ProjectDetails = ({ project, numTemplates, onProjectUpdate, team_name }) =
       <div style={{ margin: '15px 0' }}>
         <p className={styles.title}>
           Project Details &nbsp;
-          {project.team_id === team.id && (
-            <span className={styles.pen} onClick={() => handleEditDetailModal()}>
-              <FaPen />
-            </span>
-          )}
+          {user.role === 1 ||
+            (project.team_id === teamId && (
+              <span className={styles.pen} onClick={() => handleEditDetailModal()}>
+                <FaPen />
+              </span>
+            ))}
           {isModalOpen && (
             <ModalCustom width={500} isOpen={isModalOpen} onClose={handleCloseModal}>
               {modalContent}
@@ -138,7 +140,7 @@ const ProjectDetails = ({ project, numTemplates, onProjectUpdate, team_name }) =
         <p className={styles.title_body}>Description:</p>
         <p className={styles.body}>{project.description}</p>
       </div>
-      {(user.role === 1 || project.team_id !== team.id) && (
+      {(user.role === 1 || project.team_id !== teamId) && (
         <>
           <hr style={{ color: '#E5E4E2' }} />
           <p className={styles.title_body}>Created by: Group {team_name}</p>

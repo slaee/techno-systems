@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useOutletContext } from 'react-router-dom';
+import { useOutletContext } from 'react-router-dom';
 import styles from './ProjectContents.module.css';
 import BoardContainer from '../Boards/BoardContainer';
 import BoardCreation from '../BoardCreation/BoardCreation';
 import ProjectDetails from './ProjectDetails';
-import { useClassMemberTeam, useProjects, useBoardTemplate } from '../../../../hooks';
+import { useProjects, useBoardTemplate } from '../../../../hooks';
 import Loading from '../../../../components/loading';
 
 const ProjectContents = (props) => {
-  const { user, classId, classRoom, classMember } = useOutletContext();
-  const { team } = useClassMemberTeam(classId, classMember?.id);
+  const { user } = useOutletContext();
+
   const { getProject } = useProjects();
   const { getAllTemplate } = useBoardTemplate();
 
@@ -39,6 +39,12 @@ const ProjectContents = (props) => {
     fetchData();
   }, [props.selected, refresh]);
 
+  useEffect(() => {
+    if (props.setDisable) {
+      props.setDisable(createAction);
+    }
+  }, [createAction]);
+
   const onProjectUpdate = () => {
     setRefresh(!refresh);
   };
@@ -50,7 +56,7 @@ const ProjectContents = (props) => {
   return (
     <div className="px-5">
       <div className={styles.container}>
-        {project && !user.staff && user.group_fk === project.group_fk && createAction ? (
+        {project && user.role === 2 && createAction ? (
           <BoardCreation
             selected={props.selected}
             setCreateAction={setCreateAction}
@@ -75,6 +81,7 @@ const ProjectContents = (props) => {
             numTemplates={numTemplates}
             onProjectUpdate={onProjectUpdate}
             team_name={project.team_name}
+            isClass={props.isClass}
           />
         )}
       </div>

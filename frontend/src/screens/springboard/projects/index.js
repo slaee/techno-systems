@@ -9,7 +9,7 @@ import 'primeicons/primeicons.css';
 import styles from './index.module.css';
 
 function SpringBoardProjects() {
-  const { user, classId, classRoom, classMember } = useOutletContext();
+  const { classId, classMember } = useOutletContext();
   const { team } = useClassMemberTeam(classId, classMember?.id);
   const { teamProjects, createProjects, deleteProjects } = useProjects();
   const [projects, setProjects] = useState();
@@ -154,6 +154,20 @@ function SpringBoardProjects() {
   const onNavigate = (projId) => {
     navigate(`/classes/${classId}/project/${projId}`);
   };
+
+  if (!team) {
+    return (
+      <div className="px-5">
+        <div className={styles.topBar}>
+          <h1>Team Projects</h1>
+        </div>
+        <div className={styles.noCreated}>
+          <p>It looks like you haven't joined/accepted in a team.</p>
+          <p>Please join a team first.</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!projects) {
     return <p>Loading</p>;

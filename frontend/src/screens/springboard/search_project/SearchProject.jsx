@@ -3,15 +3,16 @@ import { useParams, useNavigate, useOutletContext } from 'react-router-dom';
 import { IoArrowBackSharp } from 'react-icons/io5';
 import ProjectContents from '../components/ProjectDetails/ProjectContent';
 
-function ProjectView() {
-  const { user, classId } = useOutletContext();
+function SearchProject() {
+  const { user } = useOutletContext();
   const { projId } = useParams();
   const [disable, setDisable] = useState(false);
   const navigate = useNavigate();
   const isClass = user.role === 1;
 
   const goBack = () => {
-    navigate(`/classes/${classId}/projects`);
+    const back = sessionStorage.getItem('prevUrlSearch');
+    navigate(`${back}`);
   };
 
   return (
@@ -26,4 +27,4 @@ function ProjectView() {
   );
 }
 
-export default ProjectView;
+export default SearchProject;

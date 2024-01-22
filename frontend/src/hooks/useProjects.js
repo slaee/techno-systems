@@ -2,10 +2,19 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SpringBoardService from '../services/SpringBoardService';
 
-const useProjects = (classId) => {
+const useProjects = () => {
   const allclassteamproj = async () => {
     try {
       const res = await SpringBoardService.getAllClassroomTeamAndProjects();
+      return { success: true, data: res.data };
+    } catch (error) {
+      return { success: false, error: error?.response?.status };
+    }
+  };
+
+  const getProjectsByClassId = async (classId) => {
+    try {
+      const res = await SpringBoardService.getTeamsAndProjectsByClassId(classId);
       return { success: true, data: res.data };
     } catch (error) {
       return { success: false, error: error?.response?.status };
@@ -111,6 +120,7 @@ const useProjects = (classId) => {
 
   return {
     allclassteamproj,
+    getProjectsByClassId,
     teamProjects,
     createProjects,
     getProject,
