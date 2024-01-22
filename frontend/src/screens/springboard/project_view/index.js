@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate, useOutletContext } from 'react-router-dom';
 import { IoArrowBackSharp } from 'react-icons/io5';
 import ProjectContents from '../components/ProjectDetails/ProjectContent';
@@ -6,6 +6,7 @@ import ProjectContents from '../components/ProjectDetails/ProjectContent';
 function ProjectView(props) {
   const { user, classId, classRoom } = useOutletContext();
   const { projId } = useParams();
+  const [disable, setDisable] = useState(false);
   const navigate = useNavigate();
   const isClass = user.role === 1;
 
@@ -15,10 +16,12 @@ function ProjectView(props) {
 
   return (
     <div className="px-5 d-flex justify-content-start">
-      <span style={{ cursor: 'pointer' }} onClick={goBack}>
-        <IoArrowBackSharp />
-      </span>
-      <ProjectContents selected={projId} isClass={isClass} />
+      {!disable && (
+        <span style={{ cursor: 'pointer' }} onClick={goBack}>
+          <IoArrowBackSharp />
+        </span>
+      )}
+      <ProjectContents setDisable={setDisable} selected={projId} isClass={isClass} />
     </div>
   );
 }

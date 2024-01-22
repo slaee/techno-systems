@@ -10,7 +10,8 @@ import { useClassMemberTeam, useProjects } from '../../../../hooks';
 
 function Board({ isClass, selected, project, setBoardTemplateIds, projectUpdateKey }) {
   const { user, classId, classRoom, classMember } = useOutletContext();
-  const { team } = !isClass ? useClassMemberTeam(classId, classMember?.id) : {};
+  const { team } = !isClass ? useClassMemberTeam(classId, classMember?.id) || { id: 0 } : { id: 0 };
+  const teamId = team?.id || 0;
 
   const { getProjectBoardByProjId } = useProjects();
 
@@ -44,21 +45,21 @@ function Board({ isClass, selected, project, setBoardTemplateIds, projectUpdateK
     navigate(`/project/${project.id}/board/${id}`);
   };
 
-  if (!team && !isClass) {
-    return <p>Loading..</p>;
-  }
+  // if (!team && !isClass) {
+  //   return <p>Loading..</p>;
+  // }
 
   return (
     <div className={styles.board}>
       {loadCount === 0 && <Loading />}
       <div className={styles.scrollable}>
-        {project && boards.length === 0 && user.role === 2 && team.id === project.team_id && (
+        {project && boards.length === 0 && user.role === 2 && teamId === project.team_id && (
           <p className={styles.centeredText} style={{ width: '45rem' }}>
             It looks like you haven't created any boards yet. <br /> Click on the "Create Board"
             button to get started and create your first board.
           </p>
         )}
-        {project && boards.length === 0 && (user.role !== 2 || team.id !== project.team_id) && (
+        {project && boards.length === 0 && (user.role !== 2 || teamId !== project.team_id) && (
           <p className={styles.centeredText} style={{ width: '45rem' }}>
             It looks like the group haven't created any boards yet. <br />
           </p>
