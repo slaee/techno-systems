@@ -7,7 +7,7 @@ import { useBoardTemplate } from '../../../../hooks';
 import styles from './Table.module.css';
 
 function PublicTable(props) {
-  const { classId } = useOutletContext();
+  // const { classId } = useOutletContext();
   const { getAllTemplate } = useBoardTemplate();
   const [teams, setTeams] = useState(null);
   const location = useLocation();
@@ -211,7 +211,7 @@ function PublicTable(props) {
   const onClickNavigation = (projId) => {
     const currentPathWithQuery = `${window.location.pathname}${window.location.search}`;
     sessionStorage.setItem('prevUrlSearch', currentPathWithQuery);
-    navigate(`/classes/${classId}/search-project/${projId}`);
+    navigate(`search-project/${projId}`);
   };
 
   // Get the teams for the current page
