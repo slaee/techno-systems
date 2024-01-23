@@ -19,8 +19,8 @@ const ClassroomTable = (props) => {
   const [templates, setTemplates] = useState([]);
   const [templateSortOrder, setTemplateSortOrder] = useState({}); // object to keep track of sort order for each template
   const [currentPage, setCurrentPage] = useState(() => {
-    // Use a function to initialize the state with the value from localStorage
-    const savedPage = localStorage.getItem('classPage');
+    // Use a function to initialize the state with the value from sessionStorage
+    const savedPage = sessionStorage.getItem('classPage');
     return savedPage ? parseInt(savedPage, 10) : 1;
   });
   const [sharedState, setSharedState] = useState(true);
@@ -66,7 +66,7 @@ const ClassroomTable = (props) => {
 
   useEffect(() => {
     // Save the current page to localStorage whenever it changes
-    localStorage.setItem('classPage', currentPage.toString());
+    sessionStorage.setItem('classPage', currentPage.toString());
   }, [currentPage]);
 
   const handleGroupNameSort = () => {

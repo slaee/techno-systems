@@ -22,6 +22,7 @@ import ActivityManagement from './screens/activity_management/activities';
 
 import SpringBoardProjects from './screens/springboard/projects';
 import SpringBoardAllProjects from './screens/springboard/all_projects';
+import SpringBoardTeacherAllProjects from './screens/springboard/teacher_view_all_projects';
 import ProjectView from './screens/springboard/project_view';
 import Rules from './screens/springboard/project_board_view/Rules/Rules';
 import AddBoard from './screens/springboard/project_board_view/AddBoard/AddBoard';
@@ -153,22 +154,25 @@ function App() {
                 </PrivateRoute>
               }
             />
-            <Route
-              path="allprojects"
-              element={
-                <PrivateRoute>
-                  <SpringBoardAllProjects />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="search-project/:projId"
-              element={
-                <PrivateRoute>
-                  <SearchProject />
-                </PrivateRoute>
-              }
-            />
+            <Route path="allprojects">
+              <Route
+                index
+                element={
+                  <PrivateRoute>
+                    <SpringBoardAllProjects />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="search-project/:projId"
+                element={
+                  <PrivateRoute>
+                    <SearchProject />
+                  </PrivateRoute>
+                }
+              />
+            </Route>
+
             <Route
               path="teknoplat"
               element={
@@ -188,6 +192,25 @@ function App() {
             </PrivateRoute>
           }
         />
+
+        <Route path="/allprojects">
+          <Route
+            index
+            element={
+              <PrivateRoute>
+                <SpringBoardTeacherAllProjects />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="search-project/:projId"
+            element={
+              <PrivateRoute>
+                <SearchProject />
+              </PrivateRoute>
+            }
+          />
+        </Route>
 
         <Route path="/project/:id/create-board">
           <Route

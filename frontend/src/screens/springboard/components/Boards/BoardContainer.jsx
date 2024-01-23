@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useOutletContext } from 'react-router-dom';
+import jwtDecode from 'jwt-decode';
+
 import { FaCaretDown } from 'react-icons/fa';
 import { Switch } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircle } from '@fortawesome/free-solid-svg-icons';
 import Swal from 'sweetalert2';
+import { useAuth } from '../../../../contexts/AuthContext';
 import Loading from '../../../../components/loading';
 import ModalCustom from '../UI/Modal/Modal';
 import Board from './Board';
@@ -19,14 +22,31 @@ const BoardContainer = ({
   project,
   onProjectUpdate,
   setBoardTemplateIds,
-  projectUpdateKey,
   setCreateAction,
   setSelected,
   isClass,
+  isTeacherSearch,
 }) => {
-  const { user, classId, classMember } = useOutletContext();
-  const { team } = !isClass ? useClassMemberTeam(classId, classMember?.id) || { id: 0 } : { id: 0 };
-  const teamId = team?.id || 0;
+  const { accessToken } = useAuth();
+  const user = jwtDecode(accessToken);
+
+  // temporary container
+  let officialTeam = null;
+  let teamId = 0;
+
+  // checking if this component is intended for class or not
+  // this is due to the nature of the data. useOutletContext is from Classroom layout
+  // but this component can be used outside the classroom layout so we have to check
+  if (!isClass) {
+    const { classId, classMember } = useOutletContext();
+    const { team } = useClassMemberTeam(classId, classMember?.id);
+
+    // team can be null for the meantime due to it being async
+    if (team) {
+      officialTeam = team;
+      teamId = officialTeam ? officialTeam.id : 0;
+    }
+  }
 
   const { teamProjects, updateProjects } = useProjects();
 
@@ -63,11 +83,11 @@ const BoardContainer = ({
         console.error(`Error fetching data: ${error}`, error);
       }
     };
-    if (!isClass && team) {
+    if (!isClass && officialTeam) {
       sessionStorage.setItem('teamId', teamId);
     }
     fetchData();
-  }, [team, selected]);
+  }, [selected, officialTeam]);
 
   const updateProjectReason = async (proj, newreason) => {
     const newStatus = proj.is_active ? !proj.is_active : proj.is_active;
@@ -240,7 +260,7 @@ const BoardContainer = ({
                 </div>
               )}
 
-              {user.role === 1 && isClass && (
+              {user.role !== 2 && isClass && !isTeacherSearch && (
                 <div>
                   <div className={styles.top} onClick={handleDropdownClick}>
                     <div className={styles.dropdown} ref={dropdownRef}>
@@ -294,7 +314,6 @@ const BoardContainer = ({
             project={project}
             onProjectUpdate={onProjectUpdate}
             setBoardTemplateIds={setBoardTemplateIds}
-            projectUpdateKey={projectUpdateKey}
             isClass={isClass}
           />
         </>

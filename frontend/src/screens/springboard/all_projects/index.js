@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useOutletContext } from 'react-router-dom';
+// import { useOutletContext } from 'react-router-dom';
 import PublicTable from '../components/Table/PublicTable';
 import { useProjects } from '../../../hooks';
 
@@ -7,16 +7,16 @@ import 'primeicons/primeicons.css';
 import './index.scss';
 
 function SpringBoardAllProjects() {
-  const { user, classId, classRoom } = useOutletContext();
+  // const { user, classId, classRoom } = useOutletContext();
   const { allclassteamproj } = useProjects();
   const [allProjects, setAllProjects] = useState();
   const [isActive, setIsActive] = useState(
-    localStorage.getItem('selectedStatus') === 'Active Projects' ||
-      localStorage.getItem('selectedStatus') === null
+    sessionStorage.getItem('selectedStatus') === 'Active Projects' ||
+      sessionStorage.getItem('selectedStatus') === null
   );
 
   useEffect(() => {
-    localStorage.setItem('selectedStatus', isActive ? 'Active Projects' : 'Inactive Projects');
+    sessionStorage.setItem('selectedStatus', isActive ? 'Active Projects' : 'Inactive Projects');
 
     const currentPath = window.location.pathname;
     sessionStorage.setItem('dashboard', currentPath);
