@@ -8,6 +8,12 @@ const SIDENAV_MODERATOR = [
     className: 'peer-eval',
     path: '/peer-eval',
   },
+  {
+    id: 3,
+    label: 'Project Reference',
+    className: 'allprojects',
+    path: '/allprojects',
+  },
 ];
 
 const SIDENAV_TEACHER = (classId) => [
