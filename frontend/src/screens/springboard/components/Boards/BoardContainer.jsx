@@ -87,7 +87,7 @@ const BoardContainer = ({
       sessionStorage.setItem('teamId', teamId);
     }
     fetchData();
-  }, [selected]);
+  }, [selected, officialTeam]);
 
   const updateProjectReason = async (proj, newreason) => {
     const newStatus = proj.is_active ? !proj.is_active : proj.is_active;

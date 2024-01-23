@@ -1,6 +1,6 @@
 .header {
   display: flex;
-  width: calc(100vw - 18px);
+  width: calc(100vw - 17px);
   height: 4rem;
   align-items: center; 
 }
