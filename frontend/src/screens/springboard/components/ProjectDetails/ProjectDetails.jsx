@@ -1,16 +1,35 @@
 import React, { useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { FaPen } from 'react-icons/fa6';
+import jwtDecode from 'jwt-decode';
 import Swal from 'sweetalert2';
 import ModalCustom from '../UI/Modal/Modal';
 import Button from '../UI/Button/Button';
 import styles from './ProjectDetails.module.css';
+import { useAuth } from '../../../../contexts/AuthContext';
 import { useClassMemberTeam, useProjects } from '../../../../hooks';
 
 const ProjectDetails = ({ project, numTemplates, onProjectUpdate, team_name, isClass }) => {
-  const { user, classId, classMember } = useOutletContext();
-  const { team } = !isClass ? useClassMemberTeam(classId, classMember?.id) || { id: 0 } : { id: 0 };
-  const teamId = team?.id || 0;
+  const { accessToken } = useAuth();
+  const user = jwtDecode(accessToken);
+
+  // temporary container
+  let officialTeam = null;
+  let teamId = 0;
+
+  // checking if this component is intended for class or not
+  // this is due to the nature of the data. useOutletContext is from Classroom layout
+  // but this component can be used outside the classroom layout so we have to check
+  if (!isClass) {
+    const { classId, classMember } = useOutletContext();
+    const { team } = useClassMemberTeam(classId, classMember?.id);
+
+    // team can be null for the meantime due to it being async
+    if (team) {
+      officialTeam = team;
+      teamId = officialTeam ? officialTeam.id : 0;
+    }
+  }
 
   const { updateProjects } = useProjects();
 
@@ -62,52 +81,6 @@ const ProjectDetails = ({ project, numTemplates, onProjectUpdate, team_name, isC
   };
 
   // eslint-disable-next-line no-use-before-define
-  // const handleEditDetailModal = (projname, desc) => {
-  //   setIsModalOpen(true);
-  //   setModalContent(
-  //     <div style={{ margin: '0 30px' }}>
-  //       <div style={{ margin: '20px 0' }}>
-  //         <b>Project Name:</b>
-  //         <input
-  //           type="text"
-  //           id="projectname"
-  //           defaultValue={projname ?? project.name}
-  //           className={styles.textInput}
-  //         />
-  //       </div>
-  //       <div>
-  //         <b>Description:</b>
-  //         <textarea
-  //           id="projectdesc"
-  //           defaultValue={desc ?? project.description}
-  //           className={styles.textInput}
-  //           style={{ height: '80px', resize: 'none' }}
-  //         />
-  //       </div>
-  //       <div className={styles.btmButton}>
-  //         <Button
-  //           className={styles.button}
-  //           onClick={() => {
-  //             const proj = document.getElementById('projectname').value;
-  //             const projdesc = document.getElementById('projectdesc').value;
-  //             updateProjectDetails(proj, projdesc);
-  //           }}
-  //         >
-  //           Update
-  //         </Button>
-
-  //         <Button
-  //           className={styles.button}
-  //           style={{ backgroundColor: '#8A252C' }}
-  //           onClick={handleCloseModal}
-  //         >
-  //           Close
-  //         </Button>
-  //       </div>
-  //     </div>
-  //   );
-  // };
-
   const handleEditDetailModal = (projname, desc) => {
     Swal.fire({
       html: `
@@ -190,12 +163,11 @@ const ProjectDetails = ({ project, numTemplates, onProjectUpdate, team_name, isC
       <div style={{ margin: '15px 0' }}>
         <p className={styles.title}>
           Project Details &nbsp;
-          {user.role === 1 ||
-            (project.team_id === teamId && (
-              <span className={styles.pen} onClick={() => handleEditDetailModal()}>
-                <FaPen />
-              </span>
-            ))}
+          {user.role === 2 && project.team_id === teamId && (
+            <span className={styles.pen} onClick={() => handleEditDetailModal()}>
+              <FaPen />
+            </span>
+          )}
           {isModalOpen && (
             <ModalCustom width={500} isOpen={isModalOpen} onClose={handleCloseModal}>
               {modalContent}

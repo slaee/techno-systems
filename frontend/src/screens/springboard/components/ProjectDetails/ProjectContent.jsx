@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useOutletContext } from 'react-router-dom';
+import jwtDecode from 'jwt-decode';
+import { useAuth } from '../../../../contexts/AuthContext';
 import styles from './ProjectContents.module.css';
 import BoardContainer from '../Boards/BoardContainer';
 import BoardCreation from '../BoardCreation/BoardCreation';
@@ -8,7 +9,8 @@ import { useProjects, useBoardTemplate } from '../../../../hooks';
 import Loading from '../../../../components/loading';
 
 const ProjectContents = (props) => {
-  const { user } = useOutletContext();
+  const { accessToken } = useAuth();
+  const user = jwtDecode(accessToken);
 
   const { getProject } = useProjects();
   const { getAllTemplate } = useBoardTemplate();
@@ -70,9 +72,9 @@ const ProjectContents = (props) => {
             project={project.project}
             onProjectUpdate={onProjectUpdate}
             setBoardTemplateIds={setBoardTemplateIds}
-            projectUpdateKey={props.projectUpdateKey}
             setCreateAction={setCreateAction}
             isClass={props.isClass}
+            isTeacherSearch={props.isTeacherSearch}
           />
         )}
         {project && (

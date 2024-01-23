@@ -1,17 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
+import jwtDecode from 'jwt-decode';
 import styles from './Board.module.css';
 import Card from '../UI/Card/Card';
 import IdeaIcon from '../images/idea.png';
 // import Button from '../UI/Button/Button';
 import CircularProgressWithLabel from '../UI/ProgressBar/CircularProgressWithLabel';
 import Loading from '../../../../components/loading';
+import { useAuth } from '../../../../contexts/AuthContext';
 import { useClassMemberTeam, useProjects } from '../../../../hooks';
 
-function Board({ isClass, selected, project, setBoardTemplateIds, projectUpdateKey }) {
-  const { user, classId, classMember } = useOutletContext();
-  const { team } = !isClass ? useClassMemberTeam(classId, classMember?.id) || { id: 0 } : { id: 0 };
-  const teamId = team?.id || 0;
+function Board({ isClass, selected, project, setBoardTemplateIds }) {
+  const { accessToken } = useAuth();
+  const user = jwtDecode(accessToken);
+
+  // temporary container
+  let officialTeam = null;
+  let teamId = 0;
+
+  // checking if this component is intended for class or not
+  // this is due to the nature of the data. useOutletContext is from Classroom layout
+  // but this component can be used outside the classroom layout so we have to check
+  if (!isClass) {
+    const { classId, classMember } = useOutletContext();
+    const { team } = useClassMemberTeam(classId, classMember?.id);
+
+    // team can be null for the meantime due to it being async
+    if (team) {
+      officialTeam = team;
+      teamId = officialTeam ? officialTeam.id : 0;
+    }
+  }
 
   const { getProjectBoardByProjId } = useProjects();
 
@@ -39,7 +58,7 @@ function Board({ isClass, selected, project, setBoardTemplateIds, projectUpdateK
       }
     };
     fetchData();
-  }, [selected, projectUpdateKey]);
+  }, [selected]);
 
   const onClickView = (id) => {
     navigate(`/project/${project.id}/board/${id}`);

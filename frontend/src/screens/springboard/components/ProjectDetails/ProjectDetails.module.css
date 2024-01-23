@@ -4,10 +4,10 @@
   border-radius: 10px;
   /* height: 100%; */
   width: 18rem;
-  min-height: 530px;
+  min-height: 500px;
   /* max-height: 560px; */
   padding: 20px;
-  margin-bottom: 30px;
+  /* margin-bottom: 30px; */
 }
 
 .side hr {
