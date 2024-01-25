@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useOutletContext, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import jwtDecode from 'jwt-decode';
 import Fuse from 'fuse.js';
 import SortButton from '../UI/SortButton/SortButton';
 import Card from '../UI/Card/Card';
-import { useBoardTemplate } from '../../../../hooks';
+import { useBoardTemplate, useClassMember } from '../../../../hooks';
+import { useAuth } from '../../../../contexts/AuthContext';
 import styles from './Table.module.css';
 
 function PublicTable(props) {
-  // const { classId } = useOutletContext();
+  const { accessToken } = useAuth();
+  const user = jwtDecode(accessToken);
+
   const { getAllTemplate } = useBoardTemplate();
   const [teams, setTeams] = useState(null);
   const location = useLocation();
@@ -19,7 +23,7 @@ function PublicTable(props) {
   const [filteredSearchTeam, setFilteredSearchTeam] = useState([]);
   const [currentPage, setCurrentPage] = useState(() => {
     // Use a function to initialize the state with the value from localStorage
-    const savedPage = localStorage.getItem('activeProjPage');
+    const savedPage = sessionStorage.getItem('activeProjPage');
     return savedPage ? parseInt(savedPage, 10) : 1;
   });
   const [searchText, setSearchText] = useState('');
@@ -102,51 +106,51 @@ function PublicTable(props) {
 
   useEffect(() => {
     // Save the current page to localStorage whenever it changes
-    localStorage.setItem('activeProjPage', currentPage.toString());
+    sessionStorage.setItem('activeProjPage', currentPage.toString());
   }, [currentPage]);
 
   const handleGroupNameSort = () => {
     setSharedState(1);
     activate(1);
-    const sortedTeams = [...teams].sort((a, b) =>
+    const sortedTeams = [...filteredSearchTeam].sort((a, b) =>
       !teamNameSortOrder
         ? a.team_name.localeCompare(b.team_name)
         : b.team_name.localeCompare(a.team_name)
     );
-    setTeams(sortedTeams);
+    setFilteredSearchTeam(sortedTeams);
     setTeamNameSortOrder(!teamNameSortOrder);
   };
 
   const handleProjectNameSort = () => {
     setSharedState(2);
     activate(2);
-    const sortedTeams = [...teams].sort((a, b) => {
+    const sortedTeams = [...filteredSearchTeam].sort((a, b) => {
       const aProjectName = a.projects.length > 0 ? a.projects[0].project_name : '';
       const bProjectName = b.projects.length > 0 ? b.projects[0].project_name : '';
       return !projectNameSortOrder
         ? aProjectName.localeCompare(bProjectName)
         : bProjectName.localeCompare(aProjectName);
     });
-    setTeams(sortedTeams);
+    setFilteredSearchTeam(sortedTeams);
     setProjectNameSortOrder(!projectNameSortOrder);
   };
 
   const handleSort = () => {
     setSharedState(3);
     activate(3);
-    const sortedTeams = [...teams].sort((a, b) => {
+    const sortedTeams = [...filteredSearchTeam].sort((a, b) => {
       const aScore = a.projects.length > 0 ? a.projects[0].project_score / templates.length : 0;
       const bScore = b.projects.length > 0 ? b.projects[0].project_score / templates.length : 0;
       return !sortOrder ? aScore - bScore : bScore - aScore;
     });
-    setTeams(sortedTeams);
+    setFilteredSearchTeam(sortedTeams);
     setSortOrder(!sortOrder);
   };
 
   const handleTimeSort = () => {
     setSharedState(4);
     activate(4);
-    const sortedTeams = [...teams].sort((a, b) => {
+    const sortedTeams = [...filteredSearchTeam].sort((a, b) => {
       const aTime = a.projects.length > 0 ? new Date(a.projects[0].project_date_created) : null;
       const bTime = b.projects.length > 0 ? new Date(b.projects[0].project_date_created) : null;
 
@@ -161,7 +165,7 @@ function PublicTable(props) {
       }
       return 0;
     });
-    setTeams(sortedTeams);
+    setFilteredSearchTeam(sortedTeams);
     setDateSort(!dateSort);
   };
 
@@ -208,7 +212,7 @@ function PublicTable(props) {
     }
   };
 
-  const onClickNavigation = (projId) => {
+  const onClickNavigation = (classId, projId) => {
     const currentPathWithQuery = `${window.location.pathname}${window.location.search}`;
     sessionStorage.setItem('prevUrlSearch', currentPathWithQuery);
     navigate(`search-project/${projId}`);
@@ -304,7 +308,9 @@ function PublicTable(props) {
                 {team.projects.length > 0 ? (
                   <span
                     className={styles.centerTextName}
-                    onClick={() => onClickNavigation(team.projects[0].project_id)}
+                    onClick={() =>
+                      onClickNavigation(team.classroom_id, team.projects[0].project_id)
+                    }
                   >
                     {team.projects[0].project_name}
                   </span>
