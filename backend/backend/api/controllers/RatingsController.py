@@ -24,7 +24,7 @@ class RatingsController(viewsets.GenericViewSet,
     
     @swagger_auto_schema(
         operation_summary="List all rating of a specific account",
-        operation_description="GET /ratings/myratings/",
+        operation_description="GET /ratings/my_ratings/",
         request_body=NoneSerializer,
         responses={
             status.HTTP_200_OK: openapi.Response('OK', RatingSerializer),

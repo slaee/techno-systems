@@ -25,7 +25,7 @@ class RemarksController(viewsets.GenericViewSet,
     
     @swagger_auto_schema(
         operation_summary="List all remark of a specific account",
-        operation_description="GET /remarks/myremarks/",
+        operation_description="GET /remarks/my_remarks/",
         request_body=NoneSerializer,
         responses={
             status.HTTP_200_OK: openapi.Response('OK', RemarkSerializer),
