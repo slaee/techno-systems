@@ -1,4 +1,5 @@
 import os
+import requests
 from rest_framework import viewsets, mixins, permissions, status
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.decorators import action
@@ -13,6 +14,8 @@ from api.custom_permissions import IsTeacher
 from api.models import Meeting, ClassMember, Remark, Rating, Feedback
 
 from api.serializers import MeetingSerializer, MeetingCommentSerializer, MeetingCriteriaSerializer, MeetingPresentorSerializer, RatingSerializer, RemarkSerializer, FeedbackSerializer, NoneSerializer
+
+VIDEOSDK_API_ENDPOINT=os.environ.get('VIDEOSDK_API_ENDPOINT')
 
 class MeetingsController(viewsets.GenericViewSet,
                       mixins.ListModelMixin, 
@@ -202,6 +205,31 @@ class MeetingsController(viewsets.GenericViewSet,
         return Response(meeting_criteria_id.data, status=status.HTTP_200_OK)
     
     @swagger_auto_schema(
+        operation_summary="Update is_rate_open to true to the presentors for the specific meeting.",
+        operation_description="POST /meetings/{id}/open_rating_to_pitch/",
+        request_body=NoneSerializer,
+        responses={
+            status.HTTP_201_CREATED: openapi.Response('Created', NoneSerializer),
+            status.HTTP_400_BAD_REQUEST: openapi.Response('Bad Request'),
+            status.HTTP_401_UNAUTHORIZED: openapi.Response('Unauthorized'),
+            status.HTTP_403_FORBIDDEN: openapi.Response('Forbidden'),
+            status.HTTP_500_INTERNAL_SERVER_ERROR: openapi.Response('Internal Server Error'),
+        }
+    )
+    @action(detail=True, methods=['POST'])
+    def open_rating_to_pitch(self, request, *args, **kwargs):
+        meeting = self.get_object()
+        presentor = request.data.get('presentor')
+
+        selected_presentor = meeting.meeting_presentor_id.get(id=presentor)
+
+        selected_presentor.is_rate_open = True
+        selected_presentor.save()
+
+        return Response({'message': f'Rating is open for the selected presentor'}, status=status.HTTP_200_OK)
+
+
+    @swagger_auto_schema(
         operation_summary="Add a score/rating to the presentors for the specific meeting.",
         operation_description="POST /meetings/{id}/add_rating_to_pitch/",
         request_body=RatingSerializer,
@@ -227,6 +255,34 @@ class MeetingsController(viewsets.GenericViewSet,
         return Response(rating_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     @swagger_auto_schema(
+        operation_summary="Update a score/rating to the presentors for the specific meeting.",
+        operation_description="POST /meetings/{id}/update_rating_to_pitch/",
+        request_body=RatingSerializer,
+        responses={
+            status.HTTP_201_CREATED: openapi.Response('Created', RatingSerializer),
+            status.HTTP_400_BAD_REQUEST: openapi.Response('Bad Request'),
+            status.HTTP_401_UNAUTHORIZED: openapi.Response('Unauthorized'),
+            status.HTTP_403_FORBIDDEN: openapi.Response('Forbidden'),
+            status.HTTP_500_INTERNAL_SERVER_ERROR: openapi.Response('Internal Server Error'),
+        }
+    )
+    @action(detail=True, methods=['PUT'])
+    def update_rating_to_pitch(self, request, *args, **kwargs):
+        meeting = self.get_object()
+
+        pitch = request.data.get('pitch_id')
+        new_rating = request.data.get('rating')
+
+        rating= Rating.objects.get(meeting_id=meeting.id, pitch_id=pitch)
+
+        rating.rating = new_rating
+
+        rating.save()
+
+        return Response(RatingSerializer(rating).data, status=status.HTTP_200_OK)
+    
+
+    @swagger_auto_schema(
         operation_summary="Add a reamark to the presentors for the specific meeting.",
         operation_description="POST /meetings/{id}/add_remark_to_pitch/",
         request_body=RemarkSerializer,
@@ -250,6 +306,33 @@ class MeetingsController(viewsets.GenericViewSet,
             rating_serializer.save()
             return Response(rating_serializer.data, status=status.HTTP_201_CREATED)
         return Response(rating_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    @swagger_auto_schema(
+        operation_summary="Update a remark to the presentors for the specific meeting.",
+        operation_description="POST /meetings/{id}/update_remark_to_pitch/",
+        request_body=RemarkSerializer,
+        responses={
+            status.HTTP_201_CREATED: openapi.Response('Created', RemarkSerializer),
+            status.HTTP_400_BAD_REQUEST: openapi.Response('Bad Request'),
+            status.HTTP_401_UNAUTHORIZED: openapi.Response('Unauthorized'),
+            status.HTTP_403_FORBIDDEN: openapi.Response('Forbidden'),
+            status.HTTP_500_INTERNAL_SERVER_ERROR: openapi.Response('Internal Server Error'),
+        }
+    )
+    @action(detail=True, methods=['PUT'])
+    def update_remark_to_pitch(self, request, *args, **kwargs):
+        meeting = self.get_object()
+
+        pitch = request.data.get('pitch_id')
+        new_remark = request.data.get('remark')
+
+        remark= Remark.objects.get(meeting_id=meeting.id, pitch_id=pitch)
+
+        remark.remark = new_remark
+
+        remark.save()
+
+        return Response(RemarkSerializer(remark).data, status=status.HTTP_200_OK)
     
     @swagger_auto_schema(
         operation_summary="Summarize the reamarks of the presentors for the specific meeting.",
@@ -285,8 +368,8 @@ class MeetingsController(viewsets.GenericViewSet,
             )
 
             feedback = {
-                'pitch': presentor['pitch_id'],
-                'meeting': meeting.id,
+                'pitch_id': presentor['pitch_id'],
+                'meeting_id': meeting.id,
                 'feedback': openai_response.choices[0].message.content
             }
 
@@ -385,3 +468,62 @@ class MeetingsController(viewsets.GenericViewSet,
             feedback = FeedbackSerializer(Feedback.objects.get(meeting_id=meeting.id, pitch_id=presentor['pitch_id'])).data   
             presentor['feedback'] = feedback
         return Response(presentors, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(
+        operation_summary="Start Meeting.",
+        operation_description="PUT /meetings/{id}/start_meeting",
+        request_body=NoneSerializer,
+        responses={
+            status.HTTP_201_CREATED: openapi.Response('Created', MeetingSerializer),
+            status.HTTP_400_BAD_REQUEST: openapi.Response('Bad Request'),
+            status.HTTP_401_UNAUTHORIZED: openapi.Response('Unauthorized'),
+            status.HTTP_403_FORBIDDEN: openapi.Response('Forbidden'),
+            status.HTTP_500_INTERNAL_SERVER_ERROR: openapi.Response('Internal Server Error'),
+        }
+    )
+    @action(detail=True, methods=['POST'])
+    def start_meeting(self, request, *args, **kwargs):
+        meeting = self.get_object()
+
+        meeting.status = "in_progress"
+
+        # video sdk
+        expiration_in_seconds = 600
+        expiration = datetime.datetime.now() + datetime.timedelta(seconds=expiration_in_seconds)
+        token = jwt.encode(payload={
+            'exp': expiration,
+            'apikey': self.VIDEOSDK_API_KEY,
+            'permissions': ['allow_join', 'allow_mod'],
+        }, key=self.VIDEOSDK_SECRET_KEY, algorithm="HS256")
+
+        res = requests.post(f'{VIDEOSDK_API_ENDPOINT}/api/meetings',
+                            headers={'Authorization': token})
+        meeting.video = res.json()['meetingId']
+
+        meeting.save()
+
+        return Response(MeetingSerializer(meeting).data, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(
+        operation_summary="End Meeting.",
+        operation_description="PUT /meetings/{id}/end_meeting",
+        request_body=NoneSerializer,
+        responses={
+            status.HTTP_201_CREATED: openapi.Response('Created', MeetingSerializer),
+            status.HTTP_400_BAD_REQUEST: openapi.Response('Bad Request'),
+            status.HTTP_401_UNAUTHORIZED: openapi.Response('Unauthorized'),
+            status.HTTP_403_FORBIDDEN: openapi.Response('Forbidden'),
+            status.HTTP_500_INTERNAL_SERVER_ERROR: openapi.Response('Internal Server Error'),
+        }
+    )
+    @action(detail=True, methods=['POST'])
+    def end_meeting(self, request, *args, **kwargs):
+        meeting = self.get_object()
+
+        meeting.status = "completed"
+        meeting.video = None
+        meeting.save()
+
+        return Response(MeetingSerializer(meeting).data, status=status.HTTP_200_OK)
+
+    
