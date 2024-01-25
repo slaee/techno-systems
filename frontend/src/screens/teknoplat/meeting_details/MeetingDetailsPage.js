@@ -1,4 +1,6 @@
+import GLOBALS from "../../../app_globals";
 import { useMeeting } from "../../../hooks";
+import { MeetingsService } from "../../../services";
 import MeetingDetailsComments from "./MeetingDetailsComments";
 import MeetingDetailsCriterias from "./MeetingDetailsCriterias";
 import MeetingDetailsMembers from "./MeetingDetailsMembers";
@@ -9,6 +11,7 @@ const MeetingDetailsPage = () => {
     const { user, classId, classRoom, classMember } = useOutletContext();
     const { meetingId } = useParams();
     const { isLoading, meeting } = useMeeting(meetingId);
+    const navigate = useNavigate();
 
     const tabOptions = [
         { value: 0, name: "Pitch", stringValue: "pitch" },
@@ -32,6 +35,15 @@ const MeetingDetailsPage = () => {
         setDetailsPageTabValue(value);
     }
 
+    const handleStartClick = async () => {
+        await MeetingsService.start(meetingId);
+        navigate(`/live/${meetingId}`);
+    }
+
+    const handleJoinClick = () => {
+        navigate(`/live/${meetingId}`);
+    }
+
     return (
         <Box p={3}>
             <Grid container spacing={2}>
@@ -39,16 +51,11 @@ const MeetingDetailsPage = () => {
                     <Stack spacing={3} sx={{ mb: 3 }}>
                         <Stack direction="row" spacing={5}>
                             <Typography variant="h5">{ meeting.name }</Typography>
-                            { meeting.status === "pending" && profile.role === "Teacher" && (
-                                <Form method="post">
-                                    <Button type="submit" name="intent" value="start" variant="contained">Start</Button>
-                                </Form>
+                            { meeting.status === "pending" && classMember.role === GLOBALS.CLASSMEMBER_ROLE.TEACHER && (
+                                <Button variant="contained" onClick={handleStartClick}>Start</Button>
                             )}
                             { meeting.status === "in_progress" && (
-                                <Form method="post">
-                                    <TextField sx={{ display: "none" }} name="video" value={meeting.video} />
-                                    <Button type="submit" name="intent" value="join" variant="contained">Join</Button>
-                                </Form>
+                                <Button variant="contained" onClick={handleJoinClick}>Join</Button>
                             )}
                             { meeting.status === "completed" && (
                                 <Button variant="contained" onClick={handleHistoryDialogOpen}>View</Button>
