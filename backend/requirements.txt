@@ -10,3 +10,4 @@ cryptography
 drf_yasg
 python-dotenv
 drf-nested-routers
+openai

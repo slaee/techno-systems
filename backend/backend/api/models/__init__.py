@@ -7,6 +7,15 @@ from .PeerEval import PeerEval
 from .ClassRoomPE import ClassRoomPE
 from .ClassRoomPETaker import ClassRoomPETaker
 
+from .SpringProject import SpringProject
+from .SpringProjectBoard import SpringProjectBoard
+from .SpringBoardTemplate import SpringBoardTemplate
+
+from .Activity import Activity
+from .ActivityComment import ActivityComment
+from .ActivityWorkAttachment import ActivityWorkAttachment
+from .ActivityTemplate import ActivityTemplate
+
 from .Chatbot import Chatbot
 from .Criteria import Criteria
 from .Feedback import Feedback
@@ -19,6 +28,7 @@ from .Pitch import Pitch
 from .Rating import Rating
 from .Remark import Remark
 
+
 __all__ = [
     'User',
     'ClassRoom',
@@ -27,7 +37,16 @@ __all__ = [
     'TeamMember',
     'PeerEval',
     'ClassRoomPE',
-    'ClassRoomPETaker',
+    'ClassRoomPETaker'
+  
+    'SpringProject',
+    'SpringProjectBoard',
+    'SpringBoardTemplate',
+
+    'Activity',
+    'ActivityComment',
+    'ActivityWorkAttachment',
+    'ActivityTemplate',
 
     'Chatbot',
     'Criteria',
@@ -40,4 +59,5 @@ __all__ = [
     'Pitch',
     'Rating',
     'Remark'
+
 ]
