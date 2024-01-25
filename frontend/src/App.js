@@ -27,6 +27,7 @@ import TeknoPlat from './screens/teknoplat';
 import './App.css';
 import MeetingsPage from './screens/teknoplat/meetings/MeetingsPage';
 import MeetingDetailsPage from './screens/teknoplat/meeting_details/MeetingDetailsPage';
+import VideoPage from './screens/teknoplat/video/VideoPage';
 
 function App() {
   return (
@@ -156,6 +157,14 @@ function App() {
                 element={
                   <PrivateRoute>
                     <MeetingDetailsPage />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="live/:meetingId"
+                element={
+                  <PrivateRoute>
+                    <VideoPage />
                   </PrivateRoute>
                 }
               />
