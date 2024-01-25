@@ -7,3 +7,5 @@ export { default as EvalsService } from './EvalsService';
 export { default as MeetingsService } from './MeetingsService';
 export { default as PitchesService } from './PitchesService';
 export { default as CriteriasService } from './CriteriasService';
+export { default as RatingsService } from './RatingsService';
+export { default as RemarksService } from './RemarksService';
