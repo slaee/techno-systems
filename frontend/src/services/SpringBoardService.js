@@ -12,6 +12,7 @@ const SpringBoardService = {
   getAllClassroomTeamAndProjects: () => api.get('/class_team_proj'),
   getTeamsAndProjectsByClassId: (classId) => api.get(`/class/${classId}/team_proj`),
   getProjectsByTeamId: (teamId) => api.get(`/team/${teamId}/projects`),
+  getProjectsByUserId: (userId) => api.get(`/${userId}/projects`),
   allProject: () => api.get('/project'),
   getProjectById: (projId) => api.get(`/project/${projId}`),
   projectCreate: (data) => api.post('/project/create', data),

@@ -40,6 +40,7 @@ urlpatterns += [
     path('spring/class_team_proj', GetAllClassroomTeamAndProjects.as_view()),
     path('spring/class/<int:class_id>/team_proj',GetTeamsAndProjectsByClassId.as_view()),
     path('spring/team/<int:team_id>/projects', GetProjectsByTeamId.as_view()),
+    path('spring/<int:user_id>/projects', UserProjectsView.as_view()),
     path('spring/project', ProjectView.as_view()),
     path('spring/project/<int:project_id>', GetProjectById.as_view()),
     path('spring/project/create', ProjectCreateView.as_view()),

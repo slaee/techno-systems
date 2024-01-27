@@ -1,5 +1,3 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import SpringBoardService from '../services/SpringBoardService';
 
 const useProjects = () => {
@@ -30,10 +28,19 @@ const useProjects = () => {
     }
   };
 
+  const userProjects = async (userId) => {
+    try {
+      const res = await SpringBoardService.getProjectsByUserId(userId);
+      return { success: true, data: res.data };
+    } catch (error) {
+      return { success: false, error: error?.response?.status };
+    }
+  };
+
   const createProjects = async ({ body }) => {
     try {
       const res = await SpringBoardService.projectCreate(body);
-      return true;
+      return res;
     } catch (error) {
       console.error('API Error:', error);
       return false;
@@ -43,7 +50,7 @@ const useProjects = () => {
   const updateProjects = async (projId, { body }) => {
     try {
       const res = await SpringBoardService.projectUpdate(projId, body);
-      return true;
+      return res;
     } catch (error) {
       console.error('API Error:', error);
       return false;
@@ -62,7 +69,7 @@ const useProjects = () => {
   const deleteProjects = async (projId) => {
     try {
       const res = await SpringBoardService.deleteProject(projId);
-      return true;
+      return res;
     } catch (error) {
       console.error('API Error:', error);
       return false;
@@ -122,6 +129,7 @@ const useProjects = () => {
     allclassteamproj,
     getProjectsByClassId,
     teamProjects,
+    userProjects,
     createProjects,
     getProject,
     updateProjects,

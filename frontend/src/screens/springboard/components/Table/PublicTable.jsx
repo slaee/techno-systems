@@ -4,7 +4,7 @@ import jwtDecode from 'jwt-decode';
 import Fuse from 'fuse.js';
 import SortButton from '../UI/SortButton/SortButton';
 import Card from '../UI/Card/Card';
-import { useBoardTemplate, useClassMember } from '../../../../hooks';
+import { useBoardTemplate, useProjects } from '../../../../hooks';
 import { useAuth } from '../../../../contexts/AuthContext';
 import styles from './Table.module.css';
 
@@ -13,6 +13,9 @@ function PublicTable(props) {
   const user = jwtDecode(accessToken);
 
   const { getAllTemplate } = useBoardTemplate();
+  const { userProjects } = useProjects();
+
+  const [userProjs, setUserProjs] = useState(null);
   const [teams, setTeams] = useState(null);
   const location = useLocation();
   const [sortOrder, setSortOrder] = useState(true); // true for ascending, false for descending
@@ -96,6 +99,8 @@ function PublicTable(props) {
       try {
         const templateResponse = await getAllTemplate();
         setTemplates(templateResponse.data);
+        const userProjResponse = await userProjects(user.user_id);
+        setUserProjs(userProjResponse.data);
       } catch (error) {
         console.error('Error fetching template data:', error);
       }
@@ -211,11 +216,16 @@ function PublicTable(props) {
       setCurrentPage((prevPage) => prevPage - 1);
     }
   };
-
+  console.log(userProjs);
   const onClickNavigation = (classId, projId) => {
     const currentPathWithQuery = `${window.location.pathname}${window.location.search}`;
     sessionStorage.setItem('prevUrlSearch', currentPathWithQuery);
-    navigate(`search-project/${projId}`);
+
+    if (userProjs.some((project) => project.id === projId)) {
+      navigate(`/classes/${classId}/project/${projId}`);
+    } else {
+      navigate(`search-project/${projId}`);
+    }
   };
 
   // Get the teams for the current page

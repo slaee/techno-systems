@@ -256,3 +256,19 @@ class GetTeamsAndProjectsByClassId(APIView):
 
         except ClassRoom.DoesNotExist:
             return Response({"error": "Classroom not found"}, status=status.HTTP_404_NOT_FOUND)
+
+
+class UserProjectsView(generics.ListAPIView):
+    serializer_class = SpringProjectSerializer
+
+    def get_queryset(self):
+        user_id = self.kwargs.get('user_id')
+        team_memberships = TeamMember.objects.filter(
+            class_member_id__user_id=user_id)
+        team_ids = team_memberships.values_list('team_id', flat=True)
+        return SpringProject.objects.filter(team_id__in=team_ids)
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.serializer_class(queryset, many=True)
+        return Response(serializer.data)
