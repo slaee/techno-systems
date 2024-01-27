@@ -38,7 +38,30 @@ const useActivities = (id) => {
     get();
   }, [id]);
 
-  return { isLoading, activities };
+
+  const addEvaluation = async (classId, teamId, activityId, data) => {
+    let responseCode;
+
+    try {
+      const res = await ActivityService.addEvaluation(id, teamId, activityId, data);
+      responseCode = res?.status;
+    } catch (error) {
+      responseCode = error?.response?.status;
+    }
+
+    switch (responseCode) {
+      case 200:
+        break;
+      case 404:
+      case 500:
+        navigate('/classes');
+        break;
+      default:
+    }
+  };
+
+
+  return { isLoading, activities, addEvaluation };
 };
 
 export default useActivities;

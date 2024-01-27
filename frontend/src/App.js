@@ -23,130 +23,174 @@ import SpringBoardProjects from './screens/springboard/projects';
 import SpringBoardAllProjects from './screens/springboard/all_projects';
 import TeknoPlat from './screens/teknoplat';
 
+
+// TODO: temporary
+// import { ViewActivity, CreateActivity} from './screens/activity_management/activities/teacher';
+// import ViewActivity from './screens/activity_management/activities/teacher';n
+import { CreateActivity, ViewActivity } from './screens/activity_management/activities/teacher';
+
+
 // Style Imports
 import './App.css';
 
 function App() {
-  return (
-    <AuthProvider>
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <NoAuthRoute>
-              <Login />
-            </NoAuthRoute>
-          }
-        />
-        <Route
-          path="/login"
-          element={
-            <NoAuthRoute>
-              <Login />
-            </NoAuthRoute>
-          }
-        />
-        <Route
-          path="/signup"
-          element={
-            <NoAuthRoute>
-              <Signup />
-            </NoAuthRoute>
-          }
-        />
-        <Route path="/forgotpassword" element={<ForgotPassword />} />
-        <Route path="/logout" element={<Logout />} />
+	return (
+		<AuthProvider>
+			<Routes>
+				<Route
+					path='/'
+					element={
+						<NoAuthRoute>
+							<Login />
+						</NoAuthRoute>
+					}
+				/>
+				<Route
+					path='/login'
+					element={
+						<NoAuthRoute>
+							<Login />
+						</NoAuthRoute>
+					}
+				/>
+				<Route
+					path='/signup'
+					element={
+						<NoAuthRoute>
+							<Signup />
+						</NoAuthRoute>
+					}
+				/>
+				<Route
+					path='/forgotpassword'
+					element={<ForgotPassword />}
+				/>
+				<Route
+					path='/logout'
+					element={<Logout />}
+				/>
 
-        {/* Classroom routes */}
-        <Route path="classes">
-          <Route
-            index
-            element={
-              <PrivateRoute>
-                <Classes />
-              </PrivateRoute>
-            }
-          />
+				{/* Classroom routes */}
+				<Route path='classes'>
+					<Route
+						index
+						element={
+							<PrivateRoute>
+								<Classes />
+							</PrivateRoute>
+						}
+					/>
 
-          <Route path=":id" element={<ClassroomLayout />}>
-            <Route
-              index
-              element={
-                <PrivateRoute>
-                  <ViewClass />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="members"
-              element={
-                <PrivateRoute>
-                  <ViewClassMembers />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="teams"
-              element={
-                <PrivateRoute>
-                  <Teams />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="evals"
-              element={
-                <PrivateRoute>
-                  <StudentPeerEval />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="activities"
-              element={
-                <PrivateRoute>
-                  <ActivityManagement />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="projects"
-              element={
-                <PrivateRoute>
-                  <SpringBoardProjects />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="allprojects"
-              element={
-                <PrivateRoute>
-                  <SpringBoardAllProjects />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="teknoplat"
-              element={
-                <PrivateRoute>
-                  <TeknoPlat />
-                </PrivateRoute>
-              }
-            />
-          </Route>
-        </Route>
+					<Route
+						path=':id'
+						element={<ClassroomLayout />}
+					>
+						<Route
+							index
+							element={
+								<PrivateRoute>
+									<ViewClass />
+								</PrivateRoute>
+							}
+						/>
+						<Route
+							path='members'
+							element={
+								<PrivateRoute>
+									<ViewClassMembers />
+								</PrivateRoute>
+							}
+						/>
+						<Route
+							path='teams'
+							element={
+								<PrivateRoute>
+									<Teams />
+								</PrivateRoute>
+							}
+						/>
+						<Route
+							path='evals'
+							element={
+								<PrivateRoute>
+									<StudentPeerEval />
+								</PrivateRoute>
+							}
+						/>
+						<Route path='activities'>
+							<Route
+								index
+								element={
+									<PrivateRoute>
+										<ActivityManagement />
+									</PrivateRoute>
+								}
+							/>
+							
+							<Route
+								path=':activityId/team/:teamId'
+								element={
+									<PrivateRoute>
+										<ViewActivity />
+									</PrivateRoute>
+								}
+							/>
+							<Route
+								path=':activityId'
+								element={
+									<PrivateRoute>
+										<ViewActivity />
+									</PrivateRoute>
+								}
+							/>
 
-        <Route
-          path="/peer-eval"
-          element={
-            <PrivateRoute>
-              <PeerEval />
-            </PrivateRoute>
-          }
-        />
-      </Routes>
-    </AuthProvider>
-  );
+						</Route>
+						<Route
+							path='new_activity'
+							element={
+								<PrivateRoute>
+									<CreateActivity />
+								</PrivateRoute>
+							}
+						/>
+						<Route
+							path='projects'
+							element={
+								<PrivateRoute>
+									<SpringBoardProjects />
+								</PrivateRoute>
+							}
+						/>
+						<Route
+							path='allprojects'
+							element={
+								<PrivateRoute>
+									<SpringBoardAllProjects />
+								</PrivateRoute>
+							}
+						/>
+						<Route
+							path='teknoplat'
+							element={
+								<PrivateRoute>
+									<TeknoPlat />
+								</PrivateRoute>
+							}
+						/>
+					</Route>
+				</Route>
+
+				<Route
+					path='/peer-eval'
+					element={
+						<PrivateRoute>
+							<PeerEval />
+						</PrivateRoute>
+					}
+				/>
+			</Routes>
+		</AuthProvider>
+	);
 }
 
 export default App;

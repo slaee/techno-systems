@@ -13,6 +13,10 @@ const ActivityService = {
 	allActivities: (classId) =>
 		api.get(`${CLASS_BASE_URL}/${classId}/activities`),
 
+	/// GET /classes/{class_id}/teams/{teamId}/activities/{activity_id}
+	getActivity: (classId, teamId, activityId) =>
+		api.get(`${CLASS_BASE_URL}/${classId}/teams/${teamId}/activities/${activityId}`),
+
 	/// POST /classes/{class_id}/activities
 	/*
     data: {
