@@ -216,7 +216,7 @@ function PublicTable(props) {
       setCurrentPage((prevPage) => prevPage - 1);
     }
   };
-  console.log(userProjs);
+
   const onClickNavigation = (classId, projId) => {
     const currentPathWithQuery = `${window.location.pathname}${window.location.search}`;
     sessionStorage.setItem('prevUrlSearch', currentPathWithQuery);
