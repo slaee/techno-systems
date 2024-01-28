@@ -211,8 +211,8 @@ const ViewActivity = () => {
 						activityComments.map((comment) => (
 							<div className='d-flex flex-row justify-content-between p-3 border border-dark rounded-3 ' key={comment.id}>
 								<p>
-									{/* // FIXME: change this to the user's name */}
-									{comment.user_id} - {comment.comment}
+									{/* // FIXME: dapat clickable ang comment*/}
+									{comment.user.first_name} {comment.user.last_name}: {comment.comment}
 								</p>
 								<span
 									className='nav-item nav-link text-danger'

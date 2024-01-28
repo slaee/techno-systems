@@ -157,7 +157,7 @@ function ActivityManagement() {
 					<div className='d-flex flex-row gap-3 '>
 						<button
 							className='btn btn-activity-primary btn-block fw-bold bw-3 m-0'
-							onClick={() => navigate(`/classes/${classId}/new_activity`)}
+							onClick={() => navigate(`new-activity`)}
 						>
 							Add Activity
 						</button>
