@@ -51,7 +51,7 @@ function Board({ isClass, selected, project, setBoardTemplateIds }) {
           const templateIds = new Set(boardsTemp.map((board) => board.template_id));
           setBoardTemplateIds(templateIds);
         }
-        const sortedBoards = [...boardsTemp].sort((a, b) => a.templateId - b.templateId);
+        const sortedBoards = [...boardsTemp].sort((a, b) => a.template_id - b.template_id);
         setBoards(sortedBoards);
       } catch (error) {
         console.error(`Error fetching data: ${error}`, error);
