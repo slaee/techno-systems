@@ -23,7 +23,7 @@ class ActivityCommentController(viewsets.GenericViewSet,
 
     def get_permissions(self):
         if self.action in ['create', 'update', 'partial_update', 
-                           'destroy',
+                           'destroy', 'list', 'get_activity_comments'
                            ]:
         #     return [permissions.IsAuthenticated(), IsTeacher()]
         # else:
