@@ -21,19 +21,19 @@ class ActivityCommentController(viewsets.GenericViewSet,
     queryset = ActivityComment.objects.all()
     authentication_classes = [JWTAuthentication]
 
+    def get_permissions(self):
+        if self.action in ['create', 'update', 'partial_update', 
+                           'destroy',
+                           ]:
+        #     return [permissions.IsAuthenticated(), IsTeacher()]
+        # else:
+            return [permissions.IsAuthenticated()]
+
     def get_serializer_class(self):
         if self.action == 'create':
             return CommentCreateSerializer
         else:
             return ActivityCommentSerializer
-        
-    def get_permissions(self):
-        if self.action in ['create', 'update', 'partial_update', 
-                           'destroy',
-                           ]:
-            return [permissions.IsAuthenticated(), IsTeacher()]
-        else:
-            return [permissions.IsAuthenticated()]
 
     @swagger_auto_schema(
         operation_summary="Create an activity comment",
