@@ -26,7 +26,7 @@ const ActivityService = {
         "total_score": 100
     }
     */
-	create: (data) => api.post(`${CLASS_BASE_URL}/activities`, data),
+	createActivity: (classId, data) => api.post(`${CLASS_BASE_URL}/${classId}/activities`, data),
 
 	/// POST /classes/{class_id}/activities/from_template
 	/*
