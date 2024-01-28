@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { IoArrowBackSharp } from 'react-icons/io5';
 
 import Header from '../../components/Header/Header';
 import Card from '../../components/UI/Card/Card';
@@ -70,6 +71,10 @@ function EditBoard() {
     }
   };
 
+  const handleBack = () => {
+    navigate(`/project/${id}/board/${boardid}`);
+  };
+
   if (!content) {
     return <p>Loading</p>;
   }
@@ -78,7 +83,12 @@ function EditBoard() {
     <div className={styles.body}>
       <Header />
       <div className={styles.container}>
-        <span className={styles.title}> {title} </span>
+        <span className={styles.title}>
+          <span className={styles.back} onClick={handleBack}>
+            <IoArrowBackSharp />
+          </span>
+          {title}
+        </span>
 
         <Card className={styles.cardContainer}>
           <div className={styles.box} />

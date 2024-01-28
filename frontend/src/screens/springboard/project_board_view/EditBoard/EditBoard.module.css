@@ -52,6 +52,12 @@
   border-color: #509943;
 }
 
+.back {
+  position: relative;
+  right: 90px;
+  cursor: pointer;
+}
+
 .goBackButton {
   margin-top: 20px;
   align-self: center;
