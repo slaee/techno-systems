@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ActivityService } from '../services';
+import { TeamService, ActivityService } from '../services';
 
 const useActivity = (classId, activityId, teamId) => {
   const navigate = useNavigate();
@@ -8,6 +8,9 @@ const useActivity = (classId, activityId, teamId) => {
   const [activity, setActivity] = useState(null);
 
   useEffect(() => {
+    if (!classId || !activityId || !teamId) {
+      return;
+    }
     const get = async () => {
       let responseCode;
       let retrievedActivity;
@@ -38,9 +41,56 @@ const useActivity = (classId, activityId, teamId) => {
     };
 
     get();
-  }, []);
+  }, [classId, activityId, teamId]);
 
-  return { isRetrieving, activity };
+  const updateActivity = async (data) => {
+    let responseCode;
+
+    try {
+      console.log(classId, teamId, activityId);
+      console.log("data", data);
+      const res = await TeamService.updateTeamActivity(classId, teamId, activityId, data);
+      responseCode = res?.status;
+    } catch (error) {
+      responseCode = error?.response?.status;
+    }
+
+    switch (responseCode) {
+      case 200:
+        break;
+      case 404:
+        navigate(`/classes/${classId}/activities`);
+        break;
+      case 500:
+        navigate('/classes');
+        break;
+      default:
+    }
+  }
+
+  const deleteTeamActivity = async () => {
+    let responseCode;
+
+    try {
+      const res = await TeamService.deleteTeamActivity(classId, teamId, activityId);
+      responseCode = res?.status;
+    } catch (error) {
+      responseCode = error?.response?.status;
+    }
+
+    switch (responseCode) {
+      case 200:
+        break;
+      case 404:
+        navigate(`/classes/${classId}/activities`);
+        break;
+      case 500:
+        navigate('/classes');
+        break;
+      default:
+    }
+  }
+  return { isRetrieving, activity, updateActivity, deleteTeamActivity };
 };
 
 export default useActivity;

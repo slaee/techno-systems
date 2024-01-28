@@ -1,19 +1,21 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ActivityService } from '../services';
+import { ActivityService, TeamService } from '../services';
 
-const useActivities = (id) => {
+const useActivities = (classId) => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [activities, setActivities] = useState([]);
 
   useEffect(() => {
+    if (!classId) {
+      return
+    }
     const get = async () => {
       let responseCode;
       let retrievedActivities;
-
       try {
-        const res = await ActivityService.allActivities(id);
+        const res = await ActivityService.allActivities(classId);
 
         responseCode = res?.status;
         retrievedActivities = res?.data;
@@ -36,14 +38,15 @@ const useActivities = (id) => {
     };
 
     get();
-  }, [id]);
+  }, [classId]);
 
 
-  const addEvaluation = async (classId, teamId, activityId, data) => {
+  //FIXME: Evaluations must be on the useActivity because it only change one activity
+  const addEvaluation = async (teamId, activityId, evaluation) => {
     let responseCode;
 
     try {
-      const res = await ActivityService.addEvaluation(id, teamId, activityId, data);
+      const res = await ActivityService.addEvaluation(classId, teamId, activityId, evaluation);
       responseCode = res?.status;
     } catch (error) {
       responseCode = error?.response?.status;
@@ -60,8 +63,31 @@ const useActivities = (id) => {
     }
   };
 
+  const deleteEvaluation = async (teamId, activityId) => {
+    let responseCode;
 
-  return { isLoading, activities, addEvaluation };
+    try {
+      const res = await ActivityService.deleteEvaluation(classId, teamId, activityId);
+      responseCode = res?.status;
+    } catch (error) {
+      responseCode = error?.response?.status;
+    }
+
+    switch (responseCode) {
+      case 204:
+        setActivities((prevActivitiies) => prevActivitiies.filter((activity) => activity.id !== activityId));
+        break;
+      case 404:
+        navigate(`/classes/${classId}/activities`);
+        break;
+      case 500:
+        navigate('/classes');
+        break;
+      default:
+    }
+  };
+
+  return { isLoading, activities, addEvaluation, deleteEvaluation };
 };
 
 export default useActivities;
