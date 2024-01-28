@@ -1,4 +1,4 @@
-import { useNavigate, useOutletContext, useParams, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import React, { useState } from "react";
 
 import Modal from "react-bootstrap/Modal";
@@ -11,21 +11,12 @@ import { useActivities } from "../../../hooks"
 const CreateEvaluationPopup = ({ show, handleClose, classId, teamId, activityId, data }) => {
     const navigate = useNavigate();
     const [evaluationData, setEvaluationData] = useState({
-        id: data?.id,
-        evaluation: data?.evaluation,
+        "evaluation": data?.evaluation,
     });
 
 
-    // const { classId } = useOutletContext();
-    // const { activityId, teamId } = useParams();
-
-    // const [searchParams] = useSearchParams();
-    // const teamId = searchParams.get('teamid');
-
-    console.log(classId, activityId, teamId);
-
-
-    const { addEvaluation } = useActivities();
+    // console.log(classId, activityId, teamId);
+    const { addEvaluation } = useActivities(classId);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -33,6 +24,8 @@ const CreateEvaluationPopup = ({ show, handleClose, classId, teamId, activityId,
             ...evaluationData,
             [name]: parseInt(value),
         });
+
+        
     };
 
     const handleSubmit = async (e) => {
@@ -48,7 +41,8 @@ const CreateEvaluationPopup = ({ show, handleClose, classId, teamId, activityId,
         }
 
         try {
-            await addEvaluation((classId, teamId, activityId, data))
+            console.log(evaluationData)
+            await addEvaluation( teamId, activityId, evaluationData);
             console.log("Evaluation added successfully!");
             handleClose();
             navigate(0);
