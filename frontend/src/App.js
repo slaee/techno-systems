@@ -128,6 +128,15 @@ function App() {
 							/>
 							
 							<Route
+								path='new-activity'
+								element={
+									<PrivateRoute>
+										<CreateActivity />
+									</PrivateRoute>
+								}
+							/>
+
+							<Route
 								path=':activityId/teams/:teamId'
 								element={
 									<PrivateRoute>
@@ -135,15 +144,8 @@ function App() {
 									</PrivateRoute>
 								}
 							/>
-						</Route>
-						<Route
-							path='new_activity'
-							element={
-								<PrivateRoute>
-									<CreateActivity />
-								</PrivateRoute>
-							}
-						/>
+							</Route>
+							
 						<Route
 							path='projects'
 							element={
