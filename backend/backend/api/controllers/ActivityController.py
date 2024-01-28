@@ -5,7 +5,9 @@ from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
-from api.custom_permissions import IsTeacher
+from django.db import transaction
+
+from api.custom_permissions import IsTeacher, IsModerator
 
 from api.models import Activity
 from api.models import ActivityTemplate
@@ -33,7 +35,7 @@ class ActivityController(viewsets.GenericViewSet,
         if self.action in ['create', 'create_from_template', 
                            'destroy', 'add_evaluation', 'delete_evaluation',
                            ]:
-            return [permissions.IsAuthenticated(), IsTeacher()]
+            return [permissions.IsAuthenticated(), IsTeacher(), IsModerator()]
         else:
             return [permissions.IsAuthenticated()]
 
@@ -54,16 +56,32 @@ class ActivityController(viewsets.GenericViewSet,
         serializer = self.get_serializer(data=request.data)
 
         if serializer.is_valid():
-            activity = serializer.save()
-            
+            activity_data = serializer.validated_data
             team_ids = request.data.get('team_id', [])
-            
+
             if team_ids:
                 try:
                     teams = Team.objects.filter(pk__in=team_ids)
-                    activity.team_id.set(teams)  # Set the many-to-many relationship
-                    activity.save() 
-                    return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+                    # Use transaction.atomic to ensure all or nothing behavior
+                    with transaction.atomic():
+                        activity_instances = []
+                        for team in teams:
+                            # Create a new activity instance for each team
+                            new_activity = Activity.objects.create(
+                                classroom_id=activity_data.get('classroom_id'),
+                                title=activity_data.get('title'),
+                                description=activity_data.get('description'),
+                                submission_status=activity_data.get('submission_status', False),
+                                due_date=activity_data.get('due_date'),
+                                evaluation=activity_data.get('evaluation'),
+                                total_score=activity_data.get('total_score', 100)
+                            )
+                            new_activity.team_id.add(team)
+                            activity_instances.append(new_activity)
+
+                    activity_serializer = self.get_serializer(activity_instances, many=True)
+                    return Response(activity_serializer.data, status=status.HTTP_201_CREATED)
                 except Team.DoesNotExist:
                     return Response({'error': 'One or more teams not found'}, status=status.HTTP_404_NOT_FOUND)
             else:
@@ -110,7 +128,7 @@ class ActivityController(viewsets.GenericViewSet,
     @action(detail=False, methods=['POST'])
     def create_from_template(self, request, class_pk=None, pk=None):
         template_id = request.data.get('template_id', None)
-        team_ids = request.data.get('team_ids', [])  
+        team_ids = request.data.get('team_ids', [])
         due_date = request.data.get('due_date', None)
         evaluation = request.data.get('evaluation', None)
         total_score = request.data.get('total_score', None)
@@ -118,42 +136,35 @@ class ActivityController(viewsets.GenericViewSet,
         if template_id is not None and class_pk is not None:
             try:
                 class_obj = ClassRoom.objects.get(pk=class_pk)
-
                 template = ActivityTemplate.objects.get(pk=template_id)
 
-                new_activity = Activity.create_activity_from_template(template)
+                # Use transaction.atomic to ensure all or nothing behavior
+                with transaction.atomic():
+                    activity_instances = []
+                    for team_id in team_ids:
+                        try:
+                            team = Team.objects.get(pk=team_id)
+                            new_activity = Activity.create_activity_from_template(template)
 
-                if team_ids:
-                    try:
-                        teams = Team.objects.filter(pk__in=team_ids)
-                        new_activity.team_id.set(teams)  # Set the many-to-many relationship
-                    except Team.DoesNotExist:
-                        return Response({"error": "One or more teams not found"}, status=status.HTTP_404_NOT_FOUND)
+                            # Update due_date, evaluation, and total_score
+                            if due_date:
+                                new_activity.due_date = due_date
+                            if evaluation:
+                                new_activity.evaluation = evaluation
+                            if total_score:
+                                new_activity.total_score = total_score
 
-                # Update due_date, evaluation, and total_score
-                if due_date:
-                    new_activity.due_date = due_date
-                if evaluation:
-                    new_activity.evaluation = evaluation
-                if total_score:
-                    new_activity.total_score = total_score
+                            # Set the class and team for the new activity
+                            new_activity.classroom_id = class_obj
+                            new_activity.team_id.add(team)
 
-                # Set the class for the new activity
-                new_activity.classroom_id = class_obj
+                            new_activity.save()
+                            activity_instances.append(new_activity)
+                        except Team.DoesNotExist:
+                            return Response({"error": f"Team with ID {team_id} not found"}, status=status.HTTP_404_NOT_FOUND)
 
-                new_activity.save()
-
-                template_serializer = ActivityTemplateSerializer(template)
-                activity_serializer = ActivitySerializer(new_activity)
-
-                return Response(
-                    {
-                        "success": "Activity created from template",
-                        "activity": activity_serializer.data,
-                        "template": template_serializer.data
-                    },
-                    status=status.HTTP_201_CREATED
-                )
+                activity_serializer = self.get_serializer(activity_instances, many=True)
+                return Response(activity_serializer.data, status=status.HTTP_201_CREATED)
             except (ActivityTemplate.DoesNotExist, ClassRoom.DoesNotExist) as e:
                 return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
         else:
