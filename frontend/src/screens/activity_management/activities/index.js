@@ -83,7 +83,7 @@ function ActivityManagement() {
 
 		// TODO: temporary
 		// navigate(`/classes/${classId}/activities/${actId}?teamid=${teamId}`);
-		navigate(`/classes/${classId}/activities/${actId}/team/${teamId}`);
+		navigate(`/classes/${classId}/activities/${actId}/teams/${teamId}`);
 		// navigate(`/classes/${classId}/activities/${actId}/?teamid=${teamId}`);
 
 	};
@@ -211,7 +211,7 @@ function ActivityManagement() {
 				</div>
 
 				<div className='d-flex flex-column gap-3'>
-					{activities && (
+					{activities ? (
 						<>
 							<div className='d-flex flex-row gap-3'>
 								<button
@@ -257,7 +257,7 @@ function ActivityManagement() {
 								</div>
 							))}
 						</>
-					)}
+					) : <p> NO ACTIVITY</p>}
 				</div>
 			</div>
 		</div>
