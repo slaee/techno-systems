@@ -5,13 +5,13 @@ from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
-from api.custom_permissions import IsTeacher
+from api.custom_permissions import IsTeacher, IsModerator
 
 from api.models import ActivityComment
 from api.models import User
 from api.models import Activity
 
-from api.serializers import ActivityCommentSerializer, UserCommentSerializer, SpecificActivityCommentSerializer, CommentCreateSerializer
+from api.serializers import ActivityCommentSerializer, ActivityCommentWithUserSerializer, UserCommentSerializer, SpecificActivityCommentSerializer, CommentCreateSerializer
 
 class ActivityCommentController(viewsets.GenericViewSet,
                       mixins.CreateModelMixin,
@@ -25,8 +25,8 @@ class ActivityCommentController(viewsets.GenericViewSet,
         if self.action in ['create', 'update', 'partial_update', 
                            'destroy', 'list', 'get_activity_comments'
                            ]:
-        #     return [permissions.IsAuthenticated(), IsTeacher()]
-        # else:
+            return [permissions.IsAuthenticated(), IsModerator()]
+        else:
             return [permissions.IsAuthenticated()]
 
     def get_serializer_class(self):
@@ -84,12 +84,26 @@ class ActivityCommentController(viewsets.GenericViewSet,
             try:
                 activity = Activity.objects.get(pk=activity_id)
                 comments = ActivityComment.objects.filter(activity_id=activity)
-                serializer = self.get_serializer(comments, many=True)
+                serializer = ActivityCommentWithUserSerializer(comments, many=True)
                 return Response(serializer.data, status=status.HTTP_200_OK)
             except Activity.DoesNotExist:
                 return Response({'error': 'Activity not found'}, status=status.HTTP_404_NOT_FOUND)
         else:
             return Response({'error': 'Activity ID not provided'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    @swagger_auto_schema(
+        operation_summary="Get a specific comment by ID",
+        operation_description="GET /activity-comments/{pk}",
+        responses={
+            status.HTTP_200_OK: openapi.Response('OK', ActivityCommentWithUserSerializer),
+            status.HTTP_404_NOT_FOUND: openapi.Response('Not Found', message='Comment not found.'),
+            status.HTTP_500_INTERNAL_SERVER_ERROR: openapi.Response('Internal Server Error', message='Internal Server Error. An unexpected error occurred.'),
+        }
+    )
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = ActivityCommentWithUserSerializer(instance)
+        return Response(serializer.data, status=status.HTTP_200_OK)
         
     @swagger_auto_schema(
         operation_summary="Delete an activity comment",
@@ -133,7 +147,7 @@ class ActivityCommentController(viewsets.GenericViewSet,
     )
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
-        serializer = self.get_serializer(queryset, many=True)
+        serializer = ActivityCommentWithUserSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
         
