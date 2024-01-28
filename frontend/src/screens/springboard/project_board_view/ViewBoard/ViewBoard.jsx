@@ -30,8 +30,8 @@ function ViewBoard() {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const calcAttempt = (versions) => {
-    // Exclude the first item in the versions array
-    const versionsWithoutFirst = versions.slice(1);
+    // Exclude the last item in the versions array. last item is the first version
+    const versionsWithoutLast = versions.slice(0, -1);
 
     // Get today's date and set its time to 11:59 PM
     const today = new Date();
@@ -46,7 +46,7 @@ function ViewBoard() {
     yesterday.setDate(today.getDate() - 1);
     const startDate = yesterday;
 
-    const filteredBoards = versionsWithoutFirst.filter((board) => {
+    const filteredBoards = versionsWithoutLast.filter((board) => {
       const boardCreatedAt = new Date(board.date_created);
       return boardCreatedAt >= startDate && boardCreatedAt <= endDate;
     });
@@ -158,7 +158,7 @@ function ViewBoard() {
                 <div className={styles.tabHeader}>
                   <p>Result</p>
                 </div>
-                <div>
+                <div style={{ minHeight: '10rem' }}>
                   <ResultBoard boardid={currentProjectBoard.id} />
                 </div>
               </>
@@ -168,7 +168,7 @@ function ViewBoard() {
                 <div className={styles.tabHeader}>
                   <p>{currentProjectBoard.title}</p>
                 </div>
-                <div>{parse(currentProjectBoard.content)}</div>
+                <div style={{ minHeight: '10rem' }}>{parse(currentProjectBoard.content)}</div>
               </>
             )}
           </div>

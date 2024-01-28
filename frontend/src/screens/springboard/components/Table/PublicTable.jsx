@@ -245,16 +245,18 @@ function PublicTable(props) {
               const searchedText = event.target.value;
               if (searchText.length > 0 && searchedText === '') {
                 handleSearch(searchedText);
+                const searchParams = new URLSearchParams();
+                searchParams.set('search', searchedText);
+                // Navigate to the updated URL
+                navigate(`${location.pathname}?${searchParams.toString()}`);
               }
               setSearchText(searchedText);
             }}
             placeholder="Search"
             onKeyDown={(event) => {
               if (event.key === 'Enter') {
-                // handleSearch(searchText);
                 const searchParams = new URLSearchParams();
                 searchParams.set('search', searchText);
-
                 // Navigate to the updated URL
                 navigate(`${location.pathname}?${searchParams.toString()}`);
               }
@@ -302,52 +304,58 @@ function PublicTable(props) {
             </span>
           </div>
           <div className={styles.yScroll}>
-            {teamsToDisplay.map((team, index) => (
-              <div
-                className={`${styles.groupContainer} ${styles.conHover}`}
-                style={{
-                  gridTemplateColumns:
-                    !props.isActive && `repeat(${2}, 11rem) 20rem 10rem 18rem 11rem 10rem`,
-                  gridColumnGap: '5px',
-                  borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
-                }}
-                key={index}
-              >
-                <span className={styles.centerText}>{team.team_name}</span>
+            {teamsToDisplay.length > 0 ? (
+              teamsToDisplay.map((team, index) => (
+                <div
+                  className={`${styles.groupContainer} ${styles.conHover}`}
+                  style={{
+                    gridTemplateColumns:
+                      !props.isActive && `repeat(${2}, 11rem) 20rem 10rem 18rem 11rem 10rem`,
+                    gridColumnGap: '5px',
+                    borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
+                  }}
+                  key={index}
+                >
+                  <span className={styles.centerText}>{team.team_name}</span>
 
-                {team.projects.length > 0 ? (
-                  <span
-                    className={styles.centerTextName}
-                    onClick={() =>
-                      onClickNavigation(team.classroom_id, team.projects[0].project_id)
-                    }
-                  >
-                    {team.projects[0].project_name}
-                  </span>
-                ) : (
-                  <span className={styles.centerText}>No Project </span>
-                )}
-                <span className={styles.centerText}>{team.projects[0].project_description}</span>
-
-                <span className={styles.centerText} style={{ color: 'red' }}>
-                  {team.projects.length > 0
-                    ? `${Math.round((team.projects[0].project_score / templates.length) * 10)}%`
-                    : '0%'}
-                </span>
-                {!props.isActive && (
-                  <span className={styles.centerText}>{team.projects[0].project_reason}</span>
-                )}
-
-                <span className={styles.centerText}>{team.teacher_info}</span>
-                <span className={styles.centerText}>
                   {team.projects.length > 0 ? (
-                    time(team.projects[0].project_date_created)
+                    <span
+                      className={styles.centerTextName}
+                      onClick={() =>
+                        onClickNavigation(team.classroom_id, team.projects[0].project_id)
+                      }
+                    >
+                      {team.projects[0].project_name}
+                    </span>
                   ) : (
-                    <span>---</span>
+                    <span className={styles.centerText}>No Project </span>
                   )}
-                </span>
+                  <span className={styles.centerText}>{team.projects[0].project_description}</span>
+
+                  <span className={styles.centerText} style={{ color: 'red' }}>
+                    {team.projects.length > 0
+                      ? `${Math.round((team.projects[0].project_score / templates.length) * 10)}%`
+                      : '0%'}
+                  </span>
+                  {!props.isActive && (
+                    <span className={styles.centerText}>{team.projects[0].project_reason}</span>
+                  )}
+
+                  <span className={styles.centerText}>{team.teacher_info}</span>
+                  <span className={styles.centerText}>
+                    {team.projects.length > 0 ? (
+                      time(team.projects[0].project_date_created)
+                    ) : (
+                      <span>---</span>
+                    )}
+                  </span>
+                </div>
+              ))
+            ) : (
+              <div className={styles.noTeamMessage}>
+                Sorry! We looked everywhere, but could not find any project.
               </div>
-            ))}
+            )}
           </div>
         </div>
       </Card>

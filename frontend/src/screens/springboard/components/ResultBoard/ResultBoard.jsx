@@ -42,16 +42,16 @@ const ResultBoard = ({ boardid }) => {
           </Card>
 
           <Card className={styles.cardCriteria}>
-            <h5 className={styles.ratings}>Technical Feasibility</h5>
+            <h5 className={styles.ratings}>Capability</h5>
             <div className={styles.cardContent}>
-              <CircularProgressWithLabel value={board.technical_feasibility * 10} size={80} />
+              <CircularProgressWithLabel value={board.capability * 10} size={80} />
             </div>
           </Card>
 
           <Card className={styles.cardCriteria}>
-            <h5 className={styles.ratings}>Capability</h5>
+            <h5 className={styles.ratings}>Technical Feasibility</h5>
             <div className={styles.cardContent}>
-              <CircularProgressWithLabel value={board.capability * 10} size={80} />
+              <CircularProgressWithLabel value={board.technical_feasibility * 10} size={80} />
             </div>
           </Card>
         </div>
