@@ -24,7 +24,7 @@ const ClassroomTable = (props) => {
     return savedPage ? parseInt(savedPage, 10) : 1;
   });
   const [sharedState, setSharedState] = useState(true);
-  const teamsPerPage = 15;
+  const teamsPerPage = 10;
   const navigate = useNavigate();
 
   const activate = (state) => {
@@ -47,11 +47,18 @@ const ClassroomTable = (props) => {
         });
         setTemplateSortOrder(initialSortOrder);
         const sortedGroups = [...props.teams].sort((a, b) => {
-          const aScore =
-            a.projects.length > 0 ? a.projects[0].project_score / templatesData.length : 0;
-          const bScore =
-            b.projects.length > 0 ? b.projects[0].project_score / templatesData.length : 0;
-          return bScore - aScore;
+          const aTime = a.projects.length > 0 ? new Date(a.projects[0].project_date_created) : null;
+          const bTime = b.projects.length > 0 ? new Date(b.projects[0].project_date_created) : null;
+          if (aTime && bTime) {
+            return !dateSort ? aTime - bTime : bTime - aTime;
+          }
+          if (!aTime && !bTime) {
+            return 0;
+          }
+          if (!aTime) {
+            return 1;
+          }
+          return -1;
         });
         setTeams(sortedGroups);
         setSharedState(0);
@@ -110,46 +117,6 @@ const ClassroomTable = (props) => {
     setProjectNameSortOrder(!projectNameSortOrder);
   };
 
-  const handleSort = () => {
-    setSharedState(3);
-    activate(3);
-    const sortedGroups = [...teams].sort((a, b) => {
-      const aScore = a.projects.length > 0 ? a.projects[0].project_score / templates.length : 0;
-      const bScore = b.projects.length > 0 ? b.projects[0].project_score / templates.length : 0;
-      return !sortOrder ? aScore - bScore : bScore - aScore;
-    });
-    setTeams(sortedGroups);
-    setSortOrder(!sortOrder);
-  };
-
-  const handleTemplateSort = (templateId) => {
-    setSharedState(templateId + 4);
-    activate(templateId + 4);
-    if (templateId !== sharedState - 4) {
-      setTemplateSort(true);
-    }
-
-    const sortedGroups = [...teams].sort((a, b) => {
-      const aBoard =
-        a.projects.length > 0
-          ? a.projects[0].project_boards.find((board) => board.templateId === templateId)
-          : null;
-      const bBoard =
-        b.projects.length > 0
-          ? b.projects[0].project_boards.find((board) => board.templateId === templateId)
-          : null;
-      const aScore = aBoard ? aBoard.board_score : 0;
-      const bScore = bBoard ? bBoard.board_score : 0;
-      return !templateSort ? aScore - bScore : bScore - aScore;
-    });
-    setTeams(sortedGroups);
-    setTemplateSort(!templateSort);
-    setTemplateSortOrder({
-      ...templateSortOrder,
-      [templateId]: !templateSortOrder[templateId],
-    });
-  };
-
   const handleTimeSort = () => {
     setSharedState(4);
     activate(4);
@@ -175,6 +142,45 @@ const ClassroomTable = (props) => {
 
     setTeams(sortedGroups);
     setDateSort(!dateSort);
+  };
+
+  const handleSort = () => {
+    setSharedState(3);
+    activate(3);
+    const sortedGroups = [...teams].sort((a, b) => {
+      const aScore = a.projects.length > 0 ? a.projects[0].project_score / templates.length : 0;
+      const bScore = b.projects.length > 0 ? b.projects[0].project_score / templates.length : 0;
+      return !sortOrder ? aScore - bScore : bScore - aScore;
+    });
+    setTeams(sortedGroups);
+    setSortOrder(!sortOrder);
+  };
+
+  const handleTemplateSort = (templateId) => {
+    setSharedState(templateId + 4);
+    activate(templateId + 4);
+    if (templateId !== sharedState - 4) {
+      setTemplateSort(true);
+    }
+    const sortedGroups = [...teams].sort((a, b) => {
+      const aBoard =
+        a.projects.length > 0
+          ? a.projects[0].project_boards.find((board) => board.template_id === templateId)
+          : null;
+      const bBoard =
+        b.projects.length > 0
+          ? b.projects[0].project_boards.find((board) => board.template_id === templateId)
+          : null;
+      const aScore = aBoard ? aBoard.board_score : 0;
+      const bScore = bBoard ? bBoard.board_score : 0;
+      return !templateSort ? aScore - bScore : bScore - aScore;
+    });
+    setTeams(sortedGroups);
+    setTemplateSort(!templateSort);
+    setTemplateSortOrder({
+      ...templateSortOrder,
+      [templateId]: !templateSortOrder[templateId],
+    });
   };
 
   const time = (timestamp) => {
