@@ -11,6 +11,8 @@ const ProjectDetails = ({ project, numTemplates, onProjectUpdate, team_name, isC
   const { accessToken } = useAuth();
   const user = jwtDecode(accessToken);
 
+  const { updateProjects } = useProjects();
+
   // temporary container
   let officialTeam = null;
   let teamId = 0;
@@ -29,47 +31,6 @@ const ProjectDetails = ({ project, numTemplates, onProjectUpdate, team_name, isC
     }
   }
 
-  const { updateProjects } = useProjects();
-
-  // eslint-disable-next-line no-use-before-define
-  const updateProjectDetails = async (newName, newDesc) => {
-    const wordsArray = newDesc.split(/\s+/);
-    const numberOfWords = wordsArray.length;
-    if (numberOfWords <= 50 && numberOfWords >= 10) {
-      try {
-        await updateProjects(project.id, {
-          body: {
-            name: newName,
-            description: newDesc,
-            team_id: project.team_id,
-          },
-        });
-        Swal.fire({
-          title: 'Project Updated',
-          icon: 'success',
-          confirmButtonColor: '#9c7b16',
-        });
-        onProjectUpdate();
-        return true;
-      } catch (error) {
-        Swal.fire('Error', 'Update Error.', 'error');
-      }
-    } else {
-      Swal.fire({
-        title: 'Error',
-        text: `Description should have 10 - 50 words. You have ${numberOfWords} words.`,
-        icon: 'error',
-        showConfirmButton: true,
-      }).then((result) => {
-        if (result.isConfirmed) {
-          // eslint-disable-next-line no-use-before-define
-          handleEditDetailModal(newName, newDesc);
-        }
-      });
-    }
-  };
-
-  // eslint-disable-next-line no-use-before-define
   const handleEditDetailModal = (projname, desc) => {
     Swal.fire({
       html: `
@@ -109,26 +70,44 @@ const ProjectDetails = ({ project, numTemplates, onProjectUpdate, team_name, isC
       preConfirm: async () => {
         const input1Value = document.getElementById('input1').value;
         const input2Value = document.getElementById('input2').value;
+        const wordsArray = input2Value.split(/\s+/);
         try {
-          if (!input1Value) {
-            throw new Error('Project name cannot be empty');
+          if (!input1Value && !input2Value) {
+            Swal.showValidationMessage('Project name and description cannot be empty');
+          } else if (!input1Value) {
+            Swal.showValidationMessage('Project name cannot be empty');
           } else if (!input2Value) {
-            throw new Error('Please enter the project description.');
+            Swal.showValidationMessage('Please enter the project description.');
+          } else if (wordsArray.length < 10 || wordsArray.length > 50) {
+            Swal.showValidationMessage(
+              `Description should have 10 - 50 words. You have ${wordsArray.length} word/s.`
+            );
+          } else {
+            const response = await updateProjects(project.id, {
+              body: {
+                name: input1Value,
+                description: input2Value,
+                team_id: project.team_id,
+              },
+            });
+
+            if (response) {
+              Swal.fire({
+                title: 'Project Created',
+                icon: 'success',
+                confirmButtonColor: '#9c7b16',
+              });
+              onProjectUpdate();
+            } else {
+              Swal.showValidationMessage(
+                `Project with the name '${input1Value}' already exists. Please enter another project name.`
+              );
+            }
           }
-          return true;
         } catch (error) {
-          Swal.showValidationMessage(
-            `Project with the name '${input1Value}' already exists. Please enter another project name.`
-          );
-          return false;
+          Swal.showValidationMessage(`Error: Creating project error;`);
         }
       },
-    }).then((result) => {
-      if (result.isConfirmed) {
-        const input1Value = document.getElementById('input1').value;
-        const input2Value = document.getElementById('input2').value;
-        updateProjectDetails(input1Value, input2Value);
-      }
     });
   };
 
