@@ -11,7 +11,7 @@ from api.models import ActivityComment
 from api.models import User
 from api.models import Activity
 
-from api.serializers import ActivityCommentSerializer, UserCommentSerializer, SpecificActivityCommentSerializer, CommentCreateSerializer
+from api.serializers import ActivityCommentSerializer, CommentWithUserSerializer, UserCommentSerializer, SpecificActivityCommentSerializer, CommentCreateSerializer
 
 class ActivityCommentController(viewsets.GenericViewSet,
                       mixins.CreateModelMixin,
@@ -84,12 +84,26 @@ class ActivityCommentController(viewsets.GenericViewSet,
             try:
                 activity = Activity.objects.get(pk=activity_id)
                 comments = ActivityComment.objects.filter(activity_id=activity)
-                serializer = self.get_serializer(comments, many=True)
+                serializer = CommentWithUserSerializer(comments, many=True)
                 return Response(serializer.data, status=status.HTTP_200_OK)
             except Activity.DoesNotExist:
                 return Response({'error': 'Activity not found'}, status=status.HTTP_404_NOT_FOUND)
         else:
             return Response({'error': 'Activity ID not provided'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    @swagger_auto_schema(
+        operation_summary="Get a specific comment by ID",
+        operation_description="GET /activity-comments/{pk}",
+        responses={
+            status.HTTP_200_OK: openapi.Response('OK', CommentWithUserSerializer),
+            status.HTTP_404_NOT_FOUND: openapi.Response('Not Found', message='Comment not found.'),
+            status.HTTP_500_INTERNAL_SERVER_ERROR: openapi.Response('Internal Server Error', message='Internal Server Error. An unexpected error occurred.'),
+        }
+    )
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = CommentWithUserSerializer(instance)
+        return Response(serializer.data, status=status.HTTP_200_OK)
         
     @swagger_auto_schema(
         operation_summary="Delete an activity comment",
