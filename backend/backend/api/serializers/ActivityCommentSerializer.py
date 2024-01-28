@@ -50,7 +50,7 @@ class ActivityCommentSerializer(serializers.ModelSerializer):
         model = ActivityComment
         fields = ('id', 'comment', 'date_created', 'activity_id', 'user_id')
 
-class CommentWithUserSerializer(serializers.ModelSerializer):
+class ActivityCommentWithUserSerializer(serializers.ModelSerializer):
     activity = serializers.SerializerMethodField()
     user = serializers.SerializerMethodField()
 
