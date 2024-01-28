@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { IoArrowBackSharp } from 'react-icons/io5';
 import Header from '../../components/Header/Header';
 import Card from '../../components/UI/Card/Card';
 import Button from '../../components/UI/Button/Button';
 import { Tiptap } from '../../components/UI/RichTextEditor/TipTap';
-import styles from './AddBoard.module.css';
 import ModalCustom from '../../components/UI/Modal/Modal';
 import Loading from '../../components/UI/Loading/Loading';
 import { useBoardTemplate, useProjects } from '../../../../hooks';
+import styles from './AddBoard.module.css';
 
 function AddBoard() {
   const { id, templateid } = useParams();
@@ -15,7 +16,7 @@ function AddBoard() {
   const { getTemplate } = useBoardTemplate();
   const [template, setTemplate] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newContent, setNewContent] = useState('');
+  const [newContent, setNewContent] = useState(sessionStorage.getItem('contents'));
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -23,7 +24,9 @@ function AddBoard() {
       try {
         const response = await getTemplate(templateid);
         setTemplate(response.data);
-        setNewContent(response.data.content || '');
+        if (!newContent) {
+          setNewContent(response.data.content || '');
+        }
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -31,6 +34,10 @@ function AddBoard() {
 
     fetchData();
   }, [templateid]);
+
+  useEffect(() => {
+    sessionStorage.setItem('contents', newContent);
+  }, [newContent]);
 
   const addProjectBoard = async () => {
     setIsModalOpen(true);
@@ -54,31 +61,47 @@ function AddBoard() {
       console.error('Error creating ProjectBoard:', error);
     }
     setIsModalOpen(false);
+    sessionStorage.removeItem('contents');
   };
 
-  if (!template) {
-    return <p>Loading...</p>;
-  }
+  const goBack = () => {
+    navigate(`/project/${id}/create-board/${templateid}/rules`);
+  };
+
+  // if (!template) {
+  //   return <p>Loading...</p>;
+  // }
 
   return (
     <div className={styles.body}>
       <Header />
-      <div className={styles.container}>
-        <span className={styles.title}>{template.title}</span>
-        <Card className={styles.cardContainer}>
-          <div className={styles.box} />
-          <div className={styles.containerStyle}>
-            <Tiptap setDescription={setNewContent} value={newContent} />
-          </div>
-        </Card>
-        {isModalOpen && (
-          <ModalCustom width={200} isOpen={isModalOpen}>
-            <Loading timeout="auto" style={{ height: 'auto' }} />
-          </ModalCustom>
-        )}
-        <Button className={styles.button} onClick={addProjectBoard}>
-          Submit
-        </Button>
+      <div className="d-flex">
+        <span className={styles.back} onClick={goBack}>
+          <IoArrowBackSharp />
+        </span>
+        <div className={styles.container}>
+          {template ? (
+            <span>
+              <span className={styles.title}>{template.title}</span>
+              <Card className={styles.cardContainer}>
+                <div className={styles.box} />
+                <div className={styles.containerStyle}>
+                  <Tiptap setDescription={setNewContent} value={newContent} />
+                </div>
+              </Card>
+            </span>
+          ) : (
+            <Loading />
+          )}
+          {isModalOpen && (
+            <ModalCustom width={200} isOpen={isModalOpen}>
+              <Loading timeout="auto" style={{ height: 'auto' }} />
+            </ModalCustom>
+          )}
+          <Button className={styles.button} onClick={addProjectBoard}>
+            Submit
+          </Button>
+        </div>
       </div>
     </div>
   );

@@ -16,6 +16,7 @@
   flex-direction: column;
   width: 100%;
   max-width: 70rem;
+  margin-top: 40px;
 }
 
 .cardContainer {
@@ -23,6 +24,7 @@
   padding: 0 0 40px 0;
   width: 100%;
   max-width: 70rem;
+  min-width: 70rem;
 }
 
 .containerStyle {
@@ -90,4 +92,12 @@
   margin-right: 10px;
   margin-bottom: 5px;
   background-color: white;
+}
+
+.back{
+  position: relative;
+  left: -60px;
+  padding-top: 20px;
+  cursor: pointer;
+  font-size: 20px;
 }

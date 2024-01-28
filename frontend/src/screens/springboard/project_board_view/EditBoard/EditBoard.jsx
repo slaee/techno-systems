@@ -17,7 +17,7 @@ function EditBoard() {
   const { getProjectBoardById, updateProjectBoard } = useProjects();
 
   const [title, setTitle] = useState(null);
-  const [content, setContent] = useState(null);
+  const [content, setContent] = useState(sessionStorage.getItem('contents'));
   const [boardId, setBoardId] = useState(null);
   const [projectId, SetProjectId] = useState(null);
   const [priorNovelVal, setPriorNovelVal] = useState(null);
@@ -32,7 +32,9 @@ function EditBoard() {
       try {
         const response = await getProjectBoardById(boardid);
         setTitle(response.data.title || '');
-        setContent(response.data.content || '');
+        if (!content) {
+          setContent(response.data.content || '');
+        }
         setBoardId(response.data.board_id || '');
         SetProjectId(response.data.project_fk || '');
 
@@ -45,6 +47,10 @@ function EditBoard() {
     };
     fetchData();
   }, [boardid]);
+
+  useEffect(() => {
+    sessionStorage.setItem('contents', content);
+  }, [content]);
 
   const updateBoard = async () => {
     setIsModalOpen(true);
@@ -72,12 +78,9 @@ function EditBoard() {
   };
 
   const handleBack = () => {
+    sessionStorage.removeItem('contents');
     navigate(`/project/${id}/board/${boardid}`);
   };
-
-  if (!content) {
-    return <p>Loading</p>;
-  }
 
   return (
     <div className={styles.body}>
@@ -89,13 +92,15 @@ function EditBoard() {
           </span>
           {title}
         </span>
-
         <Card className={styles.cardContainer}>
           <div className={styles.box} />
-
-          <div className={styles.containerStyle}>
-            <Tiptap setDescription={setContent} value={content} />
-          </div>
+          {content ? (
+            <div className={styles.containerStyle}>
+              <Tiptap setDescription={setContent} value={content} />
+            </div>
+          ) : (
+            <Loading />
+          )}
         </Card>
         {isModalOpen && (
           <ModalCustom width={200} isOpen={isModalOpen}>

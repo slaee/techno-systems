@@ -5,6 +5,7 @@ import parse from 'html-react-parser';
 import Swal from 'sweetalert2';
 import { IoArrowBackSharp } from 'react-icons/io5';
 import { useAuth } from '../../../../contexts/AuthContext';
+import Loading from '../../components/UI/Loading/Loading';
 import Header from '../../components/Header/Header';
 import ResultBoard from '../../components/ResultBoard/ResultBoard';
 import Button from '../../components/UI/Button/Button';
@@ -104,7 +105,7 @@ function ViewBoard() {
   };
 
   if (!boards) {
-    return <p>Loading...</p>;
+    return <Loading />;
   }
 
   const currentProjectBoard = boards[currentIndex];
