@@ -55,8 +55,11 @@
   .cardProj p {
     margin-top: 25px;
     overflow: visible; /* Allow overflowing content beyond the card */
-  white-space: normal; /* Allow text to wrap to new lines */
+    white-space: normal; /* Allow text to wrap to new lines */
+  }
 
+  .cardProj:hover{
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.36);
   }
 
 
@@ -79,6 +82,12 @@
     color: #555; /* Adjust the color as needed */
     font-size: 16px;
  
+  }
+
+  .greenBullet {
+    color: #5fab3c;
+    position: relative;
+    left: -10px;
   }
   
   
