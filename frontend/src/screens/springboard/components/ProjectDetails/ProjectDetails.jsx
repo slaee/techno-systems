@@ -1,10 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { FaPen } from 'react-icons/fa6';
 import jwtDecode from 'jwt-decode';
 import Swal from 'sweetalert2';
-import ModalCustom from '../UI/Modal/Modal';
-import Button from '../UI/Button/Button';
 import styles from './ProjectDetails.module.css';
 import { useAuth } from '../../../../contexts/AuthContext';
 import { useClassMemberTeam, useProjects } from '../../../../hooks';
@@ -33,14 +31,6 @@ const ProjectDetails = ({ project, numTemplates, onProjectUpdate, team_name, isC
 
   const { updateProjects } = useProjects();
 
-  // const [group, setGroup] = useState('');
-  const [modalContent, setModalContent] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
-
   // eslint-disable-next-line no-use-before-define
   const updateProjectDetails = async (newName, newDesc) => {
     const wordsArray = newDesc.split(/\s+/);
@@ -60,12 +50,11 @@ const ProjectDetails = ({ project, numTemplates, onProjectUpdate, team_name, isC
           confirmButtonColor: '#9c7b16',
         });
         onProjectUpdate();
+        return true;
       } catch (error) {
         Swal.fire('Error', 'Update Error.', 'error');
       }
-      handleCloseModal();
     } else {
-      handleCloseModal();
       Swal.fire({
         title: 'Error',
         text: `Description should have 10 - 50 words. You have ${numberOfWords} words.`,
@@ -139,11 +128,6 @@ const ProjectDetails = ({ project, numTemplates, onProjectUpdate, team_name, isC
         const input1Value = document.getElementById('input1').value;
         const input2Value = document.getElementById('input2').value;
         updateProjectDetails(input1Value, input2Value);
-        Swal.fire({
-          title: 'Project Updated',
-          icon: 'success',
-          confirmButtonColor: '#9c7b16',
-        });
       }
     });
   };
@@ -167,11 +151,6 @@ const ProjectDetails = ({ project, numTemplates, onProjectUpdate, team_name, isC
             <span className={styles.pen} onClick={() => handleEditDetailModal()}>
               <FaPen />
             </span>
-          )}
-          {isModalOpen && (
-            <ModalCustom width={500} isOpen={isModalOpen} onClose={handleCloseModal}>
-              {modalContent}
-            </ModalCustom>
           )}
         </p>
         <p className={styles.title_body}>Name:</p>
