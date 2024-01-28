@@ -5,6 +5,8 @@ from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
+from django.db.models import Count
+
 from api.custom_permissions import IsTeacher, IsModerator
 
 from api.models import ActivityTemplate
@@ -146,3 +148,18 @@ class ActivityTemplateController(viewsets.GenericViewSet,
         templates = ActivityTemplate.objects.all()
         serializer = self.get_serializer(templates, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    @swagger_auto_schema(
+        operation_summary="Get all courses",
+        operation_description="GET /activity-templates/all-courses",
+        responses={
+            status.HTTP_200_OK: openapi.Response('OK', ActivityTemplateSerializer(many=True)),
+            status.HTTP_401_UNAUTHORIZED: "Unauthorized",
+            status.HTTP_500_INTERNAL_SERVER_ERROR: "Internal Server Error",
+        }
+    )
+    @action(detail=False, methods=['GET'])
+    def get_all_courses(self, request):
+        courses = ActivityTemplate.objects.values('course_name').annotate(total=Count('course_name')).order_by('-total')
+        # 'values' method retrieves unique course names and 'annotate' adds the total count
+        return Response(courses, status=status.HTTP_200_OK)
