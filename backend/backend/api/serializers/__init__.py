@@ -20,7 +20,7 @@ from .PeerEvalSerializer import AssignPeerEvalSerializer
 
 from .ActivitySerializer import ActivitySerializer
 from .ActivityWorkAttachmentSerializer import ActivityWorkAttachmentSerializer
-from .ActivityCommentSerializer import ActivityCommentSerializer, UserCommentSerializer, SpecificActivityCommentSerializer, CommentCreateSerializer
+from .ActivityCommentSerializer import ActivityCommentSerializer, UserCommentSerializer, SpecificActivityCommentSerializer, CommentCreateSerializer, ActivityCommentWithUserSerializer
 from .ActivityTemplateSerializer import ActivityTemplateSerializer
 from.ActivitySerializer import ActivityCreateFromTemplateSerializer
 

@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
-from api.custom_permissions import IsTeacher
+from api.custom_permissions import IsTeacher, IsModerator
 
 from api.models import ActivityTemplate
 
@@ -24,7 +24,7 @@ class ActivityTemplateController(viewsets.GenericViewSet,
         if self.action in ['create', 'by_course', 'retrieve', 'update', 
                            'destroy', 'list',
                            ]:
-            return [permissions.IsAuthenticated(), IsTeacher()]
+            return [permissions.IsAuthenticated(), IsModerator()]
         else:
             return [permissions.IsAuthenticated()]
 
