@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
-from api.custom_permissions import IsTeacher
+from api.custom_permissions import IsTeacher, IsModerator
 
 from api.models import ActivityComment
 from api.models import User
@@ -25,8 +25,8 @@ class ActivityCommentController(viewsets.GenericViewSet,
         if self.action in ['create', 'update', 'partial_update', 
                            'destroy', 'list', 'get_activity_comments'
                            ]:
-        #     return [permissions.IsAuthenticated(), IsTeacher()]
-        # else:
+            return [permissions.IsAuthenticated(), IsModerator()]
+        else:
             return [permissions.IsAuthenticated()]
 
     def get_serializer_class(self):
