@@ -15,3 +15,4 @@ export { default as usePeerEvals } from './usePeerEvals';
 export { default as useAssignedPeerEval } from './useAssignedPeerEval';
 export { default as useActivities } from './useActivities';
 export { default as useActivity } from './useActivity';
+export { default as useActivityComments } from './useActivityComments';
