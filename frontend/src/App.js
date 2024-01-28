@@ -128,22 +128,13 @@ function App() {
 							/>
 							
 							<Route
-								path=':activityId/team/:teamId'
+								path=':activityId/teams/:teamId'
 								element={
 									<PrivateRoute>
 										<ViewActivity />
 									</PrivateRoute>
 								}
 							/>
-							<Route
-								path=':activityId'
-								element={
-									<PrivateRoute>
-										<ViewActivity />
-									</PrivateRoute>
-								}
-							/>
-
 						</Route>
 						<Route
 							path='new_activity'
