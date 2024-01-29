@@ -1,8 +1,10 @@
-import { useEffect, useState } from 'react';
-import { useNavigate, useOutletContext, useParams } from 'react-router-dom';
-import { FiChevronLeft } from 'react-icons/fi';
-import { useActivity, useTeams, useActivityTemplate} from '../../../../hooks';
 import Select from 'react-select';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
+import { useEffect, useState } from 'react';
+import { FiChevronLeft } from 'react-icons/fi';
+import { useNavigate, useOutletContext, useParams } from 'react-router-dom';
+import { useActivity, useTeams, useActivityTemplate} from '../../../../hooks';
 import { UpdateTemplatePopup } from '../../../../components/modals/teacher_views';
 
 const ViewTemplate = () => {
@@ -151,7 +153,7 @@ const ViewTemplate = () => {
 					</div>
 				</div>
 				<hr className='text-dark' />
-				<form onSubmit={handleSubmit}>
+				<Form className='d-flex flex-column gap-3 was-validated' id="form" onSubmit={handleSubmit}>
 					{/* title */}
 					<div className='mb-3'>
 						<label
@@ -218,6 +220,7 @@ const ViewTemplate = () => {
 							onChange={handleTeamChange}
 							options={teamOptions}
 							isMulti
+							required
 						/>
 					</div>
 					{/* date */}
@@ -229,10 +232,11 @@ const ViewTemplate = () => {
 							Due Date
 						</label>
 						<input
+							className='form-control is-invalid'
 							type='date'
-							className='form-control'
 							id='due_date'
 							name='due_date'
+							required
 							value={activityData.due_date}
 							onChange={handleChange}
 						/>
@@ -246,21 +250,21 @@ const ViewTemplate = () => {
 							Total Score
 						</label>
 						<input
+                            className="form-control is-invalid" 
 							type='number'
-							className='form-control'
 							id='total_score'
 							name='total_score'
-							value={activityData.total_score}
+							required
+							value={activityData.total_score ? activityData.total_score : ''}
 							onChange={handleChange}
 						/>
 					</div>
-					<button
-						type='submit'
-						className='btn btn-activity-primary'
-					>
-						Create Activity
-					</button>
-				</form>
+					<div className="d-flex justify-content-end">
+						<Button variant='btn btn-activity-primary' type='submit' id='form'>
+							Add Comment
+						</Button>
+                    </div>
+				</Form>
                 <UpdateTemplatePopup show={showModal} handleClose={handleCloseModal} data={templateData} />
 			</div>
 		</div>

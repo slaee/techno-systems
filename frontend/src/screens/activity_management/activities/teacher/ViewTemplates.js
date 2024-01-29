@@ -1,10 +1,10 @@
+import Select from 'react-select';
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FiChevronLeft } from "react-icons/fi";
 import { TemplateCard } from "../../../../components/cards/activity_cards";
 import { useActivityTemplates } from "../../../../hooks";
 import { CreateTemplatePopup } from "../../../../components/modals/teacher_views";
-import Select from 'react-select';
 
 
 const ViewTemplates = () => {
@@ -65,7 +65,9 @@ const ViewTemplates = () => {
 							Filter By Course:
 						</label>
 
+
                         <Select
+                            className='w-100'
                             options={courseOptions}
                             isSearchable={true}
                             isLoading={isLoading}

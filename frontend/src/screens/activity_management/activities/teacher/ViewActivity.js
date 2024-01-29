@@ -72,12 +72,9 @@ const ViewActivity = () => {
 
 		if (isConfirmed) {
 			try {
-				const response = await deleteTeamActivity();
-
-				if (response) {
-					console.log("Successfully deleted team!");
-					navigate(-1);
-				}
+				await deleteTeamActivity();
+				console.log("Successfully deleted team!");
+				navigate(-1);
 			} catch (error) {
 				console.error(error);
 			}

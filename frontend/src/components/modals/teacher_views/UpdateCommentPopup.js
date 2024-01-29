@@ -1,9 +1,8 @@
-import { useNavigate, useOutletContext } from "react-router-dom";
-import React, { useEffect, useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-
+import React, { useEffect, useState } from "react";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import { useActivityComment } from "../../../hooks";
 
 const UpdateCommentPopup = ({ show, handleClose, data, commentId }) => {
@@ -12,13 +11,12 @@ const UpdateCommentPopup = ({ show, handleClose, data, commentId }) => {
 
     const navigate = useNavigate();
 
-    // State variable and handler for updating comments
     const [commentData, setCommentData] = useState({
         "activity_id": 0,
         "user_id": 0,
         "comment": "",
     });
-    // Handle input changes in the comment form
+    
     const handleChange = (e) => {
         const { name, value } = e.target;
         commentData.activity_id = data.id;
@@ -32,7 +30,7 @@ const UpdateCommentPopup = ({ show, handleClose, data, commentId }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await updateComment(commentData);
+            await updateComment(commentData);
             // must add a conditional statement to check if response is successful
 
             console.log("Evaluation added successfully!");
@@ -60,30 +58,27 @@ const UpdateCommentPopup = ({ show, handleClose, data, commentId }) => {
             </Modal.Header>
 
             <Modal.Body>
-                <Form className='d-flex flex-column gap-3'>
+                <Form className='d-flex flex-column gap-3 was-validated' id="form" onSubmit={handleSubmit}>
                     <Form.Group controlId='comment-input'>
                         <Form.Label>Comment</Form.Label>
 
                         <Form.Control
+                            className="form-control is-invalid"
                             name='comment'
                             as='textarea'
+                            required
                             rows={3}
                             onChange={handleChange}
                             value={commentData.comment}
                         />
                     </Form.Group>
+                    <div className="d-flex justify-content-end">
+                        <Button variant='btn btn-activity-primary' type='submit' id='form'>
+                            Add Comment
+                        </Button>
+                    </div>
                 </Form>
             </Modal.Body>
-
-            <Modal.Footer>
-                <Button variant='outline-secondary' onClick={handleClose}>
-                    Close
-                </Button>
-
-                <Button variant='success' onClick={handleSubmit}>
-                    Edit Comment
-                </Button>
-            </Modal.Footer>
         </Modal>
     );
 };

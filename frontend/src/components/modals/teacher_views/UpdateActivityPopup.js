@@ -1,11 +1,10 @@
-import { useNavigate } from "react-router-dom";
-import React, { useState } from "react";
 
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-
-import { useActivity, useActivities } from "../../../hooks";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useActivity } from "../../../hooks";
 
 const UpdateActivityPopup = ({ show, handleClose, classId, teamId, activityId, data }) => {
     const navigate = useNavigate();
@@ -56,15 +55,18 @@ const UpdateActivityPopup = ({ show, handleClose, classId, teamId, activityId, d
             </Modal.Header>
 
             <Modal.Body>
-                <Form className='d-flex flex-column gap-3'>
+                <Form className='d-flex flex-column gap-3 was-validated' id="form" onSubmit={handleSubmit}>
                     <Form.Group controlId='title-input'>
-                        <Form.Label>Title</Form.Label>
+                        <Form.Label className="form-label">Title</Form.Label>
 
                         <Form.Control
+                            className="form-control is-invalid" 
+                            as='input'
                             type='text'
                             name='title'
                             value={updateActivityData?.title}
                             onChange={handleChange}
+                            required
                         />
                     </Form.Group>
 
@@ -72,12 +74,13 @@ const UpdateActivityPopup = ({ show, handleClose, classId, teamId, activityId, d
                         <Form.Label>Description</Form.Label>
 
                         <Form.Control
+                            className="form-control is-invalid" 
                             as='textarea'
                             rows={3}
                             name='description'
                             value={updateActivityData?.description}
                             onChange={handleChange}
-                            requ
+                            required
                         />
                     </Form.Group>
 
@@ -85,10 +88,12 @@ const UpdateActivityPopup = ({ show, handleClose, classId, teamId, activityId, d
                         <Form.Label>Due Date</Form.Label>
 
                         <Form.Control
+                            className="form-control is-invalid" 
                             type='date'
                             name='due_date'
                             value={updateActivityData?.due_date?.split('T')[0]}
                             onChange={handleChange}
+                            required
                         />
                     </Form.Group>
 
@@ -96,24 +101,21 @@ const UpdateActivityPopup = ({ show, handleClose, classId, teamId, activityId, d
                         <Form.Label>Total Score</Form.Label>
 
                         <Form.Control
+                            className="form-control is-invalid" 
                             type='number'
                             name='total_score'
                             value={updateActivityData?.total_score}
                             onChange={handleChange}
+                            required
                         />
                     </Form.Group>
+                    <div className="d-flex justify-content-end">
+                        <Button variant='btn btn-activity-primary' type="submit" >
+                            Update Activity
+                        </Button>
+                    </div>
                 </Form>
             </Modal.Body>
-
-            <Modal.Footer>
-                <Button variant='outline-secondary' onClick={handleClose}>
-                    Close
-                </Button>
-
-                <Button variant='secondary' onClick={handleSubmit}>
-                    Update Activity
-                </Button>
-            </Modal.Footer>
         </Modal>
     );
 };

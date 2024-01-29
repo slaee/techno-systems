@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
+import Button from "react-bootstrap/Button";
+import CreatableSelect from 'react-select/creatable';
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useActivityTemplates } from "../../../hooks";
-import CreatableSelect from 'react-select/creatable';
 
 
 const CreateTemplatePopup = ({ show, handleClose }) => {
@@ -23,11 +24,9 @@ const CreateTemplatePopup = ({ show, handleClose }) => {
 
         setTemplateData(prevState => ({
             ...prevState,
-            course_name: selectedOption.value,
+            course_name: selectedOption?.value,
         }));
       };
-
-
     const handleChange = (e) => {
         const { name, value } = e.target;
         setTemplateData({
@@ -70,11 +69,14 @@ const CreateTemplatePopup = ({ show, handleClose }) => {
                 <Modal.Title className="fs-6 fw-bold">Create Template</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <Form className="d-flex flex-column gap-3">
+                <Form className='d-flex flex-column gap-3 was-validated' id='form'  onSubmit={handleSubmit}>
                     <Form.Group controlId="title-input">
                         <Form.Label>Title</Form.Label>
                         <Form.Control
+                            className="form-control is-invalid" 
+                            as='input'
                             type="text"
+                            required
                             name="title"
                             value={templateData.title}
                             onChange={handleChange}
@@ -84,6 +86,9 @@ const CreateTemplatePopup = ({ show, handleClose }) => {
                     <Form.Group controlId="description-input">
                         <Form.Label>Description</Form.Label>
                         <Form.Control
+                            className="form-control is-invalid" 
+                            type="text"
+                            required
                             as="textarea"
                             name="description"
                             value={templateData.description}
@@ -94,27 +99,24 @@ const CreateTemplatePopup = ({ show, handleClose }) => {
                     <Form.Group controlId='course-id-input'>
                         <Form.Label>Course</Form.Label>
                         <CreatableSelect
+                            className="form-control" 
+                            required
+                            isClearable
                             onChange={handleCourseChange}   
                             options={courseOptions}
                             value={selectedCourse}
                         />
                     </Form.Group>
+                    <div className="d-flex justify-content-end fw-bold">
+                        <Button
+                            variant='btn btn-activity-primary'
+                            type='submit'
+                        >
+                            Create Template
+                        </Button>
+                    </div>
                 </Form>
             </Modal.Body>
-            <Modal.Footer>
-                <button
-                    className="btn btn-outline-secondary btn-block fw-bold"
-                    onClick={handleClose}
-                >
-                    Close
-                </button>
-                <button
-                    className="btn btn-activity-primary btn-block fw-bold"
-                    onClick={handleSubmit}
-                >
-                    Submit
-                </button>
-            </Modal.Footer>
         </Modal>
     );
 };

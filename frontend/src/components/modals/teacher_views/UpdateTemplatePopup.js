@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
+import Button from "react-bootstrap/Button";
 import { useNavigate } from "react-router-dom";
 import { useActivityTemplates, useActivityTemplate } from "../../../hooks";
 import CreatableSelect from 'react-select/creatable';
@@ -12,7 +13,6 @@ const UpdateTemplatePopup = ({ show, handleClose, data }) => {
     const { updateTemplate } = useActivityTemplate(templateId);
     
     const navigate = useNavigate();
-
     
     const [courseOptions, setCourseOptions] = useState([]);
     const [templateData, setTemplateData] = useState({
@@ -44,13 +44,6 @@ const UpdateTemplatePopup = ({ show, handleClose, data }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // Check if any of the required fields are empty
-        const requiredFields = ['title', 'description', 'course_name'];
-        const isEmptyField = requiredFields.some(field => !templateData[field]);
-        if (isEmptyField) {
-            window.alert('Please fill in all required fields.');
-            return;
-        }
 
         try {
             await updateTemplate(templateData);
@@ -83,12 +76,15 @@ const UpdateTemplatePopup = ({ show, handleClose, data }) => {
                 <Modal.Title className="fs-6 fw-bold">Create Template</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <Form className="d-flex flex-column gap-3">
+                <Form className='d-flex flex-column gap-3 was-validated' id="form" onSubmit={handleSubmit}>
                     <Form.Group controlId="title-input">
                         <Form.Label>Title</Form.Label>
                         <Form.Control
+                            className="form-control is-invalid" 
+                            as="input"
                             type="text"
                             name="title"
+                            required
                             value={templateData.title}
                             onChange={handleChange}
                         />
@@ -97,8 +93,10 @@ const UpdateTemplatePopup = ({ show, handleClose, data }) => {
                     <Form.Group controlId="description-input">
                         <Form.Label>Description</Form.Label>
                         <Form.Control
+                            className="form-control is-invalid" 
                             as="textarea"
                             name="description"
+                            required
                             value={templateData.description}
                             onChange={handleChange}
                         />
@@ -107,27 +105,19 @@ const UpdateTemplatePopup = ({ show, handleClose, data }) => {
                     <Form.Group controlId='course-id-input'>
                         <Form.Label>Course</Form.Label>
                         <CreatableSelect
+                            className="form-control" 
                             onChange={handleCourseChange}   
                             options={courseOptions}
                             value={selectedCourse}
                         />
                     </Form.Group>
+                    <div className="d-flex justify-content-end">
+                        <Button variant='btn btn-activity-primary' type='submit' id='form'>
+                            Submit
+                        </Button>
+                    </div>
                 </Form>
             </Modal.Body>
-            <Modal.Footer>
-                <button
-                    className="btn btn-outline-secondary btn-block fw-bold"
-                    onClick={handleClose}
-                >
-                    Close
-                </button>
-                <button
-                    className="btn btn-activity-primary btn-block fw-bold"
-                    onClick={handleSubmit}
-                >
-                    Submit
-                </button>
-            </Modal.Footer>
         </Modal>
     );
 };

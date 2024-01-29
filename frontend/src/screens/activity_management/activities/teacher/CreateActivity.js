@@ -1,8 +1,10 @@
+import Select from 'react-select';
+import Form from "react-bootstrap/Form";
 import { useEffect, useState } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
 import { FiChevronLeft } from 'react-icons/fi';
 import { useActivity, useTeams } from '../../../../hooks';
-import Select from 'react-select';
+
 
 
 const CreateActivity = () => {
@@ -35,6 +37,15 @@ const CreateActivity = () => {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
+
+		const requiredFields = ['title', 'description', 'due_date', 'total_score'];
+        const isEmptyField = requiredFields.some((field) => !activityData[field]);
+
+        if (isEmptyField) {
+            window.alert('Please fill in all required fields.');
+            return;
+        }
+
 		const isConfirmed = window.confirm("Please confirm if you want to create this activity");
 
 		if (isConfirmed) {
@@ -102,7 +113,7 @@ const CreateActivity = () => {
 					</div>
 				</div>
 				<hr className='text-dark' />
-				<form onSubmit={handleSubmit}>
+				<Form className='was-validated' id="form" onSubmit={handleSubmit} >
 					{/* title */}
 					<div className='mb-3'>
 						<label
@@ -111,11 +122,13 @@ const CreateActivity = () => {
 						>
 							Title
 						</label>
-						<input
+						<Form.Control
+                            className="form-control is-invalid" 
+							as="input"
 							type='text'
-							className='form-control'
 							id='title'
 							name='title'
+							required
 							value={activityData.title}
 							onChange={handleChange}
 						/>
@@ -129,7 +142,8 @@ const CreateActivity = () => {
 							Description
 						</label>
 						<textarea
-							className='form-control'
+							className="form-control is-invalid" 
+							required
 							id='description'
 							name='description'
 							value={activityData.description}
@@ -145,10 +159,14 @@ const CreateActivity = () => {
 							Team
 						</label>
 						<Select
-							defaultValue={selectedTeams}
-							onChange={handleTeamChange}
-							options={teamOptions}
+                            className='form-control'
 							isMulti
+							required
+							id='description'
+							name='description'
+							defaultValue={selectedTeams}
+							options={teamOptions}
+							onChange={handleTeamChange}
 						/>
 					</div>
 					{/* date */}
@@ -160,10 +178,11 @@ const CreateActivity = () => {
 							Due Date
 						</label>
 						<input
+							className='form-control is-invalid' 
 							type='date'
-							className='form-control'
 							id='due_date'
 							name='due_date'
+							required
 							value={activityData.due_date}
 							onChange={handleChange}
 						/>
@@ -177,11 +196,12 @@ const CreateActivity = () => {
 							Total Score
 						</label>
 						<input
+							className='form-control is-invalid'
 							type='number'
-							className='form-control'
 							id='total_score'
 							name='total_score'
-							value={activityData.total_score}
+							required
+							value={activityData.total_score? activityData.total_score : ''}
 							onChange={handleChange}
 						/>
 					</div>
@@ -191,7 +211,7 @@ const CreateActivity = () => {
 					>
 						Create Activity
 					</button>
-				</form>
+				</Form>
 			</div>
 		</div>
 	);
