@@ -54,14 +54,13 @@ const ViewActivityTeacher = () => {
 			try {
 				const response = deleteEvaluation(teamId, activityId);
 				navigate(0);
-				console.log("Evaluation deleted successfully!");
 			} catch (error) {
 				console.error(error);
 			}
 		}
 		else {
 			// The user canceled the deletion
-			console.log("Deletion canceled");
+			//console.log("Deletion canceled");
 		}
 	};
 
@@ -74,14 +73,12 @@ const ViewActivityTeacher = () => {
 		if (isConfirmed) {
 			try {
 				await deleteTeamActivity();
-				console.log("Successfully deleted team!");
 				navigate(-1);
 			} catch (error) {
 				console.error(error);
 			}
 		} else {
 			// The user canceled the deletion
-			console.log("Deletion canceled");
 		}
 	};
 
@@ -104,7 +101,7 @@ const ViewActivityTeacher = () => {
 			}
 		} else {
 			// The user canceled the deletion
-			console.log("Deletion canceled");
+			//console.log("Deletion canceled");
 		}
 	};
 
@@ -181,7 +178,6 @@ const ViewActivityTeacher = () => {
 	const handleEditWorkSubmit = async (editedWorkData) => {
 		// Implement the logic to update the work data
 		// You may need to use the appropriate hook or API call here
-		console.log('Edited Work Data:', editedWorkData);
 		setShowEditWorkModal(false);
 	};
 
