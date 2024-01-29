@@ -289,7 +289,12 @@ const ViewActivityTeacher = () => {
 						activityComments.map((comment) => (
 							<div className='d-flex flex-row justify-content-between align-items-center p-3 border border-dark rounded-3 mb-0' key={comment.id}>
 								<p className='b-0 mb-0 '>
-									{comment.user.first_name} {comment.user.last_name}: {comment.comment}
+									<div className='d-flex flex-row gap-2'>
+										<div className="fw-bold activity-primary">
+											{comment.user.first_name} {comment.user.last_name}: 
+										</div>
+									</div>
+										{comment.comment}
 								</p>
 								<div className='d-flex flex-row gap-3 fw-bold'>
 									<button
@@ -312,13 +317,13 @@ const ViewActivityTeacher = () => {
 						<p>No comments available</p>
 					)}
 
+				</div>
 					<button
 						className='btn btn-activity-primary  bw-3'
 						onClick={() => setShowCommentModal(true)}
 					>
 						Add Comment
 					</button>
-				</div>
 			</div>
 
 			{activityData &&  (
