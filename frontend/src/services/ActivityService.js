@@ -38,7 +38,7 @@ const ActivityService = {
     }
     */
 	createFromTemplate: (classId, data) =>
-		api.post(`${CLASS_BASE_URL}/${classId}/activities/from_template`, data),
+		api.post(`${CLASS_BASE_URL}/${classId}/activities/create_from_template`, data),
 
 	/// POST /classes/${classId}/teams/${teamId}/activities/${activityId}/submit
 	/*
