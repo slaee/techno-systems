@@ -1,20 +1,20 @@
 import { useParams, useNavigate, useOutletContext } from "react-router-dom";
 import { useEffect, useState } from "react";
-
 import {
 	FiChevronLeft,
-	FiTrash
+	FiTrash,
+	FiEdit2,
 } from "react-icons/fi";
 import { useActivities, useActivity, useActivityComments, useWorks } from "../../../../../hooks";
-import { CreateEvaluationPopup, CreateCommentPopup, UpdateActivityPopup } from "../../../../../components/modals/teacher_views"
+import { CreateEvaluationPopup, CreateCommentPopup, UpdateActivityPopup, UpdateCommentPopup } from "../../../../../components/modals/teacher_views"
 import { ViewWorkPopup, EditWorkPopup } from "../../../../../components/modals/student_views"
 import { WorkCard } from "../../../../../components/cards/work_cards"
 
 const ViewActivityStudent = () => {
     const { classId } = useOutletContext();
     const { activityId, teamId } = useParams();
-
 	const navigate = useNavigate();
+	const [activityData, setActivityData] = useState(null);
 
 	const [showUpdateModal, setShowUpdateModal] = useState(false);
 	const handleCloseUpdateModal = () => setShowUpdateModal(false);
@@ -22,20 +22,28 @@ const ViewActivityStudent = () => {
 	const handleCloseAddEvaluationModal = () => setShowAddEvaluationModal(false);
 	const [showCommentModal, setShowCommentModal] = useState(false);
 	const handleCloseCommentModal = () => setShowCommentModal(false);
+	const [showUpdateCommentModal, setShowUpdateCommentModal] = useState(false);
+	const handleCloseUpdateCommentModal = () => setShowUpdateCommentModal(false);
 
-	const [activityData, setActivityData] = useState(null);
 
 	const { isRetrieving, activity, deleteTeamActivity } = useActivity(classId, activityId, teamId);
 	const { deleteEvaluation } = useActivities(classId);
 	const { comments,  deleteComment } = useActivityComments(activityId);
-    
-	
+	const [ comment, setComment ] = useState(null);
+	const [activityComments, setActivityComments] = useState([]);
+
 	useEffect(() => {
 		if (activity) {
 			const temp = { ...activity };
 			setActivityData(temp);
 		}
 	}, [activity]);
+
+	useEffect(() => {
+		if (activityData && comments) {
+			setActivityComments(comments)
+		}
+	}, [activityData, comments]);
 
 	const handleDeleteEvaluation = async (e) => {
 		e.preventDefault();
@@ -47,14 +55,14 @@ const ViewActivityStudent = () => {
 			try {
 				const response = deleteEvaluation(teamId, activityId);
 				navigate(0);
-				console.log("Evaluation deleted successfully!");
+				//console.log("Evaluation deleted successfully!");
 			} catch (error) {
 				console.error(error);
 			}
 		}
 		else {
 			// The user canceled the deletion
-			console.log("Deletion canceled");
+			//console.log("Deletion canceled");
 		}
 	};
 
@@ -66,23 +74,19 @@ const ViewActivityStudent = () => {
 
 		if (isConfirmed) {
 			try {
-				const response = await deleteTeamActivity();
-
-				if (response) {
-					console.log("Successfully deleted team!");
-					navigate(-1);
-				}
+				await deleteTeamActivity();
+				//console.log("Successfully deleted team!");
+				navigate(-1);
 			} catch (error) {
 				console.error(error);
 			}
 		} else {
 			// The user canceled the deletion
-			console.log("Deletion canceled");
+			//console.log("Deletion canceled");
 		}
 	};
 
 	const handleEdit = (e) => {
-		console.log(activityData);
 		e.preventDefault();
 		setShowUpdateModal(true);
 	};
@@ -101,18 +105,9 @@ const ViewActivityStudent = () => {
 			}
 		} else {
 			// The user canceled the deletion
-			console.log("Deletion canceled");
+			//console.log("Deletion canceled");
 		}
 	};
-
-
-	const [activityComments, setActivityComments] = useState([]);
-	/*
-	useEffect(() => {
-		if (activityData && comments) {
-			setActivityComments(comments)
-		}
-	}, [activityData, comments]);*/
 
 	const getFormattedDate = () => {
 		if (activityData?.due_date) {
@@ -127,6 +122,12 @@ const ViewActivityStudent = () => {
 			return "None";
 		}
 	};
+
+	const handleUpdateComment = (e, commentId) => {
+		e.preventDefault();
+		setShowUpdateCommentModal(true);
+		setComment(commentId);
+	}
 
 	//Edit/Delete Work
 
@@ -181,7 +182,6 @@ const ViewActivityStudent = () => {
 	const handleEditWorkSubmit = async (editedWorkData) => {
 		// Implement the logic to update the work data
 		// You may need to use the appropriate hook or API call here
-		console.log('Edited Work Data:', editedWorkData);
 		setShowEditWorkModal(false);
 	};
 
@@ -204,14 +204,27 @@ const ViewActivityStudent = () => {
 						</h4>
 					</div>
 
-					<div className='d-flex flex-row gap-3 '>
+					<div className='d-flex flex-row gap-3'>
+						<button
+							className='btn btn-outline-secondary btn-block fw-bold bw-3 m-0 '
+							onClick={handleEdit}
+						>
+							Edit Activity
+						</button>
+
+						<button
+							className='btn btn-danger btn-block fw-bold bw-3 m-0 '
+							onClick={handleDelete}
+						>
+							Delete Activity
+						</button>
 					</div>
 				</div>
 
 				<hr className='text-dark' />
 
 				<div>
-					{activityData ? (
+					{!isRetrieving && activityData ? (
 						<div className="d-flex flex-row justify-content-between ">
 							<div>
 								<p>Due: {getFormattedDate()}</p>
@@ -228,25 +241,27 @@ const ViewActivityStudent = () => {
 					) : (
 						<p>Loading class details...</p>
 					)}
+				</div>
 
-					<div className="d-flex flex-column gap-3 mt-4">
-						<h5 className="fw-bold">Works</h5>
-						
-						{(workData) ? (
-							workData.map((work) => (
-								<WorkCard 
-									key={work.id} 
-									workData={work} 
-									isClickable={!showEditWorkModal}
-									onEditClick={() => handleSelectWork(work)}
-									isSelected={selectedWork && selectedWork.id === work.id}
-								/>
-							))
-						) : (
-							<p>No work data available.</p>
-						)}
-					</div>
-					<div className='d-flex flex-row gap-3'>
+				<div className="d-flex flex-column gap-3 mt-4">
+					<h5 className="fw-bold">Works</h5>
+					
+					{(workData) ? (
+						workData.map((work) => (
+							<WorkCard 
+								key={work.id} 
+								workData={work} 
+								isClickable={!showEditWorkModal}
+								onEditClick={() => handleSelectWork(work)}
+								isSelected={selectedWork && selectedWork.id === work.id}
+							/>
+						))
+					) : (
+						<p>No work data available.</p>
+					)}
+				</div>
+				
+				<div className='d-flex flex-row gap-3'>
 						<button className='btn btn-outline-secondary bw-3 mt-4' onClick={handleAddWork}>
 							Add Work
 						</button>
@@ -259,7 +274,6 @@ const ViewActivityStudent = () => {
 							</button>
 						)}
 					</div>
-
 					{workData && (
 						<ViewWorkPopup
 							show={showAddWorkModal}
@@ -269,25 +283,8 @@ const ViewActivityStudent = () => {
 						//onSubmit={handleSubmitWork} // Define a function to handle work submission
 						/>
 					)}
-				</div>
 
 				<div className='d-flex flex-row gap-3'>
-					<button
-						className='btn btn-success bw-3'
-						onClick={() => setShowAddEvaluationModal(true)}
-                        hidden={!activityData?.submission_status}
-					>
-						Add Evaluation
-					</button>
-
-					{activityData?.submission_status && (
-						<button
-							className='btn btn-outline-secondary bw-3'
-							onClick={handleDeleteEvaluation}
-						>
-							Delete Evaluation
-						</button>
-					)}
 				</div>
 
 				<hr className='text-dark' />
@@ -297,23 +294,15 @@ const ViewActivityStudent = () => {
 
 					{activityComments && activityComments.length > 0 ? (
 						activityComments.map((comment) => (
-							<div className='d-flex flex-row justify-content-between p-3 border border-dark rounded-3 ' key={comment.id}>
-								<p>
-									{/* // FIXME: dapat clickable ang comment*/}
+							<div className='d-flex flex-row justify-content-between align-items-center p-3 border border-dark rounded-3 mb-0' key={comment.id}>
+								<p className='b-0 mb-0 '>
 									{comment.user.first_name} {comment.user.last_name}: {comment.comment}
 								</p>
-								<span
-									className='nav-item nav-link text-danger'
-									onClick={(e) => handleCommentDelete(e, comment.id)}
-								>
-									<FiTrash />
-								</span>
 							</div>
 						))
 					) : (
 						<p>No comments available</p>
 					)}
-
 				</div>
 			</div>
 
@@ -338,16 +327,22 @@ const ViewActivityStudent = () => {
 					data={activityData}
 				/>
 			)}
-
 			{activityData &&  (
-
 				<CreateCommentPopup
 					show={showCommentModal}
 					handleClose={handleCloseCommentModal}
 					data={activityData}
 				/>
 			)}
-			{showAddEvaluationModal && activityData && (
+			{activityData &&  (
+				<UpdateCommentPopup
+					show={showUpdateCommentModal}
+					handleClose={handleCloseUpdateCommentModal}
+					data={activityData}
+					commentId={comment}
+				/>
+			)}
+			{activityData && (
 				<CreateEvaluationPopup
 					show={showAddEvaluationModal}
 					handleClose={handleCloseAddEvaluationModal}
