@@ -1,30 +1,41 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useOutletContext } from 'react-router-dom';
+import { useNavigate, useOutletContext, useParams } from 'react-router-dom';
 import { FiChevronLeft } from 'react-icons/fi';
-import { useActivity, useTeams } from '../../../../hooks';
+import { useActivity, useTeams, useActivityTemplate} from '../../../../hooks';
 import Select from 'react-select';
+import { UpdateTemplatePopup } from '../../../../components/modals/teacher_views';
 
-
-const CreateActivity = () => {
+const ViewTemplate = () => {
 	const navigate = useNavigate();
 	const { classId } = useOutletContext();
 	const { teams } = useTeams(classId);
-	const [selectedTeams, setSelectedTeams] = useState([]);
+    const { templateId } = useParams();
+    const { template, deleteTemplate } = useActivityTemplate(templateId);
+
+    const [showModal, setShowModal] = useState(false);
+    const handleShowModal = () => setShowModal(true);
+    const handleCloseModal = () => setShowModal(false)
+	
+    const [selectedTeams, setSelectedTeams] = useState([]);
 	const [teamOptions, setTeamOptions] = useState([]);
 
+	const { createFromTemplate } = useActivity(classId, null, null);
+
+    const [templateData, setTemplateData] = useState({
+        "course_name": "",
+        "title": "",
+        "description": ""
+	});
+
 	const [activityData, setActivityData] = useState({
-		"classroom_id": classId,
-		"team_id": [],
-		"title": "",
-		"description": "",
-		"submission_status": false,
+		"template_id": 0,
+		"team_ids": [],
 		"due_date": "",
 		"evaluation": 0,
 		"total_score": 0,
+		"class_id": 0,
 	});
 
-	const { createActivity } = useActivity(classId, null, null);
-	
 	const handleChange = (e) => {
 		const { name, value } = e.target;
 		setActivityData({
@@ -39,7 +50,7 @@ const CreateActivity = () => {
 
 		if (isConfirmed) {
 			try {
-				await createActivity(activityData);
+				await createFromTemplate(activityData)
 				navigate(-1);
 			} catch (error) {
 				console.error(error);
@@ -48,6 +59,25 @@ const CreateActivity = () => {
 		else {
 			// The user canceled the deletion
 			console.log("Creation canceled");	
+		}
+	};
+
+    const handleDelete = async (e) => {
+		e.preventDefault();
+
+		// Display a confirmation dialog
+		const isConfirmed = window.confirm("Are you sure you want to delete this template?");
+
+		if (isConfirmed) {
+			try {
+				await deleteTemplate(templateId);
+                navigate(-1);
+			} catch (error) {
+				console.error(error);
+			}
+		} else {
+			// The user canceled the deletion
+			console.log("Deletion canceled");
 		}
 	};
 
@@ -62,12 +92,28 @@ const CreateActivity = () => {
 	  
 		setSelectedTeams(selectedTeams);
 	  
-		// Update activityData with the selected teams
+		// Update templateData with the selected teams
 		setActivityData(prevState => ({
 		  ...prevState,
-		  team_id: selectedTeams,
+		  team_ids: selectedTeams,
 		}));
 	  };
+
+    useEffect(() => {
+        if (template) {
+            setTemplateData({
+                "course_name": template.course_name,
+                "title": template.title,
+                "description": template.description
+            });
+			
+			setActivityData(prevState => ({
+				...prevState,
+				"template_id": template.id,
+				"class_id": classId,
+			  }));
+        }
+    }, [template]);
 
 	useEffect(() => {
 		if (teams){
@@ -88,16 +134,19 @@ const CreateActivity = () => {
 						>
 							<FiChevronLeft />
 						</span>
-						<h4 className='fw-bold m-0'>Create Activity</h4>
+						<h4 className='fw-bold m-0'>{templateData.title}</h4>
 					</div>
-					<div className='d-flex flex-row gap-3 '>
+                    <div className='d-flex flex-row gap-3 '>
+						<button className='btn btn-activity-secondary btn-block fw-bold bw-3 m-0'
+                            onClick={handleShowModal}
+                        >
+							Edit Template
+						</button>
 						<button
-							className='btn btn-activity-secondary btn-block fw-bold bw-3 m-0 '
-							onClick={() => {
-								navigate(`/classes/${classId}/activities/templates`);
-							}}
+							className='btn btn-danger btn-block fw-bold bw-3 m-0 '
+							onClick={handleDelete}  
 						>
-							Use Templates
+							Delete Template
 						</button>
 					</div>
 				</div>
@@ -116,8 +165,9 @@ const CreateActivity = () => {
 							className='form-control'
 							id='title'
 							name='title'
-							value={activityData.title}
+							value={templateData.title}
 							onChange={handleChange}
+                            disabled
 						/>
 					</div>
 					{/* desc */}
@@ -132,14 +182,33 @@ const CreateActivity = () => {
 							className='form-control'
 							id='description'
 							name='description'
-							value={activityData.description}
+							value={templateData.description}
 							onChange={handleChange}
+                            disabled
 						/>
 					</div>
+                    {/* course_name */}
+					<div className='mb-3'>
+						<label
+							htmlFor='course_name'
+							className='form-label'
+						>
+							Course Name
+						</label>
+						<textarea
+							className='form-control'
+							id='courseName'
+							name='courseName'
+							value={templateData.course_name}
+							onChange={handleChange}
+                            disabled
+						/>
+					</div>
+				    <hr className='text-dark' />
 					{/* team */}
 					<div className='mb-3'>
 						<label
-							htmlFor='team_id'
+							htmlFor='team_ids'
 							className='form-label'
 						>
 							Team
@@ -192,9 +261,10 @@ const CreateActivity = () => {
 						Create Activity
 					</button>
 				</form>
+                <UpdateTemplatePopup show={showModal} handleClose={handleCloseModal} data={templateData} />
 			</div>
 		</div>
 	);
 };
 
-export default CreateActivity;
+export default ViewTemplate;
