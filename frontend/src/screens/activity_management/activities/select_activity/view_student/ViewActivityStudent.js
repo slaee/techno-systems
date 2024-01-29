@@ -16,19 +16,8 @@ const ViewActivityStudent = () => {
 	const navigate = useNavigate();
 	const [activityData, setActivityData] = useState(null);
 
-	const [showUpdateModal, setShowUpdateModal] = useState(false);
-	const handleCloseUpdateModal = () => setShowUpdateModal(false);
-	const [showAddEvaluationModal, setShowAddEvaluationModal] = useState(false);
-	const handleCloseAddEvaluationModal = () => setShowAddEvaluationModal(false);
-	const [showCommentModal, setShowCommentModal] = useState(false);
-	const handleCloseCommentModal = () => setShowCommentModal(false);
-	const [showUpdateCommentModal, setShowUpdateCommentModal] = useState(false);
-	const handleCloseUpdateCommentModal = () => setShowUpdateCommentModal(false);
-
-
-	const { isRetrieving, activity, deleteTeamActivity } = useActivity(classId, activityId, teamId);
-	const { deleteEvaluation } = useActivities(classId);
-	const { comments,  deleteComment } = useActivityComments(activityId);
+	const { isRetrieving, activity, } = useActivity(classId, activityId, teamId);
+	const { comments } = useActivityComments(activityId);
 	const [ comment, setComment ] = useState(null);
 	const [activityComments, setActivityComments] = useState([]);
 
@@ -45,70 +34,6 @@ const ViewActivityStudent = () => {
 		}
 	}, [activityData, comments]);
 
-	const handleDeleteEvaluation = async (e) => {
-		e.preventDefault();
-
-		// Display a confirmation dialog
-		const isConfirmed = window.confirm("Are you sure you want to delete this evaluation?");
-
-		if (isConfirmed) {
-			try {
-				const response = deleteEvaluation(teamId, activityId);
-				navigate(0);
-				//console.log("Evaluation deleted successfully!");
-			} catch (error) {
-				console.error(error);
-			}
-		}
-		else {
-			// The user canceled the deletion
-			//console.log("Deletion canceled");
-		}
-	};
-
-	const handleDelete = async (e) => {
-		e.preventDefault();
-
-		// Display a confirmation dialog
-		const isConfirmed = window.confirm("Are you sure you want to delete this activity?");
-
-		if (isConfirmed) {
-			try {
-				await deleteTeamActivity();
-				//console.log("Successfully deleted team!");
-				navigate(-1);
-			} catch (error) {
-				console.error(error);
-			}
-		} else {
-			// The user canceled the deletion
-			//console.log("Deletion canceled");
-		}
-	};
-
-	const handleEdit = (e) => {
-		e.preventDefault();
-		setShowUpdateModal(true);
-	};
-
-	const handleCommentDelete = async (e, commentId) => {
-		e.preventDefault();
-		// Display a confirmation dialog
-		const isConfirmed = window.confirm("Are you sure you want to delete this comment?");
-
-		if (isConfirmed) {
-			try {
-				await deleteComment(commentId);
-				navigate(0);
-			} catch (error) {
-				console.error(error);
-			}
-		} else {
-			// The user canceled the deletion
-			//console.log("Deletion canceled");
-		}
-	};
-
 	const getFormattedDate = () => {
 		if (activityData?.due_date) {
 			const options = {
@@ -122,12 +47,6 @@ const ViewActivityStudent = () => {
 			return "None";
 		}
 	};
-
-	const handleUpdateComment = (e, commentId) => {
-		e.preventDefault();
-		setShowUpdateCommentModal(true);
-		setComment(commentId);
-	}
 
 	//Edit/Delete Work
 
@@ -202,22 +121,6 @@ const ViewActivityStudent = () => {
 						<h4 className='fw-bold m-0'>
 							{activityData ? `${activityData.title}` : "Loading..."}
 						</h4>
-					</div>
-
-					<div className='d-flex flex-row gap-3'>
-						<button
-							className='btn btn-outline-secondary btn-block fw-bold bw-3 m-0 '
-							onClick={handleEdit}
-						>
-							Edit Activity
-						</button>
-
-						<button
-							className='btn btn-danger btn-block fw-bold bw-3 m-0 '
-							onClick={handleDelete}
-						>
-							Delete Activity
-						</button>
 					</div>
 				</div>
 
@@ -295,20 +198,14 @@ const ViewActivityStudent = () => {
 					{activityComments && activityComments.length > 0 ? (
 						activityComments.map((comment) => (
 							<div className='d-flex flex-row justify-content-between p-3 border border-dark rounded-3 ' key={comment.id}>
-								<p className='b-0 m-3'>
+								<div className='b-0 m-3'>
 									<div className='d-flex flex-row gap-2'>
 										<div className="fw-bold activity-primary">
 											{comment.user.first_name} {comment.user.last_name}: 
 										</div>
 									</div>
 										{comment.comment}
-								</p>
-								<span
-									className='nav-item nav-link text-danger'
-									onClick={(e) => handleCommentDelete(e, comment.id)}
-								>
-									<FiTrash />
-								</span>
+								</div>
 							</div>
 						))
 					) : (
@@ -325,42 +222,6 @@ const ViewActivityStudent = () => {
 					onSubmit={handleEditWorkSubmit}
 					id={activityId}
 					workId={selectedWorkId}
-				/>
-			)}
-
-			{activityData &&  (
-				<UpdateActivityPopup
-					show={showUpdateModal}
-					handleClose={handleCloseUpdateModal}
-					classId={classId}
-                    teamId={teamId}
-                    activityId={activityId}
-					data={activityData}
-				/>
-			)}
-			{activityData &&  (
-				<CreateCommentPopup
-					show={showCommentModal}
-					handleClose={handleCloseCommentModal}
-					data={activityData}
-				/>
-			)}
-			{activityData &&  (
-				<UpdateCommentPopup
-					show={showUpdateCommentModal}
-					handleClose={handleCloseUpdateCommentModal}
-					data={activityData}
-					commentId={comment}
-				/>
-			)}
-			{activityData && (
-				<CreateEvaluationPopup
-					show={showAddEvaluationModal}
-					handleClose={handleCloseAddEvaluationModal}
-                    classId={classId}
-                    teamId={teamId}
-                    activityId={activityId}
-					data={activityData}
 				/>
 			)}
 		</div>
