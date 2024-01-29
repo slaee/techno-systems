@@ -1,6 +1,4 @@
 import { useEditor, EditorContent, FloatingMenu } from '@tiptap/react';
-import styles from './Tiptap.module.css';
-import './Tiptap.css';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
 import Table from '@tiptap/extension-table';
@@ -67,6 +65,8 @@ import {
   RiH5,
   RiH6,
 } from 'react-icons/ri';
+import './Tiptap.css';
+import styles from './Tiptap.module.css';
 
 const MenuBar = ({ editor }) => {
   if (!editor) {
