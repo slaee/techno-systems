@@ -298,9 +298,13 @@ const ViewActivityStudent = () => {
 					{activityComments && activityComments.length > 0 ? (
 						activityComments.map((comment) => (
 							<div className='d-flex flex-row justify-content-between p-3 border border-dark rounded-3 ' key={comment.id}>
-								<p>
-									{/* // FIXME: dapat clickable ang comment*/}
-									{comment.user.first_name} {comment.user.last_name}: {comment.comment}
+								<p className='b-0 m-3'>
+									<div className='d-flex flex-row gap-2'>
+										<div className="fw-bold activity-primary">
+											{comment.user.first_name} {comment.user.last_name}: 
+										</div>
+									</div>
+										{comment.comment}
 								</p>
 								<span
 									className='nav-item nav-link text-danger'

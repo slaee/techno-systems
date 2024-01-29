@@ -288,7 +288,7 @@ const ViewActivityTeacher = () => {
 					{activityComments && activityComments.length > 0 ? (
 						activityComments.map((comment) => (
 							<div className='d-flex flex-row justify-content-between align-items-center p-3 border border-dark rounded-3 mb-0' key={comment.id}>
-								<p className='b-0 mb-0 '>
+								<p className='b-0 m-3'>
 									<div className='d-flex flex-row gap-2'>
 										<div className="fw-bold activity-primary">
 											{comment.user.first_name} {comment.user.last_name}: 
@@ -316,7 +316,6 @@ const ViewActivityTeacher = () => {
 					) : (
 						<p>No comments available</p>
 					)}
-
 				</div>
 					<button
 						className='btn btn-activity-primary  bw-3'
