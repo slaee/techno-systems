@@ -54,15 +54,26 @@ function PublicTable(props) {
       const result = fuse.search(text);
       const sortedResults = result.map((item) => item.item).sort((a, b) => b.score - a.score); // Sort in descending order based on score
       setFilteredSearchTeam(sortedResults);
-    } else {
-      setFilteredSearchTeam(teams);
+      return sortedResults;
     }
+
+    setFilteredSearchTeam(teams);
+    return teams;
   };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const filteredTeams = props.allProjects.filter((team) =>
+        const searchParams = new URLSearchParams(location.search);
+        const searchValue = searchParams.get('search') || '';
+        let tempProjects = props.allProjects;
+        setSearchText(searchValue);
+        if (searchValue) {
+          tempProjects = handleSearch(searchValue);
+        } else {
+          searchParams.set('search', searchText);
+        }
+        const filteredTeams = tempProjects.filter((team) =>
           team.projects.length > 0 ? team.projects[0].project_is_active === props.isActive : false
         );
         const sortedTeams = [...filteredTeams].sort((a, b) => {
@@ -82,14 +93,7 @@ function PublicTable(props) {
         });
         setTeams(sortedTeams);
         setFilteredSearchTeam(sortedTeams);
-        const searchParams = new URLSearchParams(location.search);
-        const searchValue = searchParams.get('search') || '';
-        setSearchText(searchValue);
-        if (searchValue) {
-          handleSearch(searchValue);
-        } else {
-          searchParams.set('search', searchText);
-        }
+
         setSharedState(0);
         activate(0);
       } catch (error) {
