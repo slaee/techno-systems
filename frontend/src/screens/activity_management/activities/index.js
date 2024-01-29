@@ -1,11 +1,15 @@
 import { useOutletContext } from 'react-router-dom';
 import { Teacher } from './teacher';
+import { Student } from './student';
 import './index.scss';
 
 function ActivityManagement() {
 	const { user } = useOutletContext();
 	
-	return user?.role === 1 ? <Teacher /> : null;
+	if (user?.role === 1)
+		return  <Teacher />;
+	else if(user?.role === 2)
+		return  <Student />;
 }
 
 export default ActivityManagement;

@@ -22,8 +22,10 @@ import ActivityManagement from './screens/activity_management/activities';
 import SpringBoardProjects from './screens/springboard/projects';
 import SpringBoardAllProjects from './screens/springboard/all_projects';
 import TeknoPlat from './screens/teknoplat';
+import ViewActivity from './screens/activity_management/activities/select_activity';
 
-import { CreateActivity, ViewActivity, ViewTemplates, ViewTemplate } from './screens/activity_management/activities/teacher';
+import { CreateActivity, ViewTemplates, ViewTemplate } from './screens/activity_management/activities/teacher';
+
 
 
 // Style Imports
