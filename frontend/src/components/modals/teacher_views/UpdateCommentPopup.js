@@ -1,26 +1,23 @@
 import { useNavigate, useOutletContext } from "react-router-dom";
-import React, { useState } from "react";
-
+import React, { useEffect, useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 
-import { useActivityComments } from "../../../hooks";
+import { useActivityComment } from "../../../hooks";
 
-const CreateCommentPopup = ({ show, handleClose, data }) => {
+const UpdateCommentPopup = ({ show, handleClose, data, commentId }) => {
+    const { user } = useOutletContext();
+    const { comment, updateComment } = useActivityComment(commentId);  
+
     const navigate = useNavigate();
 
     // State variable and handler for updating comments
     const [commentData, setCommentData] = useState({
         "activity_id": 0,
         "user_id": 0,
-        "comment": data.comment,
+        "comment": "",
     });
-
-    const { addComment } = useActivityComments(data.id);    
-    const { user } = useOutletContext();
-
-
     // Handle input changes in the comment form
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -35,7 +32,7 @@ const CreateCommentPopup = ({ show, handleClose, data }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await addComment(commentData);
+            const response = await updateComment(commentData);
             // must add a conditional statement to check if response is successful
 
             console.log("Evaluation added successfully!");
@@ -46,10 +43,20 @@ const CreateCommentPopup = ({ show, handleClose, data }) => {
         }
     };
 
+    useEffect(() => {
+        if (comment){
+            setCommentData({
+                "activity_id": comment.activity?.id,
+                "user_id": comment.user?.id,
+                "comment": comment.comment,
+            })
+        }
+    },[comment])
+
     return (
         <Modal show={show} onHide={handleClose} centered>
             <Modal.Header closeButton>
-                <Modal.Title className='fs-6 fw-bold'>Add Comment</Modal.Title>
+                <Modal.Title className='fs-6 fw-bold'>Edit Comment</Modal.Title>
             </Modal.Header>
 
             <Modal.Body>
@@ -62,6 +69,7 @@ const CreateCommentPopup = ({ show, handleClose, data }) => {
                             as='textarea'
                             rows={3}
                             onChange={handleChange}
+                            value={commentData.comment}
                         />
                     </Form.Group>
                 </Form>
@@ -73,7 +81,7 @@ const CreateCommentPopup = ({ show, handleClose, data }) => {
                 </Button>
 
                 <Button variant='success' onClick={handleSubmit}>
-                    Add Comment
+                    Edit Comment
                 </Button>
             </Modal.Footer>
         </Modal>
@@ -81,4 +89,4 @@ const CreateCommentPopup = ({ show, handleClose, data }) => {
 };
 
 
-export default CreateCommentPopup
+export default UpdateCommentPopup
