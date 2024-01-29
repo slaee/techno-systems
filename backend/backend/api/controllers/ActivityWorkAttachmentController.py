@@ -51,7 +51,7 @@ class ActivityWorkAttachmentController(viewsets.GenericViewSet,
         serializer = self.get_serializer(data=request.data)
 
         if serializer.is_valid():
-            # Get the activity_id from the request data (you may want to validate this)
+
             activity_id = request.data.get('activity_id', None)
 
             if activity_id:

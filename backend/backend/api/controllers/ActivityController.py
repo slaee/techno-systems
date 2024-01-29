@@ -138,7 +138,6 @@ class ActivityController(viewsets.GenericViewSet,
                 class_obj = ClassRoom.objects.get(pk=class_pk)
                 template = ActivityTemplate.objects.get(pk=template_id)
 
-                # Use transaction.atomic to ensure all or nothing behavior
                 with transaction.atomic():
                     activity_instances = []
                     for team_id in team_ids:
@@ -282,7 +281,6 @@ class TeamActivitiesController(viewsets.GenericViewSet,
     def submit(self, request, class_pk=None, team_pk=None, pk=None):
         try:
             activity = Activity.objects.get(classroom_id=class_pk, team_id=team_pk, pk=pk)
-            # Toggle the submission status
             activity.submission_status = not activity.submission_status
             activity.save()
 
@@ -316,14 +314,12 @@ class TeamActivitiesController(viewsets.GenericViewSet,
         try:
             activity = Activity.objects.get(classroom_id=class_pk, team_id=team_pk, pk=pk)
 
-            # Check if submission status is true
             if not activity.submission_status:
                 return Response({'error': 'Cannot add evaluation for an activity with submission status as false.'}, status=status.HTTP_400_BAD_REQUEST)
 
             evaluation = request.data.get('evaluation', None)
 
             if evaluation is not None:
-                # Add evaluation
                 activity.evaluation = evaluation
                 activity.save()
             else:
@@ -360,11 +356,9 @@ class TeamActivitiesController(viewsets.GenericViewSet,
         try:
             activity = Activity.objects.get(classroom_id=class_pk, team_id=team_pk, pk=pk)
 
-            # Check if submission status is true
             if not activity.submission_status:
                 return Response({'error': 'Cannot delete evaluation for an activity with submission status as false.'}, status=status.HTTP_400_BAD_REQUEST)
 
-            # Delete evaluation
             activity.evaluation = None
             activity.save()
 
