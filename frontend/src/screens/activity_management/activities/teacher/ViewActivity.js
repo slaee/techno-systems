@@ -212,7 +212,13 @@ const ViewActivity = () => {
 						activityComments.map((comment) => (
 							<div className='d-flex flex-row justify-content-between align-items-center p-3 border border-dark rounded-3 mb-0' key={comment.id}>
 								<p className='b-0 mb-0 '>
-									{comment.user.first_name} {comment.user.last_name}: {comment.comment}
+									<div className='d-flex flex-row gap-2'>
+										<div className="fw-bold activity-primary">
+											{comment.user.first_name} {comment.user.last_name}: 
+										</div>
+										{comment.comment}
+									</div>
+									
 								</p>
 								<div className='d-flex flex-row gap-3 fw-bold'>
 									<button
