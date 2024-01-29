@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ActivityCommentService } from '../services';
 
-const useActivityComments = (id) => {
+const useActivityComment = (id) => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
-  const [comments, setComments] = useState([]);
+  const [comment, setComment] = useState([]);
 
 
   // use for getting all comments 
@@ -17,7 +17,7 @@ const useActivityComments = (id) => {
       let responseCode;
       let retrievedComments;
       try {
-        const res = await ActivityCommentService.getAllCommentsForActivity(id);
+        const res = await ActivityCommentService.getComment(id);
 
         responseCode = res?.status;
         retrievedComments = res?.data;
@@ -27,7 +27,7 @@ const useActivityComments = (id) => {
 
       switch (responseCode) {
         case 200:
-          setComments(retrievedComments);
+          setComment(retrievedComments);
           break;
         case 404:
         case 500:
@@ -42,11 +42,11 @@ const useActivityComments = (id) => {
     get();
   }, [id]);
 
-  const addComment = async (comment) => {
+  const updateComment = async (commentData) => {
     let responseCode;
 
     try {
-      const res = await ActivityCommentService.addComment(comment);
+      const res = await ActivityCommentService.updateComment(id, commentData);
       responseCode = res?.status;
     } catch (error) {
       responseCode = error?.response?.status;
@@ -61,30 +61,9 @@ const useActivityComments = (id) => {
         break;
       default:
     }
-  };
+  }
 
-  const deleteComment = async (commentId) => {
-    let responseCode;
-
-    try {
-      const res = await ActivityCommentService.deleteComment(commentId);
-      responseCode = res?.status;
-    } catch (error) {
-      responseCode = error?.response?.status;
-    }
-
-    switch (responseCode) {
-      case 200:
-        break;
-      case 404:
-      case 500:
-        navigate('/classes');
-        break;
-      default:
-    }
-  };
-
-  return { isLoading, comments, addComment, deleteComment };
+  return { isLoading, comment, updateComment };
 };
 
-export default useActivityComments;
+export default useActivityComment;

@@ -113,7 +113,30 @@ const useActivity = (classId, activityId, teamId) => {
       default:
     }
   }
-  return { isRetrieving, activity, updateActivity, deleteTeamActivity, createActivity };
+
+  const createFromTemplate = async (data) => {
+    let responseCode;
+
+    try {
+      const res = await ActivityService.createFromTemplate(classId, data);
+      responseCode = res?.status;
+    } catch (error) {
+      responseCode = error?.response?.status;
+    }
+
+    switch (responseCode) {
+      case 200:
+        break;
+      case 404:
+        navigate(`/classes/${classId}/activities`);
+        break;
+      case 500:
+        navigate('/classes');
+        break;
+      default:
+    }
+  }
+  return { isRetrieving, activity, updateActivity, deleteTeamActivity, createActivity, createFromTemplate };
 };
 
 export default useActivity;
