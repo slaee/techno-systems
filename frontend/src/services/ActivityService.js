@@ -13,6 +13,10 @@ const ActivityService = {
 	allActivities: (classId) =>
 		api.get(`${CLASS_BASE_URL}/${classId}/activities`),
 
+	/// GET /classes/{class_id}/teams/{teamId}/activities/{activity_id}
+	getActivity: (classId, teamId, activityId) =>
+		api.get(`${CLASS_BASE_URL}/${classId}/teams/${teamId}/activities/${activityId}`),
+
 	/// POST /classes/{class_id}/activities
 	/*
     data: {
@@ -22,7 +26,7 @@ const ActivityService = {
         "total_score": 100
     }
     */
-	create: (data) => api.post(`${CLASS_BASE_URL}/activities`, data),
+	createActivity: (classId, data) => api.post(`${CLASS_BASE_URL}/${classId}/activities`, data),
 
 	/// POST /classes/{class_id}/activities/from_template
 	/*
@@ -34,7 +38,7 @@ const ActivityService = {
     }
     */
 	createFromTemplate: (classId, data) =>
-		api.post(`${CLASS_BASE_URL}/${classId}/activities/from_template`, data),
+		api.post(`${CLASS_BASE_URL}/${classId}/activities/create_from_template`, data),
 
 	/// POST /classes/${classId}/teams/${teamId}/activities/${activityId}/submit
 	/*
@@ -58,16 +62,12 @@ const ActivityService = {
     */
 	addEvaluation: (classId, teamId, activityId, data) =>
 		api.post(
-			`${CLASS_BASE_URL}/${classId}/teams/${teamId}/activities/${activityId}/add-evaluation`,
-			{
-				data,
-			}
-		),
+			`${CLASS_BASE_URL}/${classId}/teams/${teamId}/activities/${activityId}/add_evaluation`, data),
 
 	/// DELETE /classes/${classId}/teams/${teamId}/activities/${activityId}/delete-evaluation
 	deleteEvaluation: (classId, teamId, activityId) =>
 		api.delete(
-			`${CLASS_BASE_URL}/${classId}/teams/${teamId}/activities/${activityId}/delete-evaluation`
+			`${CLASS_BASE_URL}/${classId}/teams/${teamId}/activities/${activityId}/delete_evaluation`
 		),
 
 	/// POST /activity-work-attachments
@@ -96,36 +96,6 @@ const ActivityService = {
 	/// GET /activity-work-attachments/activities/{id}
 	getAllWorkAttachmentsForActivity: (id) =>
 		api.get(`${AWA_BASE_URL}/activities/${id}`),
-
-	/// POST /activity-comments
-	/*
-    data: {
-        "user_id": 1,
-        "activity_id": 1,
-        "comment": "This is a test comment"
-    }
-    */
-	createComment: (data) => api.post(`${AC_BASE_URL}`, data),
-
-	/// PUT /activity-comments/{id}
-	/*
-    data: {
-        "user_id": 1,
-        "activity_id": 1,
-        "comment": "This is an updated test comment"
-    }
-    */
-	updateComment: (id, data) => api.put(`${AC_BASE_URL}/${id}`, data),
-
-	/// DELETE /activity-comments/{id}
-	deleteComment: (id) => api.delete(`${AC_BASE_URL}/${id}`),
-
-	/// GET /activity-comments/activities/{id}
-	getAllCommentsForActivity: (id) =>
-		api.get(`${AC_BASE_URL}/activities/${id}`),
-
-	/// GET /activity-comments
-	listAllCommentsForActivity: () => api.get(`${AC_BASE_URL}`),
 };
 
 export default ActivityService;

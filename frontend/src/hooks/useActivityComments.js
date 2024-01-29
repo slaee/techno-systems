@@ -1,31 +1,33 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ActivityService, TeamService } from '../services';
+import { ActivityCommentService } from '../services';
 
-const useActivities = (classId) => {
+const useActivityComments = (id) => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
-  const [activities, setActivities] = useState([]);
+  const [comments, setComments] = useState([]);
 
+
+  // use for getting all comments 
   useEffect(() => {
-    if (!classId) {
+    if (!id) {
       return
     }
     const get = async () => {
       let responseCode;
-      let retrievedActivities;
+      let retrievedComments;
       try {
-        const res = await ActivityService.allActivities(classId);
+        const res = await ActivityCommentService.getAllCommentsForActivity(id);
 
         responseCode = res?.status;
-        retrievedActivities = res?.data;
+        retrievedComments = res?.data;
       } catch (error) {
         responseCode = error?.response?.status;
       }
 
       switch (responseCode) {
         case 200:
-          setActivities(retrievedActivities);
+          setComments(retrievedComments);
           break;
         case 404:
         case 500:
@@ -38,15 +40,13 @@ const useActivities = (classId) => {
     };
 
     get();
-  }, [classId]);
+  }, [id]);
 
-
-  //FIXME: Evaluations must be on the useActivity because it only change one activity
-  const addEvaluation = async (teamId, activityId, evaluation) => {
+  const addComment = async (comment) => {
     let responseCode;
 
     try {
-      const res = await ActivityService.addEvaluation(classId, teamId, activityId, evaluation);
+      const res = await ActivityCommentService.addComment(comment);
       responseCode = res?.status;
     } catch (error) {
       responseCode = error?.response?.status;
@@ -63,23 +63,20 @@ const useActivities = (classId) => {
     }
   };
 
-  const deleteEvaluation = async (teamId, activityId) => {
+  const deleteComment = async (commentId) => {
     let responseCode;
 
     try {
-      const res = await ActivityService.deleteEvaluation(classId, teamId, activityId);
+      const res = await ActivityCommentService.deleteComment(commentId);
       responseCode = res?.status;
     } catch (error) {
       responseCode = error?.response?.status;
     }
 
     switch (responseCode) {
-      case 204:
-        setActivities((prevActivitiies) => prevActivitiies.filter((activity) => activity.id !== activityId));
+      case 200:
         break;
       case 404:
-        navigate(`/classes/${classId}/activities`);
-        break;
       case 500:
         navigate('/classes');
         break;
@@ -87,7 +84,7 @@ const useActivities = (classId) => {
     }
   };
 
-  return { isLoading, activities, addEvaluation, deleteEvaluation };
+  return { isLoading, comments, addComment, deleteComment };
 };
 
-export default useActivities;
+export default useActivityComments;
