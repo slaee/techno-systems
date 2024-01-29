@@ -131,7 +131,7 @@ const MenuBar = ({ editor }) => {
             onInput={(event) => editor.chain().focus().setColor(event.target.value).run()}
             value={editor.getAttributes('textStyle').color}
             data-testid="setColor"
-          ></input>
+          />
 
           <button
             onClick={() => editor.chain().focus().toggleHighlight().run()}
@@ -250,6 +250,7 @@ const MenuBar = ({ editor }) => {
             <FloatingMenu
               editor={editor}
               tippyOptions={{ duration: 100, placement: 'bottom-end' }}
+              /* eslint-disable no-shadow */
               shouldShow={({ editor, view, state, oldState }) => {
                 // Check if the current selection contains a table
                 if (state && state.doc && state.selection) {
@@ -412,7 +413,7 @@ export const Tiptap = ({ setDescription, value }) => {
     ],
 
     content: value,
-
+    /* eslint-disable no-shadow */
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
 
