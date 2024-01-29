@@ -23,11 +23,7 @@ import SpringBoardProjects from './screens/springboard/projects';
 import SpringBoardAllProjects from './screens/springboard/all_projects';
 import TeknoPlat from './screens/teknoplat';
 
-
-// TODO: temporary
-// import { ViewActivity, CreateActivity} from './screens/activity_management/activities/teacher';
-// import ViewActivity from './screens/activity_management/activities/teacher';n
-import { CreateActivity, ViewActivity } from './screens/activity_management/activities/teacher';
+import { CreateActivity, ViewActivity, ViewTemplates, ViewTemplate } from './screens/activity_management/activities/teacher';
 
 
 // Style Imports
@@ -135,6 +131,25 @@ function App() {
 									</PrivateRoute>
 								}
 							/>
+							<Route path='templates'>
+								<Route
+									index
+									element={
+										<PrivateRoute>
+											<ViewTemplates />
+										</PrivateRoute>
+									}
+								/>
+
+								<Route
+									path=':templateId'
+									element={
+										<PrivateRoute>
+											<ViewTemplate />
+										</PrivateRoute>
+									}
+								/>
+							</Route>
 
 							<Route
 								path=':activityId/teams/:teamId'

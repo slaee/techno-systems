@@ -8,7 +8,7 @@ import { useActivities } from '../../../hooks';
 import { useTeams } from '../../../hooks';
 import { FiChevronLeft } from 'react-icons/fi';
 
-import { ActivityCard } from '../Cards';
+import { ActivityCard } from '../../../components/cards/activity_cards';
 
 function ActivityManagement() {
 	const { user, classId, classRoom } = useOutletContext();
@@ -163,9 +163,9 @@ function ActivityManagement() {
 						</button>
 						<button
 							className='btn btn-activity-secondary btn-block fw-bold bw-3 m-0'
-							// onClick={() => {
-							// 	// navigate("templates");
-							// }}
+							onClick={() => {
+								navigate("templates");
+							}}
 						>
 							Use Templates
 						</button>

@@ -16,3 +16,6 @@ export { default as useAssignedPeerEval } from './useAssignedPeerEval';
 export { default as useActivities } from './useActivities';
 export { default as useActivity } from './useActivity';
 export { default as useActivityComments } from './useActivityComments';
+export { default as useActivityComment } from './useActivityComment';
+export { default as useActivityTemplates } from './useActivityTemplates';
+export { default as useActivityTemplate } from './useActivityTemplate';
