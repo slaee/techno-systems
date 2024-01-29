@@ -4,7 +4,7 @@ import { api } from './axiosConfig';
 
 
 ///TODO: change this if okay na 
-const BASE_URL = `http://127.0.0.1:8000/activity-comments`;
+const BASE_URL = `${apiConfig.API_URL}/activity-comments`;
 
 const ActivityCommentService = {
 	/// POST /activity-comments

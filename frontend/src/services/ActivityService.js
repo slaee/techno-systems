@@ -2,11 +2,8 @@ import axios from 'axios';
 import apiConfig from './config';
 import { api } from './axiosConfig';
 
-
-///TODO: change this if okay na 
-const CLASS_BASE_URL = `http://127.0.0.1:8000/classes`;
-const AWA_BASE_URL = `http://127.0.0.1:8000/activity-work-attachments`;
-const AC_BASE_URL = `http://127.0.0.1:8000/activity-comments`;
+const CLASS_BASE_URL = `${apiConfig.API_URL}/classes`;
+const AWA_BASE_URL = `${apiConfig.API_URL}/activity-work-attachments`;
 
 const ActivityService = {
 	/// GET /classes/{class_id}/activities

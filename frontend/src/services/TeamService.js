@@ -1,8 +1,7 @@
 import apiConfig from './config';
 import { api } from './axiosConfig';
 
-// const BASE_URL = `${apiConfig.API_URL}/classes`;
-const BASE_URL = `http://127.0.0.1:8000/classes`;
+const BASE_URL = `${apiConfig.API_URL}/classes`;
 
 const TeamService = {
 	/// PUT /classes/{class_id}/activities
