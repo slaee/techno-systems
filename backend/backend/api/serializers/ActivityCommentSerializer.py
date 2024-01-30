@@ -10,7 +10,7 @@ class UserCommentSerializer(serializers.ModelSerializer):
 class SpecificActivityCommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Activity
-        fields = ('id', 'title')
+        fields = ('id', 'title', 'user')
 class CommentCreateSerializer(serializers.ModelSerializer):
     # activity = ActivityCommentSerializer()
     # user = UserCommentSerializer()  # Serialize the user field
@@ -49,3 +49,27 @@ class ActivityCommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = ActivityComment
         fields = ('id', 'comment', 'date_created', 'activity_id', 'user_id')
+
+class ActivityCommentWithUserSerializer(serializers.ModelSerializer):
+    activity = serializers.SerializerMethodField()
+    user = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ActivityComment
+        fields = ('id', 'comment', 'date_created', 'activity', 'user')
+
+    def get_activity(self, obj):
+        activity_data = {
+            'id': obj.activity_id.id,
+            'title': obj.activity_id.title
+        }
+        return activity_data
+
+    def get_user(self, obj):
+        user_data = {
+            'id': obj.user_id.id,
+            'email': obj.user_id.email,
+            'first_name': obj.user_id.first_name,
+            'last_name': obj.user_id.last_name
+        }
+        return user_data
