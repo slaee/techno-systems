@@ -155,10 +155,6 @@ function SpringBoardProjects() {
     navigate(`/classes/${classId}/project/${projId}`);
   };
 
-  if (!projects) {
-    return <Loading />;
-  }
-
   if (!team) {
     return (
       <div className="px-5">
@@ -171,6 +167,10 @@ function SpringBoardProjects() {
         </div>
       </div>
     );
+  }
+
+  if (!projects) {
+    return <Loading />;
   }
 
   return (
