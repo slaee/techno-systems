@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
-from api.custom_permissions import IsTeacher, IsStudent
+from api.custom_permissions import IsTeacher, IsStudent, IsBasic
 
 from api.models import Activity
 from api.models import ActivityTemplate
@@ -33,7 +33,7 @@ class ActivityWorkAttachmentController(viewsets.GenericViewSet,
         if self.action in ['create', 'update', 
                            'destroy',
                            ]:
-            return [permissions.IsAuthenticated(), IsStudent()]
+            return [permissions.IsAuthenticated(), IsBasic()]
         else:
             return [permissions.IsAuthenticated()]
 
@@ -51,7 +51,7 @@ class ActivityWorkAttachmentController(viewsets.GenericViewSet,
         serializer = self.get_serializer(data=request.data)
 
         if serializer.is_valid():
-            # Get the activity_id from the request data (you may want to validate this)
+
             activity_id = request.data.get('activity_id', None)
 
             if activity_id:
