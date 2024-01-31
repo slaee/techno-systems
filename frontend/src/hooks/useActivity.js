@@ -48,7 +48,7 @@ const useActivity = (classId, activityId, teamId) => {
 
     try {
       console.log(classId, teamId, activityId);
-      console.log("data", data);
+      console.log('data', data);
       const res = await TeamService.updateTeamActivity(classId, teamId, activityId, data);
       responseCode = res?.status;
     } catch (error) {
@@ -66,7 +66,7 @@ const useActivity = (classId, activityId, teamId) => {
         break;
       default:
     }
-  }
+  };
 
   const deleteTeamActivity = async () => {
     let responseCode;
@@ -89,7 +89,7 @@ const useActivity = (classId, activityId, teamId) => {
         break;
       default:
     }
-  }
+  };
 
   const createActivity = async (data) => {
     let responseCode;
@@ -112,7 +112,7 @@ const useActivity = (classId, activityId, teamId) => {
         break;
       default:
     }
-  }
+  };
 
   const createFromTemplate = async (data) => {
     let responseCode;
@@ -135,8 +135,15 @@ const useActivity = (classId, activityId, teamId) => {
         break;
       default:
     }
-  }
-  return { isRetrieving, activity, updateActivity, deleteTeamActivity, createActivity, createFromTemplate };
+  };
+  return {
+    isRetrieving,
+    activity,
+    updateActivity,
+    deleteTeamActivity,
+    createActivity,
+    createFromTemplate,
+  };
 };
 
 export default useActivity;

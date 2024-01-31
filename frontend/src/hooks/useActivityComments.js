@@ -7,11 +7,10 @@ const useActivityComments = (id) => {
   const [isLoading, setIsLoading] = useState(true);
   const [comments, setComments] = useState([]);
 
-
-  // use for getting all comments 
+  // use for getting all comments
   useEffect(() => {
     if (!id) {
-      return
+      return;
     }
     const get = async () => {
       let responseCode;

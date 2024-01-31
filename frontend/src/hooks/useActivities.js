@@ -9,7 +9,7 @@ const useActivities = (classId) => {
 
   useEffect(() => {
     if (!classId) {
-      return
+      return;
     }
     const get = async () => {
       let responseCode;
@@ -40,8 +40,7 @@ const useActivities = (classId) => {
     get();
   }, [classId]);
 
-
-  //FIXME: Evaluations must be on the useActivity because it only change one activity
+  // FIXME: Evaluations must be on the useActivity because it only change one activity
   const addEvaluation = async (teamId, activityId, evaluation) => {
     let responseCode;
 
@@ -75,7 +74,9 @@ const useActivities = (classId) => {
 
     switch (responseCode) {
       case 204:
-        setActivities((prevActivitiies) => prevActivitiies.filter((activity) => activity.id !== activityId));
+        setActivities((prevActivitiies) =>
+          prevActivitiies.filter((activity) => activity.id !== activityId)
+        );
         break;
       case 404:
         navigate(`/classes/${classId}/activities`);

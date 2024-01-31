@@ -20,7 +20,7 @@ const useWorks = (activityId) => {
       responseCode = error?.response?.status;
     }
 
-    //TODO
+    // TODO
     switch (responseCode) {
       case 200:
         return retrievedWorks;
@@ -145,7 +145,7 @@ const useWorks = (activityId) => {
     deleteWork,
     updateWork,
     getAllWork,
-    getWork
+    getWork,
   };
 };
 
