@@ -4,7 +4,7 @@ from rest_framework.decorators import action
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.response import Response
-from django.db.models import Count
+from django.db.models import Count, F
 
 from api.custom_permissions import IsTeamLeader
 
@@ -121,11 +121,20 @@ class TeamsController(viewsets.GenericViewSet,
             TeamMember.objects
                 .filter(class_member_id__class_id=class_id)
                 .select_related('class_member_id__user_id')  # Join with ClassMember and User
+                .annotate(
+                    first_name=F('class_member_id__user_id__first_name'),  # Access User's first_name through ClassMember
+                    last_name=F('class_member_id__user_id__last_name'),    # Access User's last_name through ClassMember
+                )
                 .values(
+                    'id',
+                    'class_member_id',
+                    'role',
+                    'status',
                     'team_id',
-                    'class_member_id__user_id__first_name',  # Access User's first_name through ClassMember
-                    'class_member_id__user_id__last_name',   # Access User's last_name through ClassMember
-                    # Include other fields you need from TeamMember
+                    'first_name',  # Access User's first_name through ClassMember
+                    'last_name',   # Access User's last_name through ClassMember
+                    'date_created',
+                    'date_updated',
                 )
             )
 
@@ -140,29 +149,17 @@ class TeamsController(viewsets.GenericViewSet,
             # Create final teams list with grouped team members
             teams = []
             for team_id, team_members_list in grouped_team_members.items():
+                team = Team.objects.get(id=team_id)
                 team_data = {
                     'id': team_id,
+                    'name': team.name,
+                    'description': team.description,
+                    'status': team.status,
                     'team_members': team_members_list
                 }
                 teams.append(team_data)
 
-            return Response(teams)
-            
-            # response = super().list(request, *args, **kwargs)
-            # for team in response.data:
-            #     team_members = TeamMember.objects.filter(team_id=team['id'], class_id=class_id)
-            #     team_members_serializer = TeamMemberSerializer(team_members, many=True).data
-            #     for team_member in team_members_serializer:
-            #         class_member = ClassMember.objects.get(id=team_member['class_member_id'])
-            #         user = User.objects.get(id=class_member.user_id.id)
-            #         team_member['first_name'] = user.first_name
-            #         team_member['last_name'] = user.last_name
-
-            #     team['team_members'] = team_members_serializer
-
-            # # crash out all teams that TeamMembers are not in the same class_id
-            # response.data = [team for team in response.data if team['team_members'] != []]
-
+            return Response(teams, status=status.HTTP_200_OK)
         except Exception as e:
             print(e)
             return Response({"error": "Internal Server Error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
