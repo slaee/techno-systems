@@ -150,7 +150,7 @@ class ClassRoomsController(viewsets.GenericViewSet,
 
         # count number of members
         roles = [ClassMember.TEACHER, ClassMember.STUDENT]
-        number_of_students = ClassMember.objects.filter(class_id=class_id, role__in=roles, status=ClassMember.ACCEPTED).count()
+        number_of_students = ClassMember.objects.filter(class_id=class_id, role__in=roles, status=ClassMember.ACCEPTED, role=ClassMember.STUDENT).count()
         response.data['number_of_students'] = number_of_students
         
         return response
