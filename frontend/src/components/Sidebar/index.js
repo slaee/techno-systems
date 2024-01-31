@@ -24,7 +24,7 @@ function Sidebar({ sidebarItems, name, hasBackButton, onButtonClick }) {
   };
 
   return (
-    <div className="position-relative top-0 start-0 d-flex flex-column p-4 nav-bar">
+    <div className="position-relative sticky-top top-0 start-0 d-flex flex-column p-4 nav-bar">
       {hasBackButton && (
         <Link to="/classes" className="nav-button text-decoration-none align-middle">
           <i className="pi pi-angle-double-left align-middle" style={{ fontSize: '1.25rem' }} />

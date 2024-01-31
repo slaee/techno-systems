@@ -189,7 +189,6 @@ function CreateClass({ visible, handleModal }) {
                     type="submit"
                     className="btn btn-yellow-primary btn-lg ms-auto fw-semibold my-3 mx-auto"
                   >
-                    {console.log(typeof values.max_teams_members)}
                     Create
                   </button>
                 </div>
