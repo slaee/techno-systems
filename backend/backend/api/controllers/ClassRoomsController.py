@@ -269,7 +269,8 @@ class ClassRoomsController(viewsets.GenericViewSet,
 
             class_members = ClassMember.objects.filter(
                 class_id=class_id, 
-                role=ClassMember.STUDENT
+                role=ClassMember.STUDENT,
+                status=ClassMember.ACCEPTED
             ).annotate(
                 teammember_status=Subquery(
                     TeamMember.objects.filter(
