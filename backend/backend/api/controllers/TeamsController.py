@@ -112,18 +112,26 @@ class TeamsController(viewsets.GenericViewSet,
         }
     )
     def list(self, request, *args, **kwargs):
-        response = super().list(request, *args, **kwargs)
-        for team in response.data:
-            team_members = TeamMember.objects.filter(team_id=team['id'])
-            team_members_serializer = TeamMemberSerializer(team_members, many=True).data
-            for team_member in team_members_serializer:
-                class_member = ClassMember.objects.get(id=team_member['class_member_id'])
-                user = User.objects.get(id=class_member.user_id.id)
-                team_member['first_name'] = user.first_name
-                team_member['last_name'] = user.last_name
+        try:
+            class_id = kwargs['class_pk']
+            response = super().list(request, *args, **kwargs)
+            for team in response.data:
+                team_members = TeamMember.objects.filter(team_id=team['id'], class_id=class_id)
+                team_members_serializer = TeamMemberSerializer(team_members, many=True).data
+                for team_member in team_members_serializer:
+                    class_member = ClassMember.objects.get(id=team_member['class_member_id'])
+                    user = User.objects.get(id=class_member.user_id.id)
+                    team_member['first_name'] = user.first_name
+                    team_member['last_name'] = user.last_name
 
-            team['team_members'] = team_members_serializer
-        return response
+                team['team_members'] = team_members_serializer
+
+            # crash out all teams that TeamMembers are not in the same class_id
+            response.data = [team for team in response.data if team['team_members'] != []]
+            
+            return response
+        except:
+            return Response({"error": "Internal Server Error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
     @swagger_auto_schema(
         operation_summary="Gets a team",
