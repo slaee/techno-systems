@@ -4,6 +4,7 @@ from rest_framework.decorators import action
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.response import Response
+from django.db.models import Count
 
 from api.custom_permissions import IsTeamLeader
 
@@ -35,7 +36,7 @@ class TeamsController(viewsets.GenericViewSet,
         """
         if self.action in ['create','destroy', 'update', 'partial_update']:
             return [permissions.IsAuthenticated(), IsTeamLeader()]
-        elif self.action in ['retrieve', 'list', 'join']:
+        elif self.action in ['retrieve', 'join']:
             return [permissions.IsAuthenticated()]
 
         return super().get_permissions()
@@ -114,23 +115,56 @@ class TeamsController(viewsets.GenericViewSet,
     def list(self, request, *args, **kwargs):
         try:
             class_id = kwargs['class_pk']
-            response = super().list(request, *args, **kwargs)
-            for team in response.data:
-                team_members = TeamMember.objects.filter(team_id=team['id'], class_id=class_id)
-                team_members_serializer = TeamMemberSerializer(team_members, many=True).data
-                for team_member in team_members_serializer:
-                    class_member = ClassMember.objects.get(id=team_member['class_member_id'])
-                    user = User.objects.get(id=class_member.user_id.id)
-                    team_member['first_name'] = user.first_name
-                    team_member['last_name'] = user.last_name
 
-                team['team_members'] = team_members_serializer
+            # get all team members by class_id and group by team_id and each team members should include the user's first_name and last_name
+            team_members = (
+            TeamMember.objects
+                .filter(class_member_id__class_id=class_id)
+                .select_related('class_member_id__user_id')  # Join with ClassMember and User
+                .values(
+                    'team_id',
+                    'class_member_id__user_id__first_name',  # Access User's first_name through ClassMember
+                    'class_member_id__user_id__last_name',   # Access User's last_name through ClassMember
+                    # Include other fields you need from TeamMember
+                )
+            )
 
-            # crash out all teams that TeamMembers are not in the same class_id
-            response.data = [team for team in response.data if team['team_members'] != []]
+            # Group team members by team_id
+            grouped_team_members = {}
+            for team_member in team_members:
+                team_id = team_member['team_id']
+                if team_id not in grouped_team_members:
+                    grouped_team_members[team_id] = []
+                grouped_team_members[team_id].append(team_member)
+
+            # Create final teams list with grouped team members
+            teams = []
+            for team_id, team_members_list in grouped_team_members.items():
+                team_data = {
+                    'id': team_id,
+                    'team_members': team_members_list
+                }
+                teams.append(team_data)
+
+            return Response(teams)
             
-            return response
-        except:
+            # response = super().list(request, *args, **kwargs)
+            # for team in response.data:
+            #     team_members = TeamMember.objects.filter(team_id=team['id'], class_id=class_id)
+            #     team_members_serializer = TeamMemberSerializer(team_members, many=True).data
+            #     for team_member in team_members_serializer:
+            #         class_member = ClassMember.objects.get(id=team_member['class_member_id'])
+            #         user = User.objects.get(id=class_member.user_id.id)
+            #         team_member['first_name'] = user.first_name
+            #         team_member['last_name'] = user.last_name
+
+            #     team['team_members'] = team_members_serializer
+
+            # # crash out all teams that TeamMembers are not in the same class_id
+            # response.data = [team for team in response.data if team['team_members'] != []]
+
+        except Exception as e:
+            print(e)
             return Response({"error": "Internal Server Error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
     @swagger_auto_schema(
