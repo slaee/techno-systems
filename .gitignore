@@ -22,23 +22,17 @@
 /frontend/yarn-debug.log*
 /frontend/yarn-error.log*
 
+# Byte-compiled / optimized / DLL files
 /backend/__pycache__/
+/backend/backend/**/__pycache__/
+
 /backend/venv
 /backend/py_client
 
-/backend/backend/api/migrations/*
-/backend/backend/api/migrations/__pycache__/
+
+/backend/backend/api/**/*
+/backend/backend/api/**/__pycache__/
 !/backend/backend/api/migrations/__init__.py
-
-backend/backend/api/__pycache__/
-backend/backend/api/controllers/__pycache__/
-backend/backend/api/models/__pycache__/
-backend/backend/api/serializers/__pycache__/
-
-.venv
-
-# Byte-compiled / optimized / DLL files
-/backend/__pycache__/
 /backend/*.py[cod]
 /backend/*$py.class
 
