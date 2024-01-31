@@ -1,10 +1,18 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
 
 import './index.scss';
 
 function ViewClass() {
   const { classRoom } = useOutletContext();
+
+  const [numberOfStudents, setNumberOfStudents] = useState(classRoom?.number_of_students);
+
+  useEffect(() => {
+    if (classRoom) {
+      setNumberOfStudents(classRoom?.number_of_students);
+    }
+  }, [classRoom?.number_of_students]);
 
   const handleCopyCode = () => {
     navigator.clipboard.writeText(classRoom?.class_code);
@@ -34,7 +42,7 @@ function ViewClass() {
       <div className="d-flex flex-column">
         <div className="pe-5">
           <div className="students-container p-5">
-            <div className="fw-bold fs-1">{classRoom?.number_of_students}</div>
+            <div className="fw-bold fs-1">{numberOfStudents}</div>
             <div className="ms-auto fw-semibold fs-3 mx-5">Students</div>
           </div>
         </div>
