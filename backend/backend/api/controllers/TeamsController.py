@@ -36,7 +36,7 @@ class TeamsController(viewsets.GenericViewSet,
         """
         if self.action in ['create','destroy', 'update', 'partial_update']:
             return [permissions.IsAuthenticated(), IsTeamLeader()]
-        elif self.action in ['retrieve', 'join']:
+        elif self.action in ['retrieve', 'list', 'join']:
             return [permissions.IsAuthenticated()]
 
         return super().get_permissions()
