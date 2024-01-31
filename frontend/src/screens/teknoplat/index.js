@@ -3,6 +3,7 @@ import { useOutletContext, Outlet } from 'react-router-dom';
 
 import 'primeicons/primeicons.css';
 import './index.scss';
+import { Box, Toolbar } from '@mui/material';
 import Sidebar from './components/sidebar/Sidebar';
 
 function TeknoPlat() {
@@ -12,12 +13,9 @@ function TeknoPlat() {
 
   return (
     <Box>
-      <Box
-          component="main"
-          sx={{ flexGrow: 1, width: { sm: `calc(100% - 240px)` }}}
-      >
-          <Toolbar />
-          <Outlet context={{ user: user, classId: classId, classRoom: classRoom, classMember: classMember }} />
+      <Box component="main" sx={{ flexGrow: 1, width: { sm: `calc(100% - 240px)` } }}>
+        <Toolbar />
+        <Outlet context={{ user, classId, classRoom, classMember }} />
       </Box>
       <Sidebar />
     </Box>

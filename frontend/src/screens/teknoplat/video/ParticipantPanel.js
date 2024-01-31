@@ -1,5 +1,3 @@
-import { useLoaderData } from "react-router-dom";
-import VideoPageVideoViewParticipantPanelParticipant from "./VideoPage.VideoView.ParticipantPanel.Participant";
 import { useMeeting } from "@videosdk.live/react-sdk";
 import { List, ListItem, ListItemButton, ListItemText, ListSubheader, Paper } from "@mui/material";
 import { useClassMembers } from "../../../hooks";

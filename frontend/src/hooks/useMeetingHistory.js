@@ -33,59 +33,56 @@ const useMeetingHistory = (meetingId) => {
           break;
         default:
       }
-
     };
 
     const getRemarks = async () => {
-        let responseCode;
-        let retrievedRemarks;
-  
-        try {
-          const res = await MeetingsService.getMeetingRemarkHistory(meetingId);
-  
-          responseCode = res?.status;
-          retrievedRemarks = res?.data;
-        } catch (error) {
-          responseCode = error?.response?.status;
-        }
-  
-        switch (responseCode) {
-          case 200:
-            setRemarks(retrievedRemarks);
-            break;
-          case 404:
-          case 500:
-            navigate('/classes');
-            break;
-          default:
-        }
-  
+      let responseCode;
+      let retrievedRemarks;
+
+      try {
+        const res = await MeetingsService.getMeetingRemarkHistory(meetingId);
+
+        responseCode = res?.status;
+        retrievedRemarks = res?.data;
+      } catch (error) {
+        responseCode = error?.response?.status;
+      }
+
+      switch (responseCode) {
+        case 200:
+          setRemarks(retrievedRemarks);
+          break;
+        case 404:
+        case 500:
+          navigate('/classes');
+          break;
+        default:
+      }
     };
 
     const getFeedbacks = async () => {
-        let responseCode;
-        let retrievedFeedbacks;
-  
-        try {
-          const res = await MeetingsService.getMeetingFeedbackHistory(meetingId);
-  
-          responseCode = res?.status;
-          retrievedFeedbacks = res?.data;
-        } catch (error) {
-          responseCode = error?.response?.status;
-        }
-  
-        switch (responseCode) {
-          case 200:
-            setFeedbacks(retrievedFeedbacks);
-            break;
-          case 404:
-          case 500:
-            navigate('/classes');
-            break;
-          default:
-        }
-  
+      let responseCode;
+      let retrievedFeedbacks;
+
+      try {
+        const res = await MeetingsService.getMeetingFeedbackHistory(meetingId);
+
+        responseCode = res?.status;
+        retrievedFeedbacks = res?.data;
+      } catch (error) {
+        responseCode = error?.response?.status;
+      }
+
+      switch (responseCode) {
+        case 200:
+          setFeedbacks(retrievedFeedbacks);
+          break;
+        case 404:
+        case 500:
+          navigate('/classes');
+          break;
+        default:
+      }
     };
 
     getRatings();

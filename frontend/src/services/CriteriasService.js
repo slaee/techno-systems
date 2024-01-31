@@ -3,7 +3,7 @@ import { api } from './axiosConfig';
 
 const BASE_URL = `${apiConfig.API_URL}/criterias`;
 
-const CriteriasServices = {
+const CriteriasService = {
   /// GET /criterias
   all: () => api.get(BASE_URL),
 
@@ -20,4 +20,4 @@ const CriteriasServices = {
   get: (id) => api.get(`${BASE_URL}/${id}`),
 };
 
-export default CriteriasServices;
+export default CriteriasService;

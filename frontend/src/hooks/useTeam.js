@@ -36,10 +36,10 @@ const useTeam = (classId, teamId) => {
       }
     };
 
-    const teamMembers = async () => {
+    const getTeamMembers = async () => {
       let responseCode;
       let retrievedMembers;
-  
+
       try {
         const res = await ClassRoomsService.teamMembers(classId, teamId);
         responseCode = res?.status;
@@ -47,7 +47,7 @@ const useTeam = (classId, teamId) => {
       } catch (error) {
         responseCode = error?.response?.status;
       }
-  
+
       switch (responseCode) {
         case 200:
           setTeamMembers(retrievedMembers);
@@ -62,7 +62,7 @@ const useTeam = (classId, teamId) => {
     };
 
     get();
-    teamMembers();
+    getTeamMembers();
     setIsRetrieving(false);
   }, []);
 

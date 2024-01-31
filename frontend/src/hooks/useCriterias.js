@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CriteriasServices } from '../services';
+import { CriteriasService } from '../services';
 
 const useCriterias = () => {
   const navigate = useNavigate();
@@ -13,10 +13,10 @@ const useCriterias = () => {
       let retrievedCriterias;
 
       try {
-        const res = await CriteriasServices.all();
+        const res = await CriteriasService.all();
 
         responseCode = res?.status;
-        retrievedPitches = res?.data;
+        retrievedCriterias = res?.data;
       } catch (error) {
         responseCode = error?.response?.status;
       }
