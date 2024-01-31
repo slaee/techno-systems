@@ -60,21 +60,21 @@ const CreateActivity = () => {
   };
 
   const handleTeamChange = (selectedOptions) => {
-    let selectedTeams;
+    let _selectedTeams;
     if (selectedOptions.some((option) => option.value === 'all')) {
-      selectedTeams = teamOptions
+      _selectedTeams = teamOptions
         .filter((option) => option.value !== 'all')
         .map((option) => option.value);
     } else {
-      selectedTeams = selectedOptions.map((option) => option.value);
+      _selectedTeams = selectedOptions.map((option) => option.value);
     }
 
-    setSelectedTeams(selectedTeams);
+    setSelectedTeams(_selectedTeams);
 
     // Update activityData with the selected teams
     setActivityData((prevState) => ({
       ...prevState,
-      team_id: selectedTeams,
+      team_id: _selectedTeams,
     }));
   };
 
