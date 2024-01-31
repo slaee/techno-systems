@@ -113,7 +113,6 @@ const ViewActivityStudent = () => {
               onClick={() => {
                 navigate(-1);
               }}
-              s
             >
               <FiChevronLeft />
             </span>
@@ -196,18 +195,18 @@ const ViewActivityStudent = () => {
           <p>Comment</p>
 
           {activityComments && activityComments.length > 0 ? (
-            activityComments.map((comment) => (
+            activityComments.map((_comment) => (
               <div
                 className="d-flex flex-row justify-content-between p-3 border border-dark rounded-3 "
-                key={comment.id}
+                key={_comment.id}
               >
                 <div className="b-0 m-3">
                   <div className="d-flex flex-row gap-2">
                     <div className="fw-bold activity-primary">
-                      {comment.user.first_name} {comment.user.last_name}:
+                      {_comment.user.first_name} {_comment.user.last_name}:
                     </div>
                   </div>
-                  {comment.comment}
+                  {_comment.comment}
                 </div>
               </div>
             ))

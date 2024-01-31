@@ -21,9 +21,9 @@ const Student = () => {
   const classMemberTeam = useClassMemberTeam(classId, user.user_id);
   const { isRetrieving, currentTeamMember, team } = classMemberTeam;
 
-  const setActivitiesAndUnfiltered = (activities) => {
-    setActivities(activities);
-    setUnfilteredActivities(activities);
+  const setActivitiesAndUnfiltered = (_activities) => {
+    setActivities(_activities);
+    setUnfilteredActivities(_activities);
     setSelectedFilter(0);
   };
 
@@ -50,6 +50,8 @@ const Student = () => {
         setActivities(filteredActivities);
         setSelectedFilter(2);
         break;
+      default:
+        break;
     }
   };
 
@@ -74,7 +76,7 @@ const Student = () => {
     if (activities) {
       const groupedActivities = activities.reduce((groups, activity) => {
         activity.team_id.forEach((teamId) => {
-          if (selectedTeam != 'All' && Number(selectedTeam) != teamId) {
+          if (selectedTeam !== 'All' && Number(selectedTeam) !== teamId) {
             return groups;
           }
           if (!groups[teamId]) {

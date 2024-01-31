@@ -18,9 +18,9 @@ const Teacher = () => {
   const { isLoading, activities: activitiesFromHook } = useActivities(classId);
   const [groupActsByTeam, setGroupActsByTeam] = useState({});
 
-  const setActivitiesAndUnfiltered = (activities) => {
-    setActivities(activities);
-    setUnfilteredActivities(activities);
+  const setActivitiesAndUnfiltered = (_activities) => {
+    setActivities(_activities);
+    setUnfilteredActivities(_activities);
     setSelectedFilter(0);
   };
 
@@ -47,6 +47,8 @@ const Teacher = () => {
         setActivities(filteredActivities);
         setSelectedFilter(2);
         break;
+      default:
+        break;
     }
   };
 
@@ -58,7 +60,7 @@ const Teacher = () => {
     // it will directly show the activities of the selected team
     // if the team is all, then show all the activities
 
-    if (teamId == 'All') {
+    if (teamId === 'All') {
       setActivitiesAndUnfiltered(allActivities);
     } else {
       // if a team is selected, then filter the activities by team
@@ -83,7 +85,7 @@ const Teacher = () => {
     if (activities) {
       const groupedActivities = activities.reduce((groups, activity) => {
         activity.team_id.forEach((teamId) => {
-          if (selectedTeam != 'All' && Number(selectedTeam) != teamId) {
+          if (selectedTeam !== 'All' && Number(selectedTeam) !== teamId) {
             return groups;
           }
           if (!groups[teamId]) {
@@ -191,10 +193,10 @@ const Teacher = () => {
                   Unsubmitted
                 </button>
               </div>
-              {Object.entries(groupActsByTeam).map(([team_id, activities]) => (
+              {Object.entries(groupActsByTeam).map(([team_id, _activities]) => (
                 <div className="d-flex flex-column gap-3" key={team_id}>
-                  <p className="fw-bold m-0">{teams?.find((team) => team.id == team_id).name}</p>
-                  {activities.map((act, index) => (
+                  <p className="fw-bold m-0">{teams?.find((team) => team.id === team_id).name}</p>
+                  {_activities.map((act, index) => (
                     <ActivityCard
                       key={act.id}
                       {...act}

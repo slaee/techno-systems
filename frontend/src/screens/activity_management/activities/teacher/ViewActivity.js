@@ -134,7 +134,6 @@ const ViewActivity = () => {
               onClick={() => {
                 navigate(-1);
               }}
-              s
             >
               <FiChevronLeft />
             </span>
@@ -203,30 +202,30 @@ const ViewActivity = () => {
           <p>Comment</p>
 
           {activityComments && activityComments.length > 0 ? (
-            activityComments.map((comment) => (
+            activityComments.map((_comment) => (
               <div
                 className="d-flex flex-row justify-content-between align-items-center p-3 border border-dark rounded-3 mb-0"
-                key={comment.id}
+                key={_comment.id}
               >
                 <p className="b-0 mb-0 ">
                   <div className="d-flex flex-row gap-2">
                     <div className="fw-bold activity-primary">
-                      {comment.user.first_name} {comment.user.last_name}:
+                      {_comment.user.first_name} {_comment.user.last_name}:
                     </div>
-                    {comment.comment}
+                    {_comment.comment}
                   </div>
                 </p>
                 <div className="d-flex flex-row gap-3 fw-bold">
                   <button
                     className="nav-item nav-link text-danger d-flex align-items-center"
-                    onClick={(e) => handleUpdateComment(e, comment.id)}
+                    onClick={(e) => handleUpdateComment(e, _comment.id)}
                   >
                     <FiEdit2 />
                   </button>
 
                   <button
                     className="nav-item nav-link text-danger d-flex align-items-center"
-                    onClick={(e) => handleCommentDelete(e, comment.id)}
+                    onClick={(e) => handleCommentDelete(e, _comment.id)}
                   >
                     <FiTrash />
                   </button>
