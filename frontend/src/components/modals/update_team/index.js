@@ -1,4 +1,5 @@
 import React from 'react';
+import Swal from 'sweetalert2';
 import PropTypes from 'prop-types';
 import { Dialog } from 'primereact/dialog';
 import { useOutletContext } from 'react-router-dom';
@@ -17,6 +18,10 @@ const validate = (values) => {
     errors.name = 'This field is required.';
   } else if (values.name.length > 50) {
     errors.name = 'The maximum length of this field is 50 characters.';
+  }
+
+  if (!values.description) {
+    errors.description = 'This field is required.';
   }
 
   return errors;
@@ -47,7 +52,7 @@ function UpdateTeam({ visible, handleModal, teamData }) {
               const updateTeamCallbacks = {
                 updated: async ({ retrievedTeam }) => {
                   if (retrievedTeam) {
-                    alert('Team Updated Successfully.');
+                    Swal.fire('Team Updated Successfully.');
                     window.location.reload();
                   }
                 },
@@ -56,7 +61,7 @@ function UpdateTeam({ visible, handleModal, teamData }) {
                   setErrors(errors);
                 },
                 internalError: () => {
-                  alert('Internal Error: Oops, something went wrong. Please try again.');
+                  Swal.fire('Internal Error: Oops, something went wrong. Please try again.');
                 },
               };
               console.log('values', values.name, values.description);
