@@ -2,7 +2,7 @@ import 'primeicons/primeicons.css';
 import '../index.scss';
 import React, { useState, useEffect } from 'react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
-import { useActivities, useClassMemberTeam, useTeams } from '../../../../hooks';
+import { useActivities, useClassMemberTeam, useTeams, useClassMember } from '../../../../hooks';
 import { ActivityCard } from '../../../../components/cards/activity_cards';
 
 const Student = () => {
@@ -17,9 +17,7 @@ const Student = () => {
   const [activities, setActivities] = useState(null);
   const { isLoading, activities: activitiesFromHook } = useActivities(classId);
   const [groupActsByTeam, setGroupActsByTeam] = useState({});
-
-  const classMemberTeam = useClassMemberTeam(classId, user.user_id);
-  const { isRetrieving, currentTeamMember, team } = classMemberTeam;
+  const { team } = useClassMember(classId, user?.user_id);
 
   const setActivitiesAndUnfiltered = (_activities) => {
     setActivities(_activities);
