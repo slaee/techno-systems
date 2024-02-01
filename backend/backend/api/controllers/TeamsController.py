@@ -55,7 +55,8 @@ class TeamsController(viewsets.GenericViewSet,
     )
     def create(self, request, *args, **kwargs):
         try:
-            class_member = ClassMember.objects.get(user_id=request.user)
+            class_id = kwargs['class_pk']
+            class_member = ClassMember.objects.filter(user_id=request.user, class_id=class_id).first()
 
             teammember = TeamMember.objects.get(class_member_id=class_member)
             
