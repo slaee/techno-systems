@@ -74,13 +74,13 @@ function Board({ isClass, selected, project, setBoardTemplateIds }) {
       <div className={styles.scrollable}>
         {project && boards.length === 0 && user.role === 2 && teamId === project.team_id && (
           <p className={styles.centeredText} style={{ width: '45rem' }}>
-            It looks like you haven't created any boards yet. <br /> Click on the "Create Board"
-            button to get started and create your first board.
+            It looks like the team haven't created any boards yet. <br /> Click on the "Create
+            Board" button to get started and create your team's first board.
           </p>
         )}
         {project && boards.length === 0 && (user.role !== 2 || teamId !== project.team_id) && (
           <p className={styles.centeredText} style={{ width: '45rem' }}>
-            It looks like the group haven't created any boards yet. <br />
+            It looks like the team haven't created any boards yet. <br />
           </p>
         )}
         {boards.map((board) => (

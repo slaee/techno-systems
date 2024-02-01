@@ -78,6 +78,8 @@ const ProjectDetails = ({ project, numTemplates, onProjectUpdate, team_name, isC
             Swal.showValidationMessage('Project name cannot be empty');
           } else if (!input2Value) {
             Swal.showValidationMessage('Please enter the project description.');
+          } else if (input1Value.length > 50) {
+            Swal.showValidationMessage(`Project name should be at most 50 characters`);
           } else if (wordsArray.length < 10 || wordsArray.length > 50) {
             Swal.showValidationMessage(
               `Description should have 10 - 50 words. You have ${wordsArray.length} word/s.`
