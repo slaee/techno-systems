@@ -238,7 +238,7 @@ const ViewTemplate = () => {
           </div>
           <div className="d-flex justify-content-end">
             <Button variant="btn btn-activity-primary" type="submit" id="form">
-              Add Comment
+              Create Activity
             </Button>
           </div>
         </Form>

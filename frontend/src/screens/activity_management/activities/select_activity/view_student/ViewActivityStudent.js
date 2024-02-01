@@ -17,15 +17,17 @@ const ViewActivityStudent = () => {
   const navigate = useNavigate();
   const [activityData, setActivityData] = useState(null);
 
-  const { isRetrieving, activity } = useActivity(classId, activityId, teamId);
+  const { isRetrieving, activity } = useActivity(classId, teamId, activityId);
   const { comments } = useActivityComments(activityId);
   const [comment, setComment] = useState(null);
   const [activityComments, setActivityComments] = useState([]);
+  const [submitted, setSubmitted] = useState(null);
 
   useEffect(() => {
     if (activity) {
       const temp = { ...activity };
       setActivityData(temp);
+      setSubmitted(!temp.submission_status);
     }
   }, [activity]);
 
@@ -48,6 +50,18 @@ const ViewActivityStudent = () => {
     return 'None';
   };
 
+  //  Submit Activity
+  const submitAct = useActivity(classId, teamId, activityId);
+
+  const handleSubmit = async (e) => {
+    setSubmitted(true);
+    const data = {
+      submission_status: submitted,
+    };
+    submitAct.submitActivity(classId, teamId, activityId, data);
+    window.location.reload();
+  };
+
   // Edit/Delete Work
 
   const [showAddWorkModal, setShowAddWorkModal] = useState(false);
@@ -58,7 +72,6 @@ const ViewActivityStudent = () => {
 
   const [workData, setWorkData] = useState(null);
   const fetchData = useWorks(activityId);
-  // console.log(fetchData);
   const fetchWorkDataPromise = fetchData.getWorksByActivity(); // This returns a Promise
 
   useEffect(() => {
@@ -118,6 +131,15 @@ const ViewActivityStudent = () => {
             </span>
 
             <h4 className="fw-bold m-0">{activityData ? `${activityData.title}` : 'Loading...'}</h4>
+          </div>
+
+          <div className="d-flex flex-row gap-3">
+            <button
+              className="btn btn-outline-secondary btn-block fw-bold bw-3 m-0 "
+              onClick={handleSubmit}
+            >
+              {submitted ? `Submit Activity` : 'Unsubmit Activity'}
+            </button>
           </div>
         </div>
 
