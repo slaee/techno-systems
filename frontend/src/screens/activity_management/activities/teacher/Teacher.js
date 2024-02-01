@@ -195,7 +195,9 @@ const Teacher = () => {
               </div>
               {Object.entries(groupActsByTeam).map(([team_id, _activities]) => (
                 <div className="d-flex flex-column gap-3" key={team_id}>
-                  <p className="fw-bold m-0">{teams?.find((team) => team.id === team_id).name}</p>
+                  <p className="fw-bold m-0">
+                    {teams?.find((team) => team.id === Number(team_id))?.name}
+                  </p>
                   {_activities.map((act, index) => (
                     <ActivityCard
                       key={act.id}
