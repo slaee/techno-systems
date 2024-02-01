@@ -13,6 +13,7 @@ import ApplyTeam from '../../../components/modals/apply_team';
 
 import './index.scss';
 import AssignNewLeader from '../../../components/modals/assign_new_leader';
+import UpdateTeam from '../../../components/modals/update_team';
 
 function Teams() {
   const { user, classId, classMember, classRoom } = useOutletContext();
@@ -34,6 +35,7 @@ function Teams() {
   const [showNotif, setShowNotif] = useState(false);
   const [isAddLeadersModalOpen, setAddLeadersModalOpen] = useState(false);
   const [isCreateTeamModalOpen, setCreateTeamModalOpen] = useState(false);
+  const [isUpdateTeamModalOpen, setUpdateTeamModalOpen] = useState(false);
   const [selectedTeam, setSelectedTeam] = useState(null);
   const [isSelectedTeam, setIsSelectedTeam] = useState(false);
 
@@ -326,6 +328,7 @@ function Teams() {
                     className="btn btn-sm fw-bold text-success"
                     onClick={() => {
                       acceptTeamMember(team.id, tmId);
+                      window.location.reload();
                     }}
                   >
                     ACCEPT
@@ -335,6 +338,7 @@ function Teams() {
                     className="btn btn-sm fw-bold text-danger"
                     onClick={() => {
                       removeTeamMember(team.id, tmId);
+                      window.location.reload();
                     }}
                   >
                     REJECT
@@ -346,6 +350,7 @@ function Teams() {
                   className="btn btn-sm fw-bold text-danger"
                   onClick={() => {
                     removeTeamMember(team.id, tmId);
+                    window.location.reload();
                   }}
                 >
                   KICK
@@ -376,9 +381,6 @@ function Teams() {
     }, [currentTeamMember]);
 
     if (team && currentTeamMember?.status === GLOBALS.MEMBER_STATUS.ACCEPTED) {
-      const isOpen = team.status === GLOBALS.TEAM_STATUS.OPEN;
-      const isClose = team.status === GLOBALS.TEAM_STATUS.CLOSE;
-
       subheaderContent = (
         <div className="subheader-body d-flex pt-2 pb-2">
           <div className="mx-5">
@@ -419,7 +421,19 @@ function Teams() {
                       CLOSE
                     </option>
                   </select>
+                  <button
+                    type="button"
+                    className="btn btn-secondary btn-sm ms-2"
+                    onClick={() => setUpdateTeamModalOpen(true)}
+                  >
+                    Edit
+                  </button>
                 </div>
+                <UpdateTeam
+                  visible={isUpdateTeamModalOpen}
+                  handleModal={() => setUpdateTeamModalOpen(false)}
+                  teamData={team}
+                />
               </div>
             )}
         </div>

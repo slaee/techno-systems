@@ -1,32 +1,32 @@
 @use '../../../styles/variables';
 @use '../../../styles/mixins';
 
-.code-box{
+.code-box {
     background-color: variables.$wild-grey;
     color: variables.$shadow-wild-grey;
 }
 
-.brown-text{
+.brown-text {
     color: variables.$wild-brown;
 }
 
-.students-container{
+.students-container {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    @include mixins.make-container(25vw, 32vh, variables.$wild-yellow, variables.$wild-white);
+    @include mixins.make-container(35vw, 67.3vh, variables.$wild-yellow, variables.$wild-white);
 }
 
-.teams-container{
+.teams-container {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    @include mixins.make-container(100%, 25vh, variables.$wild-brown, variables.$wild-white);
+    @include mixins.make-container(35vw, 67.3vh, variables.$wild-brown, variables.$wild-white);
 }
 
-.logs-container{
+.logs-container {
     display: flex;
     flex-direction: column;
     padding: 4%;

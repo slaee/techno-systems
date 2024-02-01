@@ -14,33 +14,33 @@ import './index.scss';
 const validate = (values) => {
   const errors = {};
 
-  if (!values.team_name) {
-    errors.team_name = 'This field is required.';
-  } else if (values.team_name.length > 50) {
-    errors.team_name = 'The maximum length of this field is 50 characters.';
+  if (!values.name) {
+    errors.name = 'This field is required.';
+  } else if (values.name.length > 50) {
+    errors.name = 'The maximum length of this field is 50 characters.';
   }
 
-  if (!values.team_description) {
-    errors.team_description = 'This field is required.';
+  if (!values.description) {
+    errors.description = 'This field is required.';
   }
 
   return errors;
 };
 
-function CreateTeam({ visible, handleModal }) {
+function UpdateTeam({ visible, handleModal, teamData }) {
   const { classId } = useOutletContext();
-  const { createTeam } = useTeams(classId);
+  const { updateTeam } = useTeams(classId);
 
   return (
     <Dialog className="hiring-post-modal" visible={visible} onHide={handleModal} showHeader={false}>
       <div className="d-grid gap-3 p-3">
         <button aria-label="Close Modal" className="btn btn-close ms-auto" onClick={handleModal} />
         <div className="px-3">
-          <div className="text-center fs-4 fw-bold">Team Creation</div>
+          <div className="text-center fs-4 fw-bold">Update Team</div>
           <Formik
             initialValues={{
-              team_name: '',
-              team_description: '',
+              name: teamData.name,
+              description: teamData.description,
             }}
             onSubmit={async (values, { setErrors }) => {
               const errors = validate(values);
@@ -49,49 +49,48 @@ function CreateTeam({ visible, handleModal }) {
                 return;
               }
 
-              const createTeamCallbacks = {
-                created: async ({ retrievedTeam }) => {
+              const updateTeamCallbacks = {
+                updated: async ({ retrievedTeam }) => {
                   if (retrievedTeam) {
-                    Swal.fire('Team Created Successfully.');
+                    Swal.fire('Team Updated Successfully.');
                     window.location.reload();
                   }
                 },
                 invalidFields: () => {
-                  errors.team_name = 'Invalid team name.';
+                  errors.name = 'Invalid team name.';
                   setErrors(errors);
                 },
                 internalError: () => {
                   Swal.fire('Internal Error: Oops, something went wrong. Please try again.');
                 },
               };
+              console.log('values', values.name, values.description);
 
-              // Create Team
-              await createTeam({
-                name: values.team_name,
-                description: values.team_description,
-                callbacks: createTeamCallbacks,
+              // Update Team
+              await updateTeam(teamData.id, {
+                name: values.name,
+                description: values.description,
+                callbacks: updateTeamCallbacks,
               });
             }}
           >
             {({ errors, values, handleSubmit, setFieldValue }) => (
               <form onSubmit={handleSubmit}>
                 <ControlInput
-                  name="team_name"
+                  name="name"
                   label="Team Name"
                   className="yellow-on-focus"
-                  placeholder="Enter Team Name"
-                  value={values.team_name}
-                  onChange={(e) => setFieldValue('team_name', e.target.value)}
-                  error={errors.team_name}
+                  value={values.name}
+                  onChange={(e) => setFieldValue('name', e.target.value)}
+                  error={errors.name}
                 />
                 <ControlTextArea
-                  name="team_description"
+                  name="description"
                   label="Team Description"
                   className="yellow-on-focus"
-                  placeholder="Enter Team Description"
-                  value={values.team_description}
-                  onChange={(e) => setFieldValue('team_description', e.target.value)}
-                  error={errors.team_description}
+                  value={values.description}
+                  onChange={(e) => setFieldValue('description', e.target.value)}
+                  error={errors.description}
                 />
                 <div className="d-flex flex-row justify-content-center pb-3 pt-3">
                   <button
@@ -105,7 +104,7 @@ function CreateTeam({ visible, handleModal }) {
                     className="btn btn-yellow-primary btn-create-team-modal mx-auto fw-semibold"
                     onClick={handleSubmit}
                   >
-                    Create
+                    Update
                   </button>
                 </div>
               </form>
@@ -117,14 +116,20 @@ function CreateTeam({ visible, handleModal }) {
   );
 }
 
-CreateTeam.defaultProps = {
+UpdateTeam.defaultProps = {
   visible: false,
   handleModal: () => {},
+  teamData: {},
 };
 
-CreateTeam.propTypes = {
+UpdateTeam.propTypes = {
   visible: PropTypes.bool,
   handleModal: PropTypes.func,
+  teamData: PropTypes.shape({
+    id: PropTypes.string,
+    name: PropTypes.string,
+    description: PropTypes.string,
+  }),
 };
 
-export default CreateTeam;
+export default UpdateTeam;

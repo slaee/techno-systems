@@ -1,4 +1,6 @@
 import React from 'react';
+
+import Swal from 'sweetalert2';
 import { Dialog } from 'primereact/dialog';
 import { Formik } from 'formik';
 import PropTypes from 'prop-types';
@@ -44,7 +46,7 @@ function JoinClass({ visible, handleModal }) {
 
             const joinClassCallbacks = {
               joined: ({ retrievedMessage }) => {
-                alert('Please wait for the Teacher to accept your request');
+                Swal.fire('Please wait for the Teacher to accept your request');
                 handleModal(); // Close modal
               },
               invalidFields: () => {
@@ -52,7 +54,7 @@ function JoinClass({ visible, handleModal }) {
                 setErrors(errors);
               },
               internalError: () => {
-                alert('Internal Error: Oops, something went wrong. Please try again.');
+                Swal.fire('Internal Error: Oops, something went wrong. Please try again.');
               },
             };
 
