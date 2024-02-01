@@ -6,7 +6,7 @@ import Button from '../../components/UI/Button/Button';
 import styles from './Result.module.css';
 
 const Result = () => {
-  const { id, boardid } = useParams();
+  const { boardid } = useParams();
   const navigate = useNavigate();
 
   const onClickDashboard = () => {
