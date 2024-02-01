@@ -61,7 +61,7 @@
     "test": "react-app-rewired test",
     "eject": "react-scripts eject",
     "lint": "eslint .",
-    "lint-fix": "eslint . --fix"
+    "lint-fix": "eslint --fix ."
   },
   "eslintConfig": {
     "extends": [

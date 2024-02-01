@@ -37,7 +37,6 @@ const useActivityTemplate = (templateId) => {
     get();
   }, []);
 
-
   const updateTemplate = async (templateData) => {
     let responseCode;
     let updatedTemplate;
@@ -54,12 +53,12 @@ const useActivityTemplate = (templateId) => {
       case 200:
         setTemplate(updatedTemplate);
         break;
-      case 400: 
+      case 400:
       case 404:
       case 500:
       default:
     }
-  }
+  };
 
   const deleteTemplate = async () => {
     let responseCode;
@@ -80,7 +79,7 @@ const useActivityTemplate = (templateId) => {
       case 500:
       default:
     }
-  }
+  };
   return { isLoading, template, updateTemplate, deleteTemplate };
 };
 

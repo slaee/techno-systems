@@ -5,11 +5,10 @@ import { ClassRoomsService } from '../services';
 
 const useJoinClass = () => {
   const navigate = useNavigate();
-  const [isJoining, setIsJoining] = useState(true);
+  const [isJoining, setIsJoining] = useState(false);
 
   const joinClass = async ({ classCode, callbacks }) => {
     setIsJoining(true);
-
     let responseCode;
     let retrievedMessage;
 

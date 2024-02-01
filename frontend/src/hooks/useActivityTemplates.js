@@ -7,7 +7,7 @@ const useActivityTemplates = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [templates, setTemplates] = useState([]);
   const [templatesByCourse, setTemplatesByCourse] = useState([]);
-  const [ courses, setCourses ] = useState([]);
+  const [courses, setCourses] = useState([]);
 
   useEffect(() => {
     const get = async () => {
@@ -39,7 +39,6 @@ const useActivityTemplates = () => {
     get();
   }, []);
 
-
   const createTemplate = async (templateData) => {
     let responseCode;
     let createdTemplate;
@@ -63,7 +62,7 @@ const useActivityTemplates = () => {
         break;
       default:
     }
-  }
+  };
 
   useEffect(() => {
     const get = async () => {

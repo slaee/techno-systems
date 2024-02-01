@@ -4,7 +4,7 @@ from rest_framework.decorators import action
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.response import Response
-from django.db.models import F, OuterRef, Subquery, Q
+from django.db.models import F, OuterRef, Subquery, Q, Count
 
 
 from api.custom_permissions import IsModerator
@@ -150,8 +150,15 @@ class ClassRoomsController(viewsets.GenericViewSet,
 
         # count number of members
         roles = [ClassMember.TEACHER, ClassMember.STUDENT]
-        number_of_students = ClassMember.objects.filter(class_id=class_id, role__in=roles, status=ClassMember.ACCEPTED).count()
+        number_of_students = ClassMember.objects.filter(class_id=class_id, role__in=roles, status=ClassMember.ACCEPTED, role=ClassMember.STUDENT).count()
+        
+        # fetch all team_members of the class and group by team_id
+        teams = TeamMember.objects.filter(class_member_id__class_id=class_id, status=TeamMember.ACCEPTED).values('team_id').annotate(team_count=Count('team_id'))
+
+        number_of_teams = len(teams)
+
         response.data['number_of_students'] = number_of_students
+        response.data['number_of_teams'] = number_of_teams
         
         return response
     
@@ -269,7 +276,8 @@ class ClassRoomsController(viewsets.GenericViewSet,
 
             class_members = ClassMember.objects.filter(
                 class_id=class_id, 
-                role=ClassMember.STUDENT
+                role=ClassMember.STUDENT,
+                status=ClassMember.ACCEPTED
             ).annotate(
                 teammember_status=Subquery(
                     TeamMember.objects.filter(

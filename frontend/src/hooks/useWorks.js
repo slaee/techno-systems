@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ActivityService } from '../services';
 
-const useWorks = (activityId) => {
+const useWorks = (activityId, classId) => {
   const navigate = useNavigate();
   const [isRetrieving, setIsRetrieving] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
@@ -20,7 +20,7 @@ const useWorks = (activityId) => {
       responseCode = error?.response?.status;
     }
 
-    //TODO
+    // TODO
     switch (responseCode) {
       case 200:
         return retrievedWorks;
@@ -97,11 +97,11 @@ const useWorks = (activityId) => {
     }
   };
 
-  const getAllWork = async (activityId) => {
+  const getAllWork = async (_activityId) => {
     let responseCode;
 
     try {
-      const res = await ActivityService.getAllWorkAttachmentsForActivity(activityId);
+      const res = await ActivityService.getAllWorkAttachmentsForActivity(_activityId);
       responseCode = res?.status;
     } catch (error) {
       responseCode = error?.response?.status;
@@ -145,7 +145,7 @@ const useWorks = (activityId) => {
     deleteWork,
     updateWork,
     getAllWork,
-    getWork
+    getWork,
   };
 };
 

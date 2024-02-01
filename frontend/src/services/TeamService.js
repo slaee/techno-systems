@@ -4,8 +4,8 @@ import { api } from './axiosConfig';
 const BASE_URL = `${apiConfig.API_URL}/classes`;
 
 const TeamService = {
-	/// PUT /classes/{class_id}/activities
-	/*
+  /// PUT /classes/{class_id}/activities
+  /*
     data:{
         "classroom_id": 0,
         "team_id": [
@@ -19,10 +19,12 @@ const TeamService = {
         "total_score": 2147483647
     }
     */
-	updateTeamActivity: (classId, teamId, activityId, data) => api.put(`${BASE_URL}/${classId}/teams/${teamId}/activities/${activityId}`, data),
+  updateTeamActivity: (classId, teamId, activityId, data) =>
+    api.put(`${BASE_URL}/${classId}/teams/${teamId}/activities/${activityId}`, data),
 
-    /// DELETE /classes/{class_id}/activities
-    deleteTeamActivity: (classId, teamId, activityId) => api.delete(`${BASE_URL}/${classId}/teams/${teamId}/activities/${activityId}`),
+  /// DELETE /classes/{class_id}/activities
+  deleteTeamActivity: (classId, teamId, activityId) =>
+    api.delete(`${BASE_URL}/${classId}/teams/${teamId}/activities/${activityId}`),
 };
 
 export default TeamService;

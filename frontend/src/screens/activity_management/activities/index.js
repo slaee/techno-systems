@@ -4,12 +4,10 @@ import { Student } from './student';
 import './index.scss';
 
 function ActivityManagement() {
-	const { user } = useOutletContext();
-	
-	if (user?.role === 1)
-		return  <Teacher />;
-	else if(user?.role === 2)
-		return  <Student />;
+  const { user } = useOutletContext();
+
+  if (user?.role === 1) return <Teacher />;
+  if (user?.role === 2) return <Student />;
 }
 
 export default ActivityManagement;

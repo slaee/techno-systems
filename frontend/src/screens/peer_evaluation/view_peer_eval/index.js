@@ -33,7 +33,8 @@ function PeerEval() {
 
   const { classes } = useClassRooms();
 
-  const [peerEvalModal, setPeerEvalModal] = useState(false);
+  const [peerCreateEvalModal, setCreatePeerEvalModal] = useState(false);
+  const [peerUpdateEvalModal, setUpdatePeerEvalModal] = useState(false);
   const [assignClassModal, setAssignClassModal] = useState(false);
 
   const [peerEvalsTableData, setPeerEvalsTableData] = useState([]);
@@ -52,11 +53,11 @@ function PeerEval() {
   const classesHeaders = ['id', 'name', 'actions'];
 
   const handlCreatePeerEvalModal = () => {
-    setPeerEvalModal(true);
+    setCreatePeerEvalModal(true);
   };
 
   const handleCloseCreatePeerEvalModal = () => {
-    setPeerEvalModal(false);
+    setCreatePeerEvalModal(false);
   };
 
   const openAssignTeamModal = () => {
@@ -68,11 +69,11 @@ function PeerEval() {
   };
 
   const handleUpdatePeerEvalModal = () => {
-    setPeerEvalModal(true);
+    setUpdatePeerEvalModal(true);
   };
 
   const handleCloseUpdatePeerEvalModal = () => {
-    setPeerEvalModal(false);
+    setUpdatePeerEvalModal(false);
   };
 
   const actionButtons = (data) => (
@@ -208,13 +209,13 @@ function PeerEval() {
 
   // Create Peer Eval
   const renderPeerEvalModal = () => (
-    <CreatePeerEval visible={peerEvalModal} handleModal={handleCloseCreatePeerEvalModal} />
+    <CreatePeerEval visible={peerCreateEvalModal} handleModal={handleCloseCreatePeerEvalModal} />
   );
 
   const renderUpdatePeerEvalModal = () => (
     <UpdatePeerEvalForm
       initValues={selectedPeerEval}
-      visible={peerEvalModal}
+      visible={peerUpdateEvalModal}
       handleModal={handleCloseUpdatePeerEvalModal}
     />
   );
@@ -244,8 +245,8 @@ function PeerEval() {
             <Table headers={peerEvalHeaders} data={peerEvalsTableData} className="mt-3" />
           </div>
 
-          {peerEvalModal && renderPeerEvalModal()}
-          {peerEvalModal && renderUpdatePeerEvalModal()}
+          {peerCreateEvalModal && renderPeerEvalModal()}
+          {peerUpdateEvalModal && renderUpdatePeerEvalModal()}
           {assignClassModal && renderAssignTeamModal()}
         </div>
       </div>
