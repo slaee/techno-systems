@@ -120,6 +120,8 @@ class TeamsController(viewsets.GenericViewSet,
             team_members = (
             TeamMember.objects
                 .filter(class_member_id__class_id=class_id)
+                # add filter if the TeamMember team_id is not null
+                .exclude(team_id=None)
                 .select_related('class_member_id__user_id')  # Join with ClassMember and User
                 .annotate(
                     first_name=F('class_member_id__user_id__first_name'),  # Access User's first_name through ClassMember
