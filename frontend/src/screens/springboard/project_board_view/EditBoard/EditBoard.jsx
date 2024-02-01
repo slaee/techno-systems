@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { IoArrowBackSharp } from 'react-icons/io5';
+import Swal from 'sweetalert2';
 
 import Header from '../../components/Header/Header';
 import Card from '../../components/UI/Card/Card';
@@ -73,6 +74,11 @@ function EditBoard() {
       navigate(`/project/${id}/board/${response.data.id}/edit/result`);
     } catch (error) {
       setIsModalOpen(false);
+      Swal.fire({
+        title: 'Error. Please try again',
+        icon: 'error',
+        confirmButtonColor: '#9c7b16',
+      });
       console.error('Error updating ProjectBoard:', error);
     }
   };
