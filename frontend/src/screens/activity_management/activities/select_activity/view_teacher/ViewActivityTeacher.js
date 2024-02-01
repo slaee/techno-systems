@@ -25,7 +25,7 @@ const ViewActivityTeacher = () => {
   const [showUpdateCommentModal, setShowUpdateCommentModal] = useState(false);
   const handleCloseUpdateCommentModal = () => setShowUpdateCommentModal(false);
 
-  const { isRetrieving, activity, deleteTeamActivity } = useActivity(classId, activityId, teamId);
+  const { isRetrieving, activity, deleteTeamActivity } = useActivity(classId, teamId, activityId);
   const { deleteEvaluation } = useActivities(classId);
   const { comments, deleteComment } = useActivityComments(activityId);
   const [comment, setComment] = useState(null);
