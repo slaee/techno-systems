@@ -47,7 +47,7 @@
   .cardProj{
     cursor: pointer;
     padding: 30px;
-    width: 24rem;
+    width: 23rem;
     min-height: 20rem;
     overflow: auto;
   }
