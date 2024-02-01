@@ -23,14 +23,19 @@
       "jest": true
     },
     "rules": {
+      "react/function-component-definition": 0,
+      "react/prop-types": 0,
+      "jsx-a11y/click-events-have-key-events": 0,
+      "jsx-a11y/no-static-element-interactions": 0,
+      "react/destructuring-assignment": 0,
       "import/no-extraneous-dependencies": [
         "error",
         {
           "devDependencies": true
         }
       ],
-      "jsx-a11y/control-has-associated-label": [
-        "off",
+      "jsx-a11y/label-has-associated-control": [
+        "error",
         {
           "ignoreElements": [
             "audio",
@@ -39,7 +44,8 @@
             "input",
             "textarea",
             "tr",
-            "video"
+            "video",
+            "select"
           ],
           "ignoreRoles": [
             "grid",
@@ -51,15 +57,7 @@
             "tablist",
             "toolbar",
             "tree",
-            "treegrid",
-            "dialog",
-            "alertdialog",
-            "tabpanel",
-            "log",
-            "alert",
-            "marquee",
-            "presentation",
-            "none"
+            "treegrid"
           ],
           "includeRoles": [
             "alert",
@@ -103,9 +101,10 @@
         2,
         "as-needed"
       ],
-      "no-unused-expressions": [
-        2,
-        {
+      "no-unused-expressions":[
+        "error", {
+          "allowShortCircuit": true,
+          "allowTernary": true,
           "allowTaggedTemplates": true
         }
       ],
