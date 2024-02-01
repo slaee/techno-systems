@@ -215,9 +215,10 @@ function SpringBoardProjects() {
           ))
         ) : (
           <div className={styles.noCreated}>
-            <p>It looks like you haven't created any projects yet.</p>
+            <p>It looks like your team haven't created any projects yet.</p>
             <p>
-              Click on the "Create Project" button to get started and create your first project.
+              Click on the "Create Project" button to get started and create your team's first
+              project.
             </p>
           </div>
         )}
