@@ -89,36 +89,46 @@ const BoardContainer = ({
     fetchData();
   }, [selected, officialTeam]);
 
-  const updateProjectReason = async (proj, newreason) => {
+  // for changing the status of the teams other projects to inactive
+  const updateProjectReasonStatus = async (proj, newreason) => {
     const newStatus = proj.is_active ? !proj.is_active : proj.is_active;
     try {
-      await updateProjects(proj.id, {
-        body: {
-          name: proj.name,
-          reason: newreason,
-          is_active: newStatus,
-          team_id: proj.team_id,
-        },
-      });
+      if (newreason) {
+        await updateProjects(proj.id, {
+          body: {
+            name: proj.name,
+            reason: newreason,
+            is_active: newStatus,
+            team_id: proj.team_id,
+          },
+        });
+      } else {
+        Swal.fire('Error', 'Please provide a reason/s before proceeding.', 'error');
+      }
     } catch (error) {
-      Swal.fire('Error', 'Please provide a reason.', 'error');
+      Swal.fire('Error', 'Please provide a reason/s before proceeding.', 'error');
     }
   };
 
+  // for toggling and updating the current project
   const toggleProjectPublic = async (proj, newreason) => {
     const newisActive = !proj.is_active;
     try {
-      await updateProjects(proj.id, {
-        body: {
-          name: proj.name,
-          reason: newreason,
-          is_active: newisActive,
-          team_id: proj.team_id,
-        },
-      });
+      if (newreason) {
+        await updateProjects(proj.id, {
+          body: {
+            name: proj.name,
+            reason: newreason,
+            is_active: newisActive,
+            team_id: proj.team_id,
+          },
+        });
+      } else {
+        Swal.fire('Error', 'Please provide a reason/s before proceeding.', 'error');
+      }
       onProjectUpdate();
     } catch (error) {
-      Swal.fire('Error', 'Please provide a reason.', 'error');
+      Swal.fire('Error', 'Please provide a reason/s before proceeding.', 'error');
     }
   };
 
@@ -137,7 +147,7 @@ const BoardContainer = ({
               <div>
                 <p style={{ fontSize: '14px' }}>
                   You have {projectList.length - 1} other project in your group. Before activating
-                  this project, please select a reason why the other projects are not
+                  this project, please state a reason why the other projects are not
                   activated/discontinued.
                 </p>
                 {projectList
@@ -165,13 +175,19 @@ const BoardContainer = ({
               className={styles.button}
               style={{ backgroundColor: '#5fab3c' }}
               onClick={() => {
+                let check = true;
                 projectList
                   .filter((projectItem) => projectItem.id !== project.id)
                   .forEach((projectItem) => {
                     const textareaValue = document.getElementById(projectItem.id).value;
-                    updateProjectReason(projectItem, textareaValue);
+                    if (!textareaValue) {
+                      check = false;
+                    }
+                    updateProjectReasonStatus(projectItem, textareaValue);
                   });
-                toggleProjectPublic(project, 'None');
+                if (check) {
+                  toggleProjectPublic(project, 'None');
+                }
                 setIsModalOpen(false);
               }}
             >
