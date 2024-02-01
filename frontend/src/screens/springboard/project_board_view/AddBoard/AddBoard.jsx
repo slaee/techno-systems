@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { IoArrowBackSharp } from 'react-icons/io5';
+import Swal from 'sweetalert2';
 import Header from '../../components/Header/Header';
 import Card from '../../components/UI/Card/Card';
 import Button from '../../components/UI/Button/Button';
@@ -59,6 +60,11 @@ function AddBoard() {
       navigate(`/project/${id}/create-board/${response.data.id}/result`);
     } catch (error) {
       console.error('Error creating ProjectBoard:', error);
+      Swal.fire({
+        title: 'Error. Please try again',
+        icon: 'error',
+        confirmButtonColor: '#9c7b16',
+      });
     }
     setIsModalOpen(false);
     sessionStorage.removeItem('contents');

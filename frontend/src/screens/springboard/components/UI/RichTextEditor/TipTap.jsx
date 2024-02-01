@@ -5,23 +5,14 @@ import Table from '@tiptap/extension-table';
 import TableCell from '@tiptap/extension-table-cell';
 import TableHeader from '@tiptap/extension-table-header';
 import TableRow from '@tiptap/extension-table-row';
-import Document from '@tiptap/extension-document';
-import Heading from '@tiptap/extension-heading';
-import Paragraph from '@tiptap/extension-paragraph';
-import Text from '@tiptap/extension-text';
 import TextAlign from '@tiptap/extension-text-align';
 import Subscript from '@tiptap/extension-subscript';
 import Superscript from '@tiptap/extension-superscript';
 import TextStyle from '@tiptap/extension-text-style';
-import Image from '@tiptap/extension-image';
 import Highlight from '@tiptap/extension-highlight';
-import Gapcursor from '@tiptap/extension-gapcursor';
 import Color from '@tiptap/extension-color';
-import HorizontalRule from '@tiptap/extension-horizontal-rule';
-import { Decoration, DecorationSet } from 'prosemirror-view';
-import React, { useCallback, useState } from 'react';
-import { LuImagePlus } from 'react-icons/lu';
-import { MdSubscript, MdSuperscript, MdFormatQuote, MdHorizontalRule } from 'react-icons/md';
+import React from 'react';
+import { MdSubscript, MdSuperscript, MdHorizontalRule } from 'react-icons/md';
 import { FiUnderline } from 'react-icons/fi';
 import {
   BiBold,
@@ -30,12 +21,10 @@ import {
   BiAlignLeft,
   BiAlignMiddle,
   BiAlignRight,
-  BiFontColor,
   BiHighlight,
   BiTable,
   BiUndo,
   BiRedo,
-  BiHeading,
 } from 'react-icons/bi';
 import {
   AiOutlineStrikethrough,
@@ -55,15 +44,9 @@ import {
   RiPaintFill,
   RiSplitCellsHorizontal,
   RiDeleteBinLine,
-  RiHeading,
-  RiArrowDropDownFill,
-  RiFontFamily,
   RiH1,
   RiH2,
   RiH3,
-  RiH4,
-  RiH5,
-  RiH6,
 } from 'react-icons/ri';
 import './Tiptap.css';
 import styles from './Tiptap.module.css';
@@ -73,13 +56,13 @@ const MenuBar = ({ editor }) => {
     return null;
   }
 
-  const addImage = useCallback(() => {
-    const url = window.prompt('URL');
+  // const addImage = useCallback(() => {
+  //   const url = window.prompt('URL');
 
-    if (url) {
-      editor.chain().focus().setImage({ src: url }).run();
-    }
-  }, [editor]);
+  //   if (url) {
+  //     editor.chain().focus().setImage({ src: url }).run();
+  //   }
+  // }, [editor]);
 
   return (
     <div className={styles.menuBar}>
@@ -233,9 +216,9 @@ const MenuBar = ({ editor }) => {
             <MdHorizontalRule title="Horizontal Rule" />
           </button>
 
-          <button onClick={addImage} className="butHover">
+          {/* <button onClick={addImage} className="butHover">
             <LuImagePlus title="Insert Image" />
-          </button>
+          </button> */}
 
           <button
             onClick={() => {
@@ -251,7 +234,7 @@ const MenuBar = ({ editor }) => {
               editor={editor}
               tippyOptions={{ duration: 100, placement: 'bottom-end' }}
               /* eslint-disable no-shadow */
-              shouldShow={({ editor, view, state, oldState }) => {
+              shouldShow={({ state }) => {
                 // Check if the current selection contains a table
                 if (state && state.doc && state.selection) {
                   const { from, to } = state.selection;
@@ -408,7 +391,7 @@ export const Tiptap = ({ setDescription, value }) => {
       Color,
       TextStyle,
       // Gapcursor,
-      Image,
+      // Image,
       // HorizontalRule,
     ],
 
