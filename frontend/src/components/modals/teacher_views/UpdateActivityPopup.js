@@ -8,7 +8,7 @@ import { useActivity } from '../../../hooks';
 const UpdateActivityPopup = ({ show, handleClose, classId, teamId, activityId, data }) => {
   const navigate = useNavigate();
 
-  const { updateActivity } = useActivity(classId, activityId, teamId);
+  const { updateActivity } = useActivity(classId, teamId, activityId);
 
   const [updateActivityData, setUpdateActivityData] = useState({
     ...data,
