@@ -21,9 +21,7 @@ import { useOutletContext } from 'react-router-dom';
 import { useCriterias, usePitches } from '../../../hooks';
 import { MeetingsService } from '../../../services';
 
-const SlideTransition = forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
+const SlideTransition = forwardRef((props, ref) => <Slide direction="up" ref={ref} {...props} />);
 
 function CreateMeetingDialog({ open, handleClose }) {
   const { user, classId, classRoom, classMember } = useOutletContext();

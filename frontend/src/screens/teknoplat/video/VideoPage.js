@@ -10,7 +10,7 @@ function VideoPage() {
   const { meetingId } = useParams();
   const navigate = useNavigate();
   const { isLoading, meeting } = useMeeting(meetingId);
-
+  const videoAccessToken = '';
   useEffect(() => {
     if (!meeting.video) navigate(`/classes/${classId}/teknoplat/meetings/${meetingId}`);
   }, [isLoading]);

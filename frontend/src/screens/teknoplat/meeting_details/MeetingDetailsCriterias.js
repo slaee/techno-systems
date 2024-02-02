@@ -1,3 +1,4 @@
+import React from 'react';
 import { ExpandMore } from '@mui/icons-material';
 import { Accordion, AccordionDetails, AccordionSummary, Box, Typography } from '@mui/material';
 import PropTypes from 'prop-types';
