@@ -39,15 +39,13 @@ function Sidebar() {
               <ListItemText primary="Meetings" />
             </ListItemButton>
           </ListItem>
-          <ListItem disablePadding>
-            <ListItemButton onClick={handlePitchesClick}>
-              <ListItemText
-                primary={
-                  classMember.role === GLOBALS.CLASSMEMBER_ROLE.TEACHER ? 'Pitches' : 'My Pitch'
-                }
-              />
-            </ListItemButton>
-          </ListItem>
+          {classMember.role === GLOBALS.CLASSMEMBER_ROLE.STUDENT && (
+            <ListItem disablePadding>
+              <ListItemButton onClick={handlePitchesClick}>
+                <ListItemText primary="My Pitch" />
+              </ListItemButton>
+            </ListItem>
+          )}
           <ListItem disablePadding>
             <ListItemButton onClick={handleChatbotClick}>
               <ListItemText primary="Chatbot" />
