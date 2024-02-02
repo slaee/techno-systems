@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Send } from '@mui/icons-material';
 import { Box, Button, Paper, Stack, TextField, Typography } from '@mui/material';
+import PropTypes from 'prop-types';
 import { MeetingsService } from '../../../services';
 
 function MeetingDetailsComments({ user, classMember, comments }) {
@@ -135,5 +136,11 @@ function MeetingDetailsComments({ user, classMember, comments }) {
     </Box>
   );
 }
+
+MeetingDetailsComments.propTypes = {
+  user: PropTypes.object.isRequired,
+  classMember: PropTypes.object.isRequired,
+  comments: PropTypes.array.isRequired,
+};
 
 export default MeetingDetailsComments;

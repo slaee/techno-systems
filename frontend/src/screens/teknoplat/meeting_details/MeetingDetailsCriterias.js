@@ -1,5 +1,6 @@
 import { ExpandMore } from '@mui/icons-material';
 import { Accordion, AccordionDetails, AccordionSummary, Box, Typography } from '@mui/material';
+import PropTypes from 'prop-types';
 
 function MeetingDetailsCriterias({ criterias }) {
   /* eslint-disable react/prop-types */
@@ -22,5 +23,9 @@ function MeetingDetailsCriterias({ criterias }) {
     </Box>
   );
 }
+
+MeetingDetailsCriterias.propTypes = {
+  criterias: PropTypes.array.isRequired,
+};
 
 export default MeetingDetailsCriterias;

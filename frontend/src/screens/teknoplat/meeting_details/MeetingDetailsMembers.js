@@ -1,4 +1,5 @@
 import { List, ListItem, ListItemButton, ListItemText, ListSubheader, Paper } from '@mui/material';
+import PropTypes from 'prop-types';
 import GLOBALS from '../../../app_globals';
 import { useClassMembers } from '../../../hooks';
 
@@ -34,5 +35,9 @@ function MeetingDetailsMembers({ classId }) {
     </Paper>
   );
 }
+
+MeetingDetailsMembers.propTypes = {
+  classId: PropTypes.number.isRequired,
+};
 
 export default MeetingDetailsMembers;
