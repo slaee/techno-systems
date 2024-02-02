@@ -20,3 +20,5 @@ export { default as useMeetingHistory } from './useMeetingHistory';
 export { default as useMeeting } from './useMeeting';
 export { default as usePitches } from './usePitches';
 export { default as useCriterias } from './useCriterias';
+export { default as useUserTeam } from './useUserTeam';
+export { default as usePitch } from './usePitch';

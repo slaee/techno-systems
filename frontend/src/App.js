@@ -28,6 +28,7 @@ import './App.css';
 import MeetingsPage from './screens/teknoplat/meetings/MeetingsPage';
 import MeetingDetailsPage from './screens/teknoplat/meeting_details/MeetingDetailsPage';
 import VideoPage from './screens/teknoplat/video/VideoPage';
+import PitchPage from './screens/teknoplat/pitches/PitchPage';
 
 function App() {
   return (
@@ -149,6 +150,14 @@ function App() {
                 element={
                   <PrivateRoute>
                     <MeetingsPage />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="pitches"
+                element={
+                  <PrivateRoute>
+                    <PitchPage />
                   </PrivateRoute>
                 }
               />

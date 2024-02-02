@@ -17,9 +17,11 @@ const PitchesService = {
     }
   */
   create: (data) => api.post(BASE_URL, data),
+  update: (id, data) => api.put(`${BASE_URL}/${id}`, data),
 
   /// GET /classes/{id}
   get: (id) => api.get(`${BASE_URL}/${id}`),
+  getTeamPitch: (teamid) => api.get(`${BASE_URL}/my_pitch?team_id=${teamid}`),
 };
 
 export default PitchesService;
