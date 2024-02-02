@@ -12,7 +12,8 @@ function VideoPage() {
   const { isLoading, meeting } = useMeeting(meetingId);
 
   useEffect(() => {
-    if (!meeting.video) navigate(`/classes/${classId}/teknoplat/meetings/${meetingId}`);
+    if (!isLoading && !meeting.video)
+      navigate(`/classes/${classId}/teknoplat/meetings/${meetingId}`);
   }, [isLoading]);
 
   if (isLoading) {
@@ -29,7 +30,7 @@ function VideoPage() {
           name: user.full_name,
           participantId: classMember.id,
         }}
-        token={videoAccessToken}
+        token={meeting.token}
       >
         <VideoView meeting={meeting} />
       </MeetingProvider>

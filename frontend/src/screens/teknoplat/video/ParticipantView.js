@@ -43,7 +43,8 @@ function ParticipantView({ participantId }) {
 
   return (
     <Box>
-      <audio ref={micRef} autoPlay playsInline muted={micOn} />
+      {/* eslint-disable jsx-a11y/media-has-caption */}
+      <audio ref={micRef} autoPlay muted={micOn} />
       <Box
         sx={{
           position: 'relative',

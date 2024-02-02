@@ -471,7 +471,7 @@ class MeetingsController(viewsets.GenericViewSet,
 
     @swagger_auto_schema(
         operation_summary="Start Meeting.",
-        operation_description="PUT /meetings/{id}/start_meeting",
+        operation_description="POST /meetings/{id}/start_meeting",
         request_body=NoneSerializer,
         responses={
             status.HTTP_201_CREATED: openapi.Response('Created', MeetingSerializer),
@@ -502,7 +502,45 @@ class MeetingsController(viewsets.GenericViewSet,
 
         meeting.save()
 
-        return Response(MeetingSerializer(meeting).data, status=status.HTTP_200_OK)
+        meeting_data = MeetingSerializer(meeting).data
+
+        meeting_data['token'] = token
+
+        return Response(meeting_data, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(
+        operation_summary="Join Meeting.",
+        operation_description="POST /meetings/{id}/join_meeting",
+        request_body=NoneSerializer,
+        responses={
+            status.HTTP_201_CREATED: openapi.Response('Created', MeetingSerializer),
+            status.HTTP_400_BAD_REQUEST: openapi.Response('Bad Request'),
+            status.HTTP_401_UNAUTHORIZED: openapi.Response('Unauthorized'),
+            status.HTTP_403_FORBIDDEN: openapi.Response('Forbidden'),
+            status.HTTP_500_INTERNAL_SERVER_ERROR: openapi.Response('Internal Server Error'),
+        }
+    )
+    @action(detail=True, methods=['POST'])
+    def join_meeting(self, request, *args, **kwargs):
+        meeting = self.get_object()
+
+        # video sdk
+        expiration_in_seconds = 600
+        expiration = datetime.datetime.now() + datetime.timedelta(seconds=expiration_in_seconds)
+        token = jwt.encode(payload={
+            'exp': expiration,
+            'apikey': self.VIDEOSDK_API_KEY,
+            'permissions': ['allow_join', 'allow_mod'],
+        }, key=self.VIDEOSDK_SECRET_KEY, algorithm="HS256")
+
+        # res = requests.post(f'{VIDEOSDK_API_ENDPOINT}/api/meetings/{meeting.video}',
+        #                     headers={'Authorization': token})
+
+        meeting_data = MeetingSerializer(meeting).data
+
+        meeting_data['token'] = token
+
+        return Response(meeting_data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(
         operation_summary="End Meeting.",

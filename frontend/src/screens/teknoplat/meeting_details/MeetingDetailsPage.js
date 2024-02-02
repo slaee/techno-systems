@@ -45,7 +45,7 @@ function MeetingDetailsPage() {
     navigate(`/live/${meetingId}`);
   };
 
-  const handleJoinClick = () => {
+  const handleJoinClick = async () => {
     navigate(`/live/${meetingId}`);
   };
 
