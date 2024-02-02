@@ -6,7 +6,6 @@ const BASE_URL = `${apiConfig.API_URL}/ratings`;
 const RatingsService = {
   /// GET /ratings
   all: () => api.get(`${BASE_URL}`),
-
   /// POST /meetings
   /*
     data: {
@@ -19,11 +18,10 @@ const RatingsService = {
     }
   */
   create: (data) => api.post(BASE_URL, data),
-
   /// GET /meetings/{id}
   get: (id) => api.get(`${BASE_URL}/${id}`),
-
-  getAccountRatingsForPresentor: (meetingId, pitchId) => api.get(`${BASE_URL}/my_ratings/?meeting=${meetingId}&pitch=${pitchId}`)
+  getAccountRatingsForPresentor: (meetingId, pitchId) =>
+    api.get(`${BASE_URL}/my_ratings/?meeting=${meetingId}&pitch=${pitchId}`),
 };
 
 export default RatingsService;
