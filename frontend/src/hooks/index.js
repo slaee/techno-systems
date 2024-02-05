@@ -13,6 +13,7 @@ export { default as useTeam } from './useTeam';
 export { default as useNonLeaders } from './useNonLeaders';
 export { default as usePeerEvals } from './usePeerEvals';
 export { default as useAssignedPeerEval } from './useAssignedPeerEval';
+export { default as useClasses } from './useClasses';
 
 export { default as useActivities } from './useActivities';
 export { default as useActivity } from './useActivity';
