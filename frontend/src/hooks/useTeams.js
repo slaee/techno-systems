@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 import { ClassRoomsService } from '../services';
 
 const useTeams = (classId) => {
@@ -170,7 +171,13 @@ const useTeams = (classId) => {
 
     switch (responseCode) {
       case 204:
-        setTeams((prevTeams) => prevTeams.filter((team) => team.id !== teamID));
+        // setTeams((prevTeams) => prevTeams.filter((team) => team.id !== teamID));
+        Swal.fire({
+          title: 'Team Successfully Deleted',
+          icon: 'success',
+        }).then(() => {
+          navigate(`/classes/${classId}/teams`);
+        });
         break;
       case 404:
         navigate(`/classes/${classId}/teams`);
