@@ -19,19 +19,13 @@ const TeamService = {
         "total_score": 2147483647
     }
     */
-
   all: (classId) => api.get(`${BASE_URL}/${classId}/teams`),
   updateTeamActivity: (classId, teamId, activityId, data) =>
-    api.put(
-      `${BASE_URL}/${classId}/teams/${teamId}/activities/${activityId}`,
-      data
-    ),
+    api.put(`${BASE_URL}/${classId}/teams/${teamId}/activities/${activityId}`, data),
 
   /// DELETE /classes/{class_id}/activities
   deleteTeamActivity: (classId, teamId, activityId) =>
-    api.delete(
-      `${BASE_URL}/${classId}/teams/${teamId}/activities/${activityId}`
-    ),
+    api.delete(`${BASE_URL}/${classId}/teams/${teamId}/activities/${activityId}`),
 };
 
 export default TeamService;
