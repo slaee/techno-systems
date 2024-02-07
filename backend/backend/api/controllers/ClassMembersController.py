@@ -255,7 +255,7 @@ class ClassMembersController(viewsets.GenericViewSet,
     @swagger_auto_schema(
         method='GET',
         operation_summary="GETs a classmembers team",
-        operation_description="GET /classes/{class_pk}/members/{id}/team", request_body=None,
+        operation_description="GET /classes/{class_pk}/members/{id}/team",
         responses={
             status.HTTP_202_ACCEPTED: openapi.Response('Accepted'),
             status.HTTP_400_BAD_REQUEST: openapi.Response('Bad Request'),

@@ -22,7 +22,6 @@ from .MeetingsController import MeetingsController
 from .MeetingCommentsController import MeetingCommentsController
 from .MeetingCriteriasController import MeetingCriteriasController
 from .MeetingPresentorsController import MeetingPresentorsController
-from .MessagesController import MessagesController
 from .PitchesController import PitchesController
 from .RatingsController import RatingsController
 from .RemarksController import RemarksController

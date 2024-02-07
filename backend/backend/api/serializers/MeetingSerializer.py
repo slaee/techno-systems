@@ -1,5 +1,4 @@
 from rest_framework import serializers
-
 from api.models import Meeting
 
 from .MeetingPresentorSerializer import MeetingPresentorSerializer
@@ -16,13 +15,13 @@ class MeetingSerializer(serializers.ModelSerializer):
         fields = '__all__'
         
     def get_presentors(self, obj):
-        return MeetingPresentorSerializer(obj.presentor_id, many=True).data
+        return MeetingPresentorSerializer(obj.presentors, many=True).data
     
     def get_comments(self, obj):
-        return MeetingCommentSerializer(obj.meeting_comment_id, many=True).data
+        return MeetingCommentSerializer(obj.comments, many=True).data
     
     def get_criterias(self, obj):
-        return MeetingCriteriaSerializer(obj.meeting_criteria_id, many=True).data
+        return MeetingCriteriaSerializer(obj.criterias, many=True).data
             
 
 

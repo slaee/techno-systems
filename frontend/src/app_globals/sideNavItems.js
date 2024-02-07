@@ -1,4 +1,6 @@
-const SIDENAV_DEFAULT = [{ id: 1, label: 'Classes', className: 'classes', path: '/classes' }];
+const SIDENAV_DEFAULT = [
+  { id: 1, label: 'Classes', className: 'classes', path: '/classes' },
+];
 
 const SIDENAV_MODERATOR = [
   { id: 1, label: 'Classes', className: 'classes', path: '/classes' },
@@ -49,7 +51,7 @@ const SIDENAV_TEACHER = (classId) => [
   },
   {
     id: 6,
-    label: 'Teknoplat',
+    label: 'Pitching & Validation',
     className: 'teknoplat',
     path: `/classes/${classId}/teknoplat`,
   },
@@ -93,11 +95,16 @@ const SIDENAV_CLASSMEMBER = (classId) => [
     path: `/classes/${classId}/allprojects`,
   },
   {
-    id: 5,
+    id: 7,
     label: 'Teknoplat',
     className: 'teknoplat',
     path: `/classes/${classId}/teknoplat`,
   },
 ];
 
-export { SIDENAV_DEFAULT, SIDENAV_TEACHER, SIDENAV_CLASSMEMBER, SIDENAV_MODERATOR };
+export {
+  SIDENAV_DEFAULT,
+  SIDENAV_TEACHER,
+  SIDENAV_CLASSMEMBER,
+  SIDENAV_MODERATOR,
+};

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TeamService, ActivityService } from '../services';
 
-const useActivity = (classId, activityId, teamId) => {
+const useActivity = (classId, teamId, activityId) => {
   const navigate = useNavigate();
   const [isRetrieving, setIsRetrieving] = useState(true);
   const [activity, setActivity] = useState(null);
@@ -42,6 +42,29 @@ const useActivity = (classId, activityId, teamId) => {
 
     get();
   }, [classId, activityId, teamId]);
+
+  const getActivity = async (classId2, teamId2, activityId2) => {
+    let responseCode;
+
+    try {
+      const res = await ActivityService.getActivity(classId2, teamId2, activityId2);
+      responseCode = res?.status;
+    } catch (error) {
+      responseCode = error?.response?.status;
+    }
+
+    switch (responseCode) {
+      case 200:
+        break;
+      case 404:
+        navigate(`/classes/${classId}/activities`);
+        break;
+      case 500:
+        navigate('/classes');
+        break;
+      default:
+    }
+  };
 
   const updateActivity = async (data) => {
     let responseCode;
@@ -136,13 +159,38 @@ const useActivity = (classId, activityId, teamId) => {
       default:
     }
   };
+
+  const submitActivity = async (classId3, teamId3, activityId3, data) => {
+    let responseCode;
+
+    try {
+      const res = await ActivityService.submitOrUnsubmit(classId3, teamId3, activityId3, data);
+      responseCode = res?.status;
+    } catch (error) {
+      responseCode = error?.response?.status;
+    }
+
+    switch (responseCode) {
+      case 200:
+        break;
+      case 404:
+        navigate(`/classes/${classId}/activities`);
+        break;
+      case 500:
+        navigate('/classes');
+        break;
+      default:
+    }
+  };
   return {
     isRetrieving,
     activity,
+    getActivity,
     updateActivity,
     deleteTeamActivity,
     createActivity,
     createFromTemplate,
+    submitActivity,
   };
 };
 

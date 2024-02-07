@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
 
+import Swal from 'sweetalert2';
 import { useTeams, useClassMemberTeam } from '../../../hooks';
 
 import GLOBALS from '../../../app_globals';
@@ -31,6 +32,8 @@ function Teams() {
     acceptTeamMember,
     removeTeamMember,
   } = useTeams(classId);
+
+  const { deleteTeam } = useTeams(classId);
 
   const [showNotif, setShowNotif] = useState(false);
   const [isAddLeadersModalOpen, setAddLeadersModalOpen] = useState(false);
@@ -73,16 +76,42 @@ function Teams() {
           leader: `${leader?.first_name} ${leader?.last_name}`,
           members,
           actions: (
-            <button
-              type="button"
-              className="btn btn-sm fw-bold text-success"
-              onClick={() => {
-                setIsSelectedTeam(true);
-                setSelectedTeam(team);
-              }}
-            >
-              VIEW
-            </button>
+            <>
+              <button
+                type="button"
+                className="btn btn-sm fw-bold text-success"
+                onClick={() => {
+                  setIsSelectedTeam(true);
+                  setSelectedTeam(team);
+                }}
+              >
+                VIEW
+              </button>
+              {user?.role === GLOBALS.USER_ROLE.MODERATOR && (
+                <button
+                  type="button"
+                  className="btn btn-sm fw-bold text-danger"
+                  onClick={() => {
+                    Swal.fire({
+                      title: 'Are you sure?',
+                      text: 'You will not be able to recover this Team!',
+                      icon: 'warning',
+                      showCancelButton: true,
+                      confirmButtonText: 'Yes, delete it!',
+                      cancelButtonText: 'No, keep it',
+                    }).then((result) => {
+                      if (result.isConfirmed) {
+                        deleteTeam();
+                      } else {
+                        Swal.fire('Cancelled', 'Your team is safe :)', 'error');
+                      }
+                    });
+                  }}
+                >
+                  DELETE
+                </button>
+              )}
+            </>
           ),
         };
       });

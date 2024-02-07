@@ -12,5 +12,5 @@ class ChatbotSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def get_messages(self, obj):
-        return MessageSerializer(obj.messages_id, many=True).data
+        return MessageSerializer(obj.messages, many=True).data
     

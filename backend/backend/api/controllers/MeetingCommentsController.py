@@ -23,3 +23,17 @@ class MeetingCommentsController(viewsets.GenericViewSet,
     def get_permissions(self):
         return [permissions.IsAuthenticated()]
     
+    @action(detail=False, methods=['get'])
+    def list_comments(self, request, *args, **kwargs):
+        meeting = request.query_params.get('meeting')
+
+        try:
+            queryset = MeetingComment.objects.all()
+            
+            queryset = queryset.filter(meeting=meeting)
+
+            serializer = MeetingCommentSerializer(queryset, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except MeetingComment.DoesNotExist:
+            return Response({'details': 'Meeting comment not found'}, status=status.HTTP_404_NOT_FOUND)
+    

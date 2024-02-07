@@ -3,9 +3,10 @@ from django.db import models
 class Meeting(models.Model):
     classroom_id = models.ForeignKey('ClassRoom', on_delete=models.CASCADE)
     owner_id = models.ForeignKey('ClassMember', on_delete=models.CASCADE)
-    presentor_id = models.ManyToManyField('Pitch', through='MeetingPresentor')
-    meeting_criteria_id = models.ManyToManyField('Criteria', through='MeetingCriteria')
-    meeting_comment_id = models.ManyToManyField('MeetingComment')
+    
+    presentors = models.ManyToManyField('MeetingPresentor', blank=True)
+    comments = models.ManyToManyField('MeetingComment', blank=True)
+    criterias = models.ManyToManyField('MeetingCriteria', blank=True)
 
     name = models.CharField(max_length=100)
     description = models.TextField()
@@ -22,6 +23,7 @@ class Meeting(models.Model):
 
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     video = models.CharField(max_length=50, blank=True, null=True)
+    token = models.TextField(blank=True, null=True)
 
     created_at = models.DateTimeField(auto_now_add=True) 
     updated_at = models.DateTimeField(auto_now=True)

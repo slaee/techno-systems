@@ -1,20 +1,19 @@
 {
-    "extends": [
-      "airbnb",
-      "prettier"
-    ],
-    "parser": "@babel/eslint-parser",
-    "settings": {
-      "react": {
-        "version": "detect"
-      }
+  // "extends": [
+  //   "airbnb",
+  //   "prettier"
+  // ],
+  "parser": "@babel/eslint-parser",
+  "settings": {
+    "react": {
+      "version": "detect",
     },
-    "parserOptions": {
-      "ecmaVersion": 2018,
-      "ecmaFeatures": {
-        "impliedStrict": true,
-        "classes": true
-      }
+  },
+  "parserOptions": {
+    "ecmaVersion": 2018,
+    "ecmaFeatures": {
+      "impliedStrict": true,
+      "classes": true,
     },
     "env": {
       "browser": true,

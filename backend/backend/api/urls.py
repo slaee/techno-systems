@@ -1,4 +1,4 @@
-from django.urls import path, include
+from django.urls import path, include, re_path
 from .controllers.ActivityController import TeamActivitiesController
 from rest_framework_nested import routers
 from rest_framework_simplejwt.views import (
@@ -27,9 +27,19 @@ team_members.register(r'members', TeamMembersController, basename='team-members'
 team_members.register(r'activities', TeamActivitiesController, basename='team-activities')
 
 
+teknoplat_router = routers.DefaultRouter(trailing_slash=False)
+teknoplat_router.register('meetings', MeetingsController, basename='meeting')
+teknoplat_router.register('pitches', PitchesController, basename='pitches')
+teknoplat_router.register('ratings', RatingsController, basename='ratings')
+teknoplat_router.register('remarks', RemarksController, basename='remarks')
+teknoplat_router.register('idea_validation', ChatbotsController, basename='idea_validation')
+teknoplat_router.register('criterias', CriteriasController, basename='criterias')
+teknoplat_router.register('meeting_comments', MeetingCommentsController, basename='meeting_comments')
+
 urlpatterns = router.urls
 urlpatterns += classes_router.urls
 urlpatterns += team_members.urls
+urlpatterns += teknoplat_router.urls
 
 urlpatterns += [
     path('tokens/', include([
@@ -56,5 +66,5 @@ urlpatterns += [
     path('spring/template/', GetAllTemplate.as_view()),
     path('spring/template/add', CreateTemplate.as_view()),
     path('spring/template/<int:template_id>/update', UpdateTemplate.as_view()),
-    path('spring/template/<int:template_id>/delete', DeleteTemplate.as_view()),
+    path('spring/template/<int:template_id>/delete', DeleteTemplate.as_view())
 ]
