@@ -34,6 +34,14 @@ To auto fix eslint errors open your VSCode User Settings JSON and add the follow
 ],
 ```
 
+### Eslint and Prettier
+If you encounter eslint errors, uninstall `Prettier` extensions in your VSCode so that we will use only the `ESLint` extension. (Note: prettier is already included in our local eslint configuration)
+
+If there is a chance that some files are not being formatted, you can run the following command:
+```
+npm run lint-fix
+```
+
 ## Dev build for non docker backend django framework and frontend react
 
 Comment out the backend and frontend services in the docker-compose.yml file.
@@ -76,14 +84,6 @@ npm install
 then run the frontend server:
 ```
 npm start
-```
-
-### Eslint and Prettier
-If you are encountering eslint errors, uninstall `Prettier - Code formatter` extension in VSCode so that we will use only the `ESLint` extension. (Note: prettier is already included in our local eslint configuration)
-
-If there is a chance that some files are not being formatted, you can run the following command:
-```
-npm run lint-fix
 ```
 
 ## Dev Build with Docker
