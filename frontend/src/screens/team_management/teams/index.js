@@ -304,9 +304,9 @@ function Teams() {
             </button>
           </div>
         </div>
-        {/* <div className="d-flex align-items-center me-5 ms-auto">
+        <div className="d-flex align-items-center me-5 ms-auto">
           <Search />
-        </div> */}
+        </div>
       </div>
     );
     bodyContent = renderTeacherTeamManagement();
@@ -486,9 +486,9 @@ function Teams() {
               </button>
             </div>
           </div>
-          {/* <div className="d-flex align-items-center me-5 ms-auto">
+          <div className="d-flex align-items-center me-5 ms-auto">
             <Search />
-          </div> */}
+          </div>
         </div>
       );
       if (
