@@ -21,7 +21,7 @@ const RatingsService = {
   /// GET /meetings/{id}
   get: (id) => api.get(`${BASE_URL}/${id}`),
   getAccountRatingsForPresentor: (meetingId, pitchId) =>
-    api.get(`${BASE_URL}/my_ratings/?meeting=${meetingId}&pitch=${pitchId}`),
+    api.get(`${BASE_URL}/my_ratings?meeting=${meetingId}&pitch=${pitchId}`),
 };
 
 export default RatingsService;

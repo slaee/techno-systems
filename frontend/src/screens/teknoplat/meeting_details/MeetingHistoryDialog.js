@@ -12,7 +12,7 @@ import {
   Tabs,
   Typography,
 } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -26,21 +26,54 @@ import PropTypes from 'prop-types';
 import { Bar } from 'react-chartjs-2';
 import { useOutletContext, useParams } from 'react-router-dom';
 import * as XLSX from 'xlsx';
-import { useMeetingHistory } from '../../../hooks';
+import { useCriterias, useMeeting, useMeetingHistory } from '../../../hooks';
 import GLOBALS from '../../../app_globals';
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 function MeetingHistoryDialog({ title, presentors, open, handleClose }) {
   const { user, classId, classRoom, classMember } = useOutletContext();
   const { meetingId } = useParams();
-  const { isLoading, ratings, remarks, feedbacks } = useMeetingHistory(meetingId);
+  const { isLoading, ratings, remarks, feedbacks } =
+    useMeetingHistory(meetingId);
+  const { isLoading: isMeetingLoading, meeting } = useMeeting(meetingId);
+  const [pitches, setPitches] = useState([]);
+  const { isLoading: isCriteriasLoading, criterias } = useCriterias();
+  useEffect(() => {
+    if (!isLoading) {
+      const pitches = [];
+      meeting.presentors.forEach((presentor) => {
+        pitches.push(presentor.pitch);
+      });
+
+      setPitches(pitches);
+    }
+  }, [isMeetingLoading, meeting]);
 
   let tabOptions = [{ value: 0, name: 'Overall', id: null }];
 
-  const tabPitchOptions = presentors.map((presentor, index) => [
-    { value: index + 1, name: presentor.pitch.name, id: presentor.id },
-  ]);
+  const tabPitchOptions = presentors.map((presentor, index) => ({
+    value: index + 1,
+    name: presentor.pitch.name,
+    id: presentor.id,
+    ratings: ratings?.filter(
+      (rating) => rating.pitch_id === presentor.pitch_id
+    ),
+    feedbacks: feedbacks?.filter(
+      (feedback) => feedback.pitch_id === presentor.pitch_id
+    ),
+    remarks: remarks?.filter(
+      (remark) => remark.pitch_id === presentor.pitch_id
+    ),
+  }));
+
   tabOptions = tabOptions.concat(tabPitchOptions);
 
   const [dialogTabValue, setDialogTabValue] = useState(0);
@@ -62,7 +95,11 @@ function MeetingHistoryDialog({ title, presentors, open, handleClose }) {
       onClose={handleClose}
     >
       <DialogTitle>
-        <Stack direction="row" justifyContent="space-between" alignItems="center">
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
+        >
           {title}
           {/* {classMember.role === GLOBALS.CLASSMEMBER_ROLE.TEACHER && <Button variant="contained" onClick={handleExportClick}>Export</Button>} */}
         </Stack>
@@ -87,7 +124,11 @@ function MeetingHistoryDialog({ title, presentors, open, handleClose }) {
           },
         }}
       >
-        <Tabs value={dialogTabValue} onChange={handleTabChange} aria-label="action-tabs">
+        <Tabs
+          value={dialogTabValue}
+          onChange={handleTabChange}
+          aria-label="action-tabs"
+        >
           {tabOptions.map((option) => (
             <Tab
               key={option.value}
@@ -102,21 +143,19 @@ function MeetingHistoryDialog({ title, presentors, open, handleClose }) {
           <Box />
         ) : (
           <Box>
-            {dialogTabValue === 0 && <OverallView ratings={ratings} />}
+            {dialogTabValue === 0 && (
+              <OverallView
+                pitches={pitches}
+                ratings={ratings}
+                meeting={meeting}
+              />
+            )}
             {dialogTabValue !== 0 && (
               <PitchView
-                rating={ratings.find(
-                  (presentor) =>
-                    presentor.id === tabOptions.find((tab) => tab.value === dialogTabValue).id
-                )}
-                remark={remarks.find(
-                  (presentor) =>
-                    presentor.id === tabOptions.find((tab) => tab.value === dialogTabValue).id
-                )}
-                feedback={feedbacks.find(
-                  (presentor) =>
-                    presentor.id === tabOptions.find((tab) => tab.value === dialogTabValue).id
-                )}
+                ratings={tabOptions[dialogTabValue].ratings}
+                remarks={tabOptions[dialogTabValue].remarks}
+                feedbacks={tabOptions[dialogTabValue].feedbacks}
+                criterias={criterias}
               />
             )}
           </Box>
@@ -136,7 +175,7 @@ MeetingHistoryDialog.propTypes = {
   handleClose: PropTypes.func.isRequired,
 };
 
-function OverallView({ ratings }) {
+function OverallView({ pitches, ratings, meeting }) {
   const options = {
     responsive: true,
     plugins: {
@@ -154,17 +193,40 @@ function OverallView({ ratings }) {
       },
     },
   };
+  const labels = pitches.map((pitch) => pitch.name);
 
-  const labels = ratings.map((presentor) => presentor.pitch.name);
+  const overallScores = useMemo(() => {
+    const criterias = meeting.criterias;
+    const overallScores = pitches.map((pitch) => {
+      const ratingsForPitch = ratings.filter(
+        (rating) => rating.pitch_id === pitch.id
+      );
+      const totalScorePerCriterias = criterias.map((criteria) => {
+        const weight = Number(criteria.weight);
+        const ratingsForCriteria = ratingsForPitch.filter(
+          (rating) => rating.meeting_criteria_id === criteria.criteria_id
+        );
+        const sumOfRatings = ratingsForCriteria.reduce((acc, rating) => {
+          return acc + Number(rating.rating);
+        }, 0);
+        return sumOfRatings * weight;
+      });
+
+      const totalScore = totalScorePerCriterias.reduce((acc, score) => {
+        return acc + score;
+      }, 0);
+
+      return totalScore / totalScorePerCriterias.length;
+    });
+    return overallScores;
+  }, [pitches, ratings, meeting]);
 
   const data = {
     labels,
     datasets: [
       {
         label: 'Overall Score',
-        data: labels.map(
-          (label) => ratings.find((presentor) => presentor.pitch.name === label).overall_score
-        ),
+        data: overallScores,
         backgroundColor: 'rgba(255, 99, 132, 0.5)',
       },
     ],
@@ -181,12 +243,25 @@ OverallView.propTypes = {
   ratings: PropTypes.array.isRequired,
 };
 
-function PitchView({ rating, remark, feedback }) {
+const colors = [
+  'red',
+  'orange',
+  'yellow',
+  'green',
+  'blue',
+  'purple',
+  'pink',
+  'brown',
+  'gray',
+  'black',
+];
+
+function PitchView({ ratings, remarks, feedbacks, criterias }) {
   const options = {
     responsive: true,
     plugins: {
       legend: {
-        position: 'top',
+        display: false,
       },
       title: {
         display: true,
@@ -194,14 +269,34 @@ function PitchView({ rating, remark, feedback }) {
       },
     },
   };
+  const criteriaIds = [];
+  ratings.forEach((rating) => {
+    if (!criteriaIds.includes(rating.meeting_criteria_id)) {
+      criteriaIds.push(rating.meeting_criteria_id);
+    }
+  });
 
-  const labels = Object.keys(rating.score);
+  const labels = criteriaIds.map((id) => {
+    const criteria = criterias.find((c) => c.id === id);
+    return criteria.name;
+  });
+
+  const ratingsByCriteria = criteriaIds.map((id) => {
+    const ratingsForCriteria = ratings.filter(
+      (rating) => rating.meeting_criteria_id === id
+    );
+    const totalScore = ratingsForCriteria.reduce(
+      (acc, rating) => acc + Number(rating.rating),
+      0
+    );
+    return totalScore / ratingsForCriteria.length;
+  });
+
   const data = {
     labels,
     datasets: [
       {
-        label: 'Score',
-        data: labels.map((label) => rating.score[label]),
+        data: ratingsByCriteria,
         backgroundColor: 'rgba(255, 99, 132, 0.5)',
       },
     ],
@@ -211,26 +306,23 @@ function PitchView({ rating, remark, feedback }) {
     <Box p={3}>
       <Stack spacing={2}>
         <Bar options={options} data={data} />
-        <Typography variant="h6">Remarks</Typography>
-        {remark.remarks.map((rmk) => (
+        <Typography variant="h6">User Remarks</Typography>
+        {remarks.map((rmk) => (
           <Paper sx={{ p: 3 }}>
             <Typography>{rmk.remark}</Typography>
           </Paper>
         ))}
+        <Typography variant="h6">Summary of Remarks</Typography>
         <Paper sx={{ p: 3 }}>
-          <Typography variant="body1" textAlign="justify">
-            {feedback.feedback.feedback}
-          </Typography>
+          {feedbacks.map((feedback) => (
+            <Typography variant="body1" textAlign="justify">
+              {feedback.feedback}
+            </Typography>
+          ))}
         </Paper>
       </Stack>
     </Box>
   );
 }
-
-PitchView.propTypes = {
-  rating: PropTypes.object.isRequired,
-  remark: PropTypes.object.isRequired,
-  feedback: PropTypes.object.isRequired,
-};
 
 export default MeetingHistoryDialog;

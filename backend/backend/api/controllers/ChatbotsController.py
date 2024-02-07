@@ -53,7 +53,7 @@ class ChatbotsController(viewsets.GenericViewSet,
 
         if message_serializer.is_valid():
             message_serializer.save()
-            chatbot.message_id.add(message_serializer.data['id'])
+            chatbot.messages.add(message_serializer.data['id'])
         
             constant_messages = [
                 {'role': 'system', 'content': 'You are an expert panelist. ... specified ranges from 0 to 1.'},
@@ -63,13 +63,13 @@ class ChatbotsController(viewsets.GenericViewSet,
                 {'role': 'system', 'content': 'Give comments and suggestions on the sent pitch.'},
             ]
 
-            messages = MessageSerializer(instance=chatbot.messages_id.all(), many=True).data
+            messages = MessageSerializer(instance=chatbot.messages.all(), many=True).data
 
             destruct_messages = [{'role': message['role'], 'content': message['content']} for message in messages]
 
             messages_to_be_sent = constant_messages + destruct_messages
 
-            client = OpenAI(api_key=os.environ.get('OPENAI_API_KEY'))
+            client = OpenAI(api_key=os.environ.get('OPENAI_KEY'))
             openai_response = client.chat.completions.create(
                 model="gpt-3.5-turbo",
                 messages=messages_to_be_sent,
@@ -85,7 +85,7 @@ class ChatbotsController(viewsets.GenericViewSet,
 
             if openai_message_serializer.is_valid():
                 openai_message_serializer.save()
-                chatbot.message_id.all(openai_message_serializer.data['id'])
+                chatbot.messages.add(openai_message_serializer.data['id'])
                 return Response(openai_message_serializer.data, status=status.HTTP_201_CREATED)
             else:
                 return Response(openai_message_serializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

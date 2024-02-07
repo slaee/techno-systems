@@ -14,7 +14,6 @@ const useMeeting = (meetingId) => {
 
       try {
         const res = await MeetingsService.get(meetingId);
-
         responseCode = res?.status;
         retrievedMeeting = res?.data;
       } catch (error) {

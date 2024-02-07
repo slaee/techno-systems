@@ -11,7 +11,13 @@ import {
 import { useState } from 'react';
 import { PitchesService } from '../../../services';
 
-function CreatePitchDialog({ open, handleClose, pitch, updatePitch, isCreate = true }) {
+function CreatePitchDialog({
+  open,
+  handleClose,
+  pitch,
+  updatePitch,
+  isCreate = true,
+}) {
   const [formData, setFormData] = useState({
     id: pitch.id,
     name: pitch.name ?? '',
@@ -45,10 +51,17 @@ function CreatePitchDialog({ open, handleClose, pitch, updatePitch, isCreate = t
       onClose={handleClose}
       sx={{ '& .MuiPaper-root': { width: 'calc(100vw * .3)' } }}
     >
-      <DialogTitle>{isCreate ? 'Create your pitch' : 'Update your pitch'}</DialogTitle>
+      <DialogTitle>
+        {isCreate ? 'Create your pitch' : 'Update your pitch'}
+      </DialogTitle>
       <DialogContent>
         <Stack spacing={2} sx={{ pt: 2 }}>
-          <TextField name="name" label="Name" value={formData.name} onChange={handleInputChange} />
+          <TextField
+            name="name"
+            label="Name"
+            value={formData.name}
+            onChange={handleInputChange}
+          />
           <TextField
             name="description"
             multiline
@@ -62,6 +75,7 @@ function CreatePitchDialog({ open, handleClose, pitch, updatePitch, isCreate = t
       <DialogActions>
         <Button
           onClick={handleSaveClick}
+          variant="contained"
           disabled={formData.name === '' || formData.description === ''}
         >
           Save

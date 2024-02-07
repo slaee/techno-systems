@@ -167,11 +167,13 @@ function CreateClass({ visible, handleModal }) {
                   <div className="format-instructions">Sample Format: 1:00PM - 2:00PM</div>
                   <ControlInput
                     name="max_teams_members"
-                    label="Max team members"
+                    label="Max Team Members"
                     className="yellow-on-focus"
                     value={values.max_teams_members}
                     type="number"
-                    onChange={(e) => setFieldValue('max_teams_members', e.target.value)}
+                    onChange={(e) =>
+                      setFieldValue('max_teams_members', parseInt(e.target.value, 10))
+                    }
                     error={errors.max_teams_members}
                   />
                 </div>

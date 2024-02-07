@@ -73,7 +73,6 @@ const useClassMembers = (classId) => {
 
       try {
         const res = await ClassRoomsService.members(classId);
-
         responseCode = res?.status;
         retrievedClassMembers = res?.data;
       } catch (error) {

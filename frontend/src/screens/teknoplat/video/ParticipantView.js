@@ -8,7 +8,9 @@ function ParticipantView({ participantId }) {
   const micRef = useRef(null);
   const videoRef = useRef(null);
 
-  const { webcamStream, micStream, webcamOn, micOn, displayName } = useParticipant(participantId);
+  const { webcamStream, micStream, webcamOn, micOn, displayName } =
+    useParticipant(participantId);
+
   const [maskHeight, setMaskHeight] = useState('100%');
 
   const videoStream = useMemo(() => {
@@ -34,7 +36,9 @@ function ParticipantView({ participantId }) {
         micRef.current.srcObject = mediaStream;
         micRef.current
           .play()
-          .catch((error) => console.error('videoElem.current.play() failed', error));
+          .catch((error) =>
+            console.error('videoElem.current.play() failed', error)
+          );
       } else {
         micRef.current.srcObject = null;
       }
@@ -43,7 +47,6 @@ function ParticipantView({ participantId }) {
 
   return (
     <Box>
-      {/* eslint-disable jsx-a11y/media-has-caption */}
       <audio ref={micRef} autoPlay muted={micOn} />
       <Box
         sx={{
@@ -63,10 +66,14 @@ function ParticipantView({ participantId }) {
           muted
           playing
           url={videoStream}
-          height="calc(100vh - 72px - 48px - 24px)"
+          height="fit-content"
           width="-webkit-fill-available"
           onError={(err) => {
             console.log(err, 'participant video error');
+          }}
+          style={{
+            borderRadius: '10px',
+            overflow: 'hidden',
           }}
         />
         <Box
@@ -81,7 +88,14 @@ function ParticipantView({ participantId }) {
             backgroundAttachment: 'fixed',
           }}
         >
-          <Box sx={{ backgroundColor: '#000000a8', position: 'absolute', bottom: 0, p: 1 }}>
+          <Box
+            sx={{
+              backgroundColor: '#dddddda8',
+              position: 'absolute',
+              bottom: 0,
+              p: 1,
+            }}
+          >
             <Typography variant="button" fontSize={12}>
               {displayName}
             </Typography>

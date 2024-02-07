@@ -11,13 +11,14 @@ from django.db.models import Max
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 
+
 class ProjectCreateView(generics.CreateAPIView):
     # Return all projects and create
     queryset = SpringProject.objects.all()
     serializer_class = SpringProjectSerializer
 
     def perform_create(self, serializer):
-        serializer.save()  
+        serializer.save()
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -26,6 +27,7 @@ class ProjectCreateView(generics.CreateAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class ProjectView(generics.ListAPIView):
     # Get all Projects
     queryset = SpringProject.objects.all()
@@ -33,7 +35,6 @@ class ProjectView(generics.ListAPIView):
 
 
 class GetProjectsByTeamId(generics.ListAPIView):
-    # Get all projects of the group
     serializer_class = SpringProjectSerializer
     queryset = SpringProject.objects.all()
 
@@ -41,28 +42,32 @@ class GetProjectsByTeamId(generics.ListAPIView):
         team_id = self.kwargs.get('team_id')
         try:
             projects = SpringProject.objects.filter(team_id=team_id)
+            team_name = Team.objects.get(id=team_id).name  # Retrieve team name
             serializer = SpringProjectSerializer(projects, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            data = {'team_name': team_name, 'projects': serializer.data}
+            return Response(data, status=status.HTTP_200_OK)
         except SpringProject.DoesNotExist:
             return Response({"error": "Projects not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Team.DoesNotExist:
+            return Response({"error": "Team not found"}, status=status.HTTP_404_NOT_FOUND)
         except ValueError as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class GetProjectById(generics.ListAPIView):
-    # Get project by id
     serializer_class = SpringProjectSerializer
     queryset = SpringProject.objects.all()
 
     def get(self, request, *args, **kwargs):
         project_id = self.kwargs.get('project_id')
-
         try:
-            projects = SpringProject.objects.get(id=project_id)
-            serializer = SpringProjectSerializer(projects)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            project = SpringProject.objects.get(id=project_id)
+            team_name = project.team_id.name  # Retrieve team name
+            serializer = SpringProjectSerializer(project)
+            data = {'team_name': team_name, 'project': serializer.data}
+            return Response(data, status=status.HTTP_200_OK)
         except SpringProject.DoesNotExist:
-            return Response({"error": "Projects not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Project not found"}, status=status.HTTP_404_NOT_FOUND)
         except ValueError as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -94,8 +99,6 @@ class DeleteProjectView(generics.DestroyAPIView):
         return Response({"message": "Project deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
 
 
-
-
 class GetAllClassroomTeamAndProjects(APIView):
     # Gets all the Groups that belongs to the classroom. This returns:
     # the classroom name, list of groups (group name and list of projects),
@@ -113,7 +116,8 @@ class GetAllClassroomTeamAndProjects(APIView):
                     if class_member.role == 0:
                         teacher_info = f"{class_member.user_id.first_name} {class_member.user_id.last_name}"
 
-                team_ids = TeamMember.objects.filter(class_member_id__in=class_members).values_list('team_id', flat=True).distinct()
+                team_ids = TeamMember.objects.filter(
+                    class_member_id__in=class_members).values_list('team_id', flat=True).distinct()
                 teams = Team.objects.filter(id__in=team_ids)
 
                 for team in teams:
@@ -124,7 +128,7 @@ class GetAllClassroomTeamAndProjects(APIView):
 
                     for project in projects:
                         project_boards = SpringProjectBoard.objects.filter(project_id=project.id
-                        ).values('template_id').annotate(
+                                                                           ).values('template_id').annotate(
                             latest_id=Max('id')
                         ).values('latest_id')
 
@@ -151,7 +155,7 @@ class GetAllClassroomTeamAndProjects(APIView):
                             "project_date_created": project.date_created,
                             "project_boards": project_board_data
                         })
-                        
+
                     for project_data in projects_data:
                         team_info = {
                             "classroom_id": classroom.id,
@@ -163,7 +167,7 @@ class GetAllClassroomTeamAndProjects(APIView):
                         }
 
                         all_data.append(team_info)
-                        
+
                     if not projects_data:
                         team_info = {
                             "classroom_id": classroom.id,
@@ -195,6 +199,7 @@ class GetTeamsAndProjectsByClassId(APIView):
             teams = Team.objects.filter(id__in=team_ids)
 
             for team in teams:
+                team_id = team.id
                 team_name = team.name
 
                 projects = SpringProject.objects.filter(
@@ -202,6 +207,7 @@ class GetTeamsAndProjectsByClassId(APIView):
 
                 if not projects:
                     team_info = {
+                        "team_id": team_id,
                         "team_name": team_name,
                         "projects": []
                     }
@@ -239,6 +245,7 @@ class GetTeamsAndProjectsByClassId(APIView):
                         }
 
                         team_info = {
+                            "team_id": team_id,
                             "team_name": team_name,
                             "projects": [project_data]
                         }
@@ -249,3 +256,19 @@ class GetTeamsAndProjectsByClassId(APIView):
 
         except ClassRoom.DoesNotExist:
             return Response({"error": "Classroom not found"}, status=status.HTTP_404_NOT_FOUND)
+
+
+class UserProjectsView(generics.ListAPIView):
+    serializer_class = SpringProjectSerializer
+
+    def get_queryset(self):
+        user_id = self.kwargs.get('user_id')
+        team_memberships = TeamMember.objects.filter(
+            class_member_id__user_id=user_id)
+        team_ids = team_memberships.values_list('team_id', flat=True)
+        return SpringProject.objects.filter(team_id__in=team_ids)
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.serializer_class(queryset, many=True)
+        return Response(serializer.data)

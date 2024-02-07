@@ -1,19 +1,13 @@
-import React from 'react';
 import { useOutletContext } from 'react-router-dom';
-
-import 'primeicons/primeicons.css';
+import { Teacher } from './teacher';
+import { Student } from './student';
 import './index.scss';
 
 function ActivityManagement() {
-  const { user, classId, classRoom } = useOutletContext();
+  const { user } = useOutletContext();
 
-  // TODO: Your screens
-
-  return (
-    <div className="px-5">
-      <h1>Render your view here</h1>
-    </div>
-  );
+  if (user?.role === 1) return <Teacher />;
+  if (user?.role === 2) return <Student />;
 }
 
 export default ActivityManagement;

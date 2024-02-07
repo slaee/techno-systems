@@ -6,7 +6,7 @@ const useTeam = (classId, teamId) => {
   const navigate = useNavigate();
   const [isRetrieving, setIsRetrieving] = useState(true);
   const [team, setTeam] = useState(null);
-  const [teamMembers, setTeamMembers] = useState(null);
+  const [teamMembers, setTeamMembers] = useState([]);
 
   useEffect(() => {
     const get = async () => {
@@ -51,6 +51,7 @@ const useTeam = (classId, teamId) => {
       switch (responseCode) {
         case 200:
           setTeamMembers(retrievedMembers);
+          break;
         case 404:
           navigate(`/classes/${classId}/teams`);
           break;

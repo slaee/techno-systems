@@ -26,7 +26,13 @@ import { useNavigate } from 'react-router-dom';
 import GLOBALS from '../../../app_globals';
 import { MeetingsService } from '../../../services';
 
-function ParticipantControls({ controlTab, changeTab, classMember, meeting }) {
+function ParticipantControls({
+  controlTab,
+  changeTab,
+  classMember,
+  meeting,
+  webcamStatusRef,
+}) {
   const handleTabChange = (index) => {
     if (index === controlTab) {
       changeTab(-1);
@@ -40,9 +46,13 @@ function ParticipantControls({ controlTab, changeTab, classMember, meeting }) {
       <Box display="flex" justifyContent="space-between">
         <Box width="152px" />
         {classMember.role === GLOBALS.CLASSMEMBER_ROLE.TEACHER ? (
-          <TeacherControls owner={meeting.owner_id} meeting={meeting} />
+          <TeacherControls
+            owner={meeting.owner_id}
+            meeting={meeting}
+            webcamStatusRef={webcamStatusRef}
+          />
         ) : (
-          <StudentControls />
+          <StudentControls webcamStatusRef={webcamStatusRef} />
         )}
         <Stack direction="row" spacing={2}>
           <Tooltip title="Rate" enterDelay={300}>
@@ -85,23 +95,24 @@ ParticipantControls.propTypes = {
   meeting: PropTypes.object.isRequired,
 };
 
-function TeacherControls({ owner, meeting }) {
+function TeacherControls({ owner, meeting, webcamStatusRef }) {
   const navigate = useNavigate();
 
   const onParticipantLeft = (participantId) => {
     if (owner === participantId) {
-      navigate('/classes');
+      // navigate('/classes');
     }
   };
 
-  const onMeetingLeft = () => {
-    navigate('/classes');
+  const onMeetingLeft = (x) => {
+    // navigate('leave');
   };
 
-  const { toggleMic, toggleWebcam, localMicOn, localWebcamOn, leave, end } = useMeeting({
-    onParticipantLeft,
-    onMeetingLeft,
-  });
+  const { toggleMic, toggleWebcam, localMicOn, localWebcamOn, leave, end } =
+    useMeeting({
+      onParticipantLeft,
+      onMeetingLeft,
+    });
 
   const [open, setOpen] = useState(false);
   const [isEnding, setIsEnding] = useState('not leaving');
@@ -118,6 +129,7 @@ function TeacherControls({ owner, meeting }) {
   };
 
   const handleToggleVideoCam = () => {
+    webcamStatusRef.current = !localWebcamOn;
     toggleWebcam();
   };
 
@@ -136,6 +148,7 @@ function TeacherControls({ owner, meeting }) {
     });
 
     await MeetingsService.end(meeting.id);
+    handleLeave();
 
     if (localMicOn) {
       toggleMic();
@@ -143,10 +156,6 @@ function TeacherControls({ owner, meeting }) {
     if (localWebcamOn) {
       toggleWebcam();
     }
-    setTimeout(() => {
-      setOpen(false);
-      setIsEnding('ending');
-    }, 8000);
   };
 
   const handleLeave = () => {
@@ -158,6 +167,7 @@ function TeacherControls({ owner, meeting }) {
       toggleWebcam();
     }
     leave();
+    navigate('leave');
   };
 
   return (
@@ -263,36 +273,92 @@ TeacherControls.propTypes = {
 
 function StudentControls() {
   const navigate = useNavigate();
-
-  const onMeetingLeft = () => {
-    navigate('leave');
-  };
-
-  const { leave } = useMeeting({
-    onMeetingLeft,
-  });
+  const { disableWebcam, toggleMic, localMicOn, localWebcamOn, leave, end } =
+    useMeeting();
 
   const handleLeave = () => {
     leave();
+    navigate('leave');
+  };
+
+  const handleToggleMic = () => {
+    toggleMic();
+  };
+
+  const handleToggleVideoCam = () => {
+    disableWebcam();
   };
 
   return (
     <Box>
-      <Tooltip title="Leave Call">
-        <IconButton
-          onClick={handleLeave}
-          aria-label="leaveCall"
-          sx={{
-            backgroundColor: '#ff4313',
-            color: 'white',
-            ':hover': {
-              backgroundColor: '#ff430080',
-            },
-          }}
-        >
-          <CallEnd />
-        </IconButton>
-      </Tooltip>
+      <Stack direction="row" spacing={2}>
+        <Tooltip title="Mic">
+          <IconButton
+            aria-label="toggleMic"
+            onClick={handleToggleMic}
+            sx={
+              localMicOn
+                ? {
+                    backgroundColor: '#3c4043',
+                    color: 'white',
+                    ':hover': {
+                      backgroundColor: '#3c4043',
+                    },
+                  }
+                : {
+                    backgroundColor: '#ff4313',
+                    color: 'white',
+                    ':hover': {
+                      backgroundColor: '#ff430080',
+                    },
+                  }
+            }
+          >
+            {localMicOn ? <Mic /> : <MicOff />}
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Video">
+          <IconButton
+            aria-label="toggleWebcam"
+            onClick={handleToggleVideoCam}
+            disabled={!localWebcamOn}
+            sx={
+              localWebcamOn
+                ? {
+                    backgroundColor: '#3c4043',
+                    color: 'white',
+                    ':hover': {
+                      backgroundColor: '#3c4043',
+                    },
+                  }
+                : {
+                    backgroundColor: '#ff4313',
+                    color: 'white',
+                    ':hover': {
+                      backgroundColor: '#ff430080',
+                    },
+                  }
+            }
+          >
+            {localWebcamOn ? <Videocam /> : <VideocamOff />}
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Leave Call">
+          <IconButton
+            onClick={handleLeave}
+            aria-label="leaveCall"
+            sx={{
+              backgroundColor: '#ff4313',
+              color: 'white',
+              ':hover': {
+                backgroundColor: '#ff430080',
+              },
+            }}
+          >
+            <CallEnd />
+          </IconButton>
+        </Tooltip>
+      </Stack>
     </Box>
   );
 }

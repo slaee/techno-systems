@@ -1,13 +1,46 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
 
 import './index.scss';
+import Swal from 'sweetalert2';
+import GLOBALS from '../../../app_globals';
+import UpdateClass from '../../../components/modals/update_class';
+import { useClasses } from '../../../hooks';
 
 function ViewClass() {
-  const { classRoom } = useOutletContext();
+  const { user, classRoom } = useOutletContext();
+  const { deleteClass } = useClasses(classRoom?.id);
+
+  const [updateClassModalOpen, setUpdateClassModalOpen] = useState(false);
+  const [numberOfStudents, setNumberOfStudents] = useState(classRoom?.number_of_students);
+  const [numberOfTeams, setNumberOfTeams] = useState(classRoom?.number_of_teams);
+
+  useEffect(() => {
+    if (classRoom) {
+      setNumberOfStudents(classRoom?.number_of_students);
+      setNumberOfTeams(classRoom?.number_of_teams);
+    }
+  }, [classRoom?.number_of_students, classRoom?.number_of_teams]);
 
   const handleCopyCode = () => {
     navigator.clipboard.writeText(classRoom?.class_code);
+  };
+
+  const handleDeleteClass = () => {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'You will not be able to recover this class!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'No, keep it',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        deleteClass();
+      } else {
+        Swal.fire('Cancelled', 'Your class is safe :)', 'error');
+      }
+    });
   };
 
   const renderSubheader = () => (
@@ -26,30 +59,37 @@ function ViewClass() {
           </button>
         </div>
       </div>
+      {user?.role === GLOBALS.USER_ROLE.MODERATOR && (
+        <div className="d-flex align-items-center me-5 ms-auto">
+          <button
+            type="button"
+            className="btn btn-info ms-auto ms-2"
+            onClick={() => setUpdateClassModalOpen(true)}
+          >
+            Edit
+          </button>
+          <button type="button" className="btn btn-danger ms-2" onClick={handleDeleteClass}>
+            Delete
+          </button>
+        </div>
+      )}
     </div>
   );
 
   const renderBody = () => (
     <div className="d-flex justify-content-center pt-3 pb-3 px-5">
-      <div className="d-flex flex-column">
+      <div className="d-flex flex-row">
         <div className="pe-5">
-          <div className="students-container p-5">
-            <div className="fw-bold fs-1">{classRoom?.number_of_students}</div>
+          <div className="students-container">
+            <div className="fw-bold fs-1">{numberOfStudents}</div>
             <div className="ms-auto fw-semibold fs-3 mx-5">Students</div>
           </div>
         </div>
-        <div className="pe-5 pt-4">
-          <div className="students-container p-5">
-            <div className="fw-bold fs-1">0</div>
+        <div className="ps-5">
+          <div className="teams-container">
+            <div className="fw-bold fs-1">{numberOfTeams}</div>
             <div className="ms-auto fw-semibold fs-3 mx-5">Teams</div>
           </div>
-        </div>
-      </div>
-      <div className="logs-container">
-        <div className="fw-bold fs-4 mb-3">CLASS LOGS</div>
-        <div className="d-flex">
-          <div>[DateTime]</div>
-          <div className="ms-3">[Log Entry]</div>
         </div>
       </div>
     </div>
@@ -61,6 +101,11 @@ function ViewClass() {
     <div>
       {renderSubheader()}
       {renderContent()}
+      <UpdateClass
+        visible={updateClassModalOpen}
+        handleModal={() => setUpdateClassModalOpen(false)}
+        classroom={classRoom}
+      />
     </div>
   );
 }

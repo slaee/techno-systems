@@ -1,4 +1,13 @@
-import { Box, Button, Divider, Grid, Stack, Tab, Tabs, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  Divider,
+  Grid,
+  Stack,
+  Tab,
+  Tabs,
+  Typography,
+} from '@mui/material';
 import { useState } from 'react';
 import { useNavigate, useOutletContext, useParams } from 'react-router-dom';
 import GLOBALS from '../../../app_globals';
@@ -42,80 +51,87 @@ function MeetingDetailsPage() {
 
   const handleStartClick = async () => {
     await MeetingsService.start(meetingId);
-    navigate(`/live/${meetingId}`);
+    navigate(`/classes/${classId}/teknoplat/live/${meetingId}`);
   };
 
   const handleJoinClick = async () => {
-    navigate(`/live/${meetingId}`);
+    navigate(`/classes/${classId}/teknoplat/live/${meetingId}`);
   };
 
   return (
     <Box p={3}>
-      <Grid container spacing={2}>
-        <Grid item sm={12} md={8}>
-          <Stack spacing={3} sx={{ mb: 3 }}>
-            <Stack direction="row" spacing={5}>
-              <Typography variant="h5">{meeting.name}</Typography>
-              {meeting.status === 'pending' &&
-                classMember.role === GLOBALS.CLASSMEMBER_ROLE.TEACHER && (
-                  <Button variant="contained" onClick={handleStartClick}>
-                    Start
-                  </Button>
-                )}
-              {meeting.status === 'in_progress' && (
-                <Button variant="contained" onClick={handleJoinClick}>
-                  Join
-                </Button>
+      {!isLoading && (
+        <>
+          <Grid container spacing={2}>
+            <Grid item sm={12} md={8}>
+              <Stack spacing={3} sx={{ mb: 3 }}>
+                <Stack direction="row" spacing={5}>
+                  <Typography variant="h5">{meeting.name}</Typography>
+                  {meeting.status === 'pending' &&
+                    classMember.role === GLOBALS.CLASSMEMBER_ROLE.TEACHER && (
+                      <Button variant="contained" onClick={handleStartClick}>
+                        Start
+                      </Button>
+                    )}
+                  {meeting.status === 'in_progress' && (
+                    <Button variant="contained" onClick={handleJoinClick}>
+                      Join
+                    </Button>
+                  )}
+                  {meeting.status === 'completed' && (
+                    <Button
+                      variant="contained"
+                      onClick={handleHistoryDialogOpen}
+                    >
+                      View
+                    </Button>
+                  )}
+                </Stack>
+                <Typography fontWeight={100} variant="h6">
+                  {meeting.description}
+                </Typography>
+              </Stack>
+              <Tabs
+                value={meetingDetailsPageTabValue}
+                onChange={handleTabChange}
+                aria-label="action-tabs"
+              >
+                {tabOptions.map((option) => (
+                  <Tab
+                    key={option.value}
+                    id={`option-${option.value}`}
+                    label={option.name}
+                    aria-controls={`tabpanel-${option.value}`}
+                  />
+                ))}
+              </Tabs>
+              <Divider />
+              {meetingDetailsPageTabValue === 0 && (
+                <MeetingDetailsPresentors presentors={meeting.presentors} />
               )}
-              {meeting.status === 'completed' && (
-                <Button variant="contained" onClick={handleHistoryDialogOpen}>
-                  View
-                </Button>
+              {meetingDetailsPageTabValue === 1 && (
+                <MeetingDetailsCriterias criterias={meeting.criterias} />
               )}
-            </Stack>
-            <Typography fontWeight={100} variant="h6">
-              {meeting.description}
-            </Typography>
-          </Stack>
-          <Tabs
-            value={meetingDetailsPageTabValue}
-            onChange={handleTabChange}
-            aria-label="action-tabs"
-          >
-            {tabOptions.map((option) => (
-              <Tab
-                key={option.value}
-                id={`option-${option.value}`}
-                label={option.name}
-                aria-controls={`tabpanel-${option.value}`}
-              />
-            ))}
-          </Tabs>
-          <Divider />
-          {meetingDetailsPageTabValue === 0 && (
-            <MeetingDetailsPresentors presentors={meeting.presentors} />
-          )}
-          {meetingDetailsPageTabValue === 1 && (
-            <MeetingDetailsCriterias criterias={meeting.criterias} />
-          )}
-          {meetingDetailsPageTabValue === 2 && (
-            <MeetingDetailsComments
-              user={user}
-              classMember={classMember}
-              comments={meeting.comments}
-            />
-          )}
-        </Grid>
-        <Grid item sm={12} md={4}>
-          <MeetingDetailsMembers classId={classId} />
-        </Grid>
-      </Grid>
-      <MeetingHistoryDialog
-        open={openHistoryDialog}
-        handleClose={handleHistoryDialogClose}
-        presentors={meeting.presentors}
-        title={meeting.name}
-      />
+              {meetingDetailsPageTabValue === 2 && (
+                <MeetingDetailsComments
+                  user={user}
+                  classMember={classMember}
+                  comments={meeting.comments}
+                />
+              )}
+            </Grid>
+            <Grid item sm={12} md={4}>
+              <MeetingDetailsMembers classId={classId} />
+            </Grid>
+          </Grid>
+          <MeetingHistoryDialog
+            open={openHistoryDialog}
+            handleClose={handleHistoryDialogClose}
+            presentors={meeting.presentors}
+            title={meeting.name}
+          />
+        </>
+      )}
     </Box>
   );
 }

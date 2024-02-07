@@ -14,7 +14,6 @@ const usePitches = () => {
 
       try {
         const res = await PitchesService.all();
-
         responseCode = res?.status;
         retrievedPitches = res?.data;
       } catch (error) {

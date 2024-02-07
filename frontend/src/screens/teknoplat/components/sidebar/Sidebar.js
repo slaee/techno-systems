@@ -1,9 +1,17 @@
-import { Box, Divider, Drawer, List, ListItem, ListItemButton, ListItemText } from '@mui/material';
+import {
+  Box,
+  Divider,
+  Drawer,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+} from '@mui/material';
 import { useNavigate, useOutletContext } from 'react-router-dom';
 import GLOBALS from '../../../../app_globals';
 
 function Sidebar() {
-  const { classMember } = useOutletContext();
+  const { classMember, classId } = useOutletContext();
   const navigate = useNavigate();
 
   const handleMeetingsClick = () => {
@@ -11,7 +19,8 @@ function Sidebar() {
   };
 
   const handlePitchesClick = () => {
-    navigate('pitches');
+    localStorage.setItem('meetingsPageTabValue', 3);
+    window.location.href = `/classes/${classId}/teknoplat`;
   };
 
   const handleChatbotClick = () => {

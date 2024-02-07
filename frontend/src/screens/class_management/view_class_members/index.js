@@ -95,10 +95,10 @@ function ViewClassMembers() {
     } else {
       const filtered = tableData?.filter(
         (item) =>
-          item.name.toLowerCase().includes(lowerCaseQuery) ||
-          item.team.toLowerCase().includes(lowerCaseQuery) ||
-          item.role.toLowerCase().includes(lowerCaseQuery) ||
-          item.status.toLowerCase().includes(lowerCaseQuery)
+          (item.name && item.name.toLowerCase().includes(lowerCaseQuery)) ||
+          (item.team && item.team.toLowerCase().includes(lowerCaseQuery)) ||
+          (item.role && item.role.toLowerCase().includes(lowerCaseQuery)) ||
+          (item.status && item.status.toLowerCase().includes(lowerCaseQuery))
       );
       setFilteredData(filtered);
     }

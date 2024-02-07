@@ -1,5 +1,6 @@
 import { Close } from '@mui/icons-material';
 import {
+  Alert,
   AppBar,
   Button,
   Checkbox,
@@ -10,24 +11,31 @@ import {
   IconButton,
   InputAdornment,
   Slide,
+  Snackbar,
   Stack,
   TextField,
   Toolbar,
   Typography,
 } from '@mui/material';
 import PropTypes from 'prop-types';
-import { forwardRef, useState } from 'react';
+import { forwardRef, useEffect, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { useCriterias, usePitches } from '../../../hooks';
+import { useCriterias, usePitches, useTeams } from '../../../hooks';
 import { MeetingsService } from '../../../services';
 
-const SlideTransition = forwardRef((props, ref) => <Slide direction="up" ref={ref} {...props} />);
+const SlideTransition = forwardRef((props, ref) => (
+  <Slide direction="up" ref={ref} {...props} />
+));
 
 function CreateMeetingDialog({ open, handleClose }) {
   const { user, classId, classRoom, classMember } = useOutletContext();
 
   const { isLoading: loadingPitches, pitches } = usePitches();
   const { isLoading: loadingCriterias, criterias } = useCriterias();
+  const { isRetrieving: loadingTeams, teams } = useTeams(classId);
+
+  const [showSnackbar, setShowSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
 
   const [formData, setFormData] = useState({
     name: '',
@@ -35,15 +43,20 @@ function CreateMeetingDialog({ open, handleClose }) {
     teacher_weight_score: '80',
     student_weight_score: '20',
   });
-  const [checkedTeams, setCheckedTeams] = useState(pitches.map(() => false));
-  const [formCriterias, setFormCriterias] = useState(
-    criterias.map(() => [{ criteria: false, weight: '0' }])
-  );
+  const [checkedTeams, setCheckedTeams] = useState([]);
+  const [formCriterias, setFormCriterias] = useState([]);
+
+  useEffect(() => {
+    setFormCriterias(criterias.map(() => [{ criteria: false, weight: '0' }]));
+    setCheckedTeams(teams?.map(() => false) ? teams.map(() => false) : []);
+  }, [criterias, teams]);
+
   const [isWeightError, setIsWeightError] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   // const [emails, setEmails] = useState([{ email: "", emailAt: "@gmail.com" }]);
 
-  const { name, description, teacher_weight_score, student_weight_score } = formData;
+  const { name, description, teacher_weight_score, student_weight_score } =
+    formData;
 
   const handleInputChange = (e) => {
     let { name: fieldName, value } = e.target;
@@ -133,32 +146,99 @@ function CreateMeetingDialog({ open, handleClose }) {
     };
     const meeting_presentors_data = checkedTeams
       .filter((checked) => checked === true)
-      .map((checked, index) => [{ pitch_id: pitches[index].id }]);
+      .map((checked, index) => ({ team_id: teams[index].id }));
     const meeting_criterias_data = formCriterias
       .filter((form) => form.criteria === true)
-      .map((form, index) => [
-        { criteria_id: criterias[index].id, weight: Number(form.weight) / 100 },
-      ]);
-
+      .map((form, index) => ({
+        criteria_id: criterias[index].id,
+        weight: Number(form.weight) / 100,
+      }));
+    if (!meeting_data.name) {
+      setSnackbarMessage('Title must be filled');
+      setShowSnackbar(true);
+      setIsSaving(false);
+      return;
+    } else if (!meeting_data.description) {
+      setSnackbarMessage('Description must be filled');
+      setShowSnackbar(true);
+      setIsSaving(false);
+      return;
+    } else if (meeting_presentors_data.length < 1) {
+      setSnackbarMessage('Teams must be selected');
+      setShowSnackbar(true);
+      setIsSaving(false);
+      return;
+    } else if (meeting_criterias_data.length < 1) {
+      setSnackbarMessage('Criterias must be selected');
+      setShowSnackbar(true);
+      setIsSaving(false);
+      return;
+    } else if (meeting_criterias_data.reduce((a, b) => a + b.weight, 0) !== 1) {
+      setSnackbarMessage('Criterias must add up to 100%');
+      setShowSnackbar(true);
+      setIsSaving(false);
+      return;
+    } else if (meeting_criterias_data.length > 5) {
+      setSnackbarMessage('Criterias must not exceed 5');
+      setShowSnackbar(true);
+      setIsSaving(false);
+      return;
+    }
     const meetingResponse = await MeetingsService.create(meeting_data);
     const meeting = meetingResponse.data;
-
     meeting_presentors_data.forEach(async (presentor) => {
       await MeetingsService.addMeetingPresentor(meeting.id, presentor);
     });
-
     meeting_criterias_data.forEach(async (criteria) => {
       await MeetingsService.addMeetingCriteria(meeting.id, criteria);
     });
-
     setIsSaving(false);
+    setFormCriterias(criterias.map(() => [{ criteria: false, weight: '0' }]));
+    setCheckedTeams(teams?.map(() => false) ? teams.map(() => false) : []);
+    setFormData({
+      name: '',
+      description: '',
+      teacher_weight_score: '80',
+      student_weight_score: '20',
+    });
+    handleClose();
+  };
+
+  const closeSnackbar = () => {
+    setShowSnackbar(false);
   };
 
   return (
-    <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={SlideTransition}>
+    <Dialog
+      fullScreen
+      open={open}
+      onClose={handleClose}
+      TransitionComponent={SlideTransition}
+    >
+      <Snackbar
+        open={showSnackbar}
+        autoHideDuration={6000}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        onClose={closeSnackbar}
+        message="Some message"
+      >
+        <Alert
+          onClose={closeSnackbar}
+          severity="error"
+          variant="filled"
+          sx={{ width: '100%' }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
       <AppBar sx={{ position: 'relative' }}>
         <Toolbar>
-          <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
+          <IconButton
+            edge="start"
+            color="inherit"
+            onClick={handleClose}
+            aria-label="close"
+          >
             <Close />
           </IconButton>
           <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
@@ -196,8 +276,13 @@ function CreateMeetingDialog({ open, handleClose }) {
       >
         <Grid item sm={12} md={4} sx={{ p: 1 }}>
           <Stack spacing={2}>
-            <Typography variant="h6">Meeting General Information</Typography>
-            <TextField label="Title" name="name" value={name} onChange={handleInputChange} />
+            <Typography variant="h6">Meeting Information</Typography>
+            <TextField
+              label="Title"
+              name="name"
+              value={name}
+              onChange={handleInputChange}
+            />
             <TextField
               label="Description"
               name="description"
@@ -214,7 +299,9 @@ function CreateMeetingDialog({ open, handleClose }) {
                   name="teacher_weight_score"
                   value={teacher_weight_score}
                   InputProps={{
-                    endAdornment: <InputAdornment position="end">%</InputAdornment>,
+                    endAdornment: (
+                      <InputAdornment position="end">%</InputAdornment>
+                    ),
                   }}
                   onChange={handleInputChange}
                 />
@@ -226,7 +313,9 @@ function CreateMeetingDialog({ open, handleClose }) {
                   name="student_weight_score"
                   value={student_weight_score}
                   InputProps={{
-                    endAdornment: <InputAdornment position="end">%</InputAdornment>,
+                    endAdornment: (
+                      <InputAdornment position="end">%</InputAdornment>
+                    ),
                   }}
                   onChange={handleInputChange}
                 />
@@ -241,18 +330,19 @@ function CreateMeetingDialog({ open, handleClose }) {
                 Teams
               </Typography>
               <FormGroup>
-                {pitches.map((pitch, index) => (
-                  <FormControlLabel
-                    key={pitch.id}
-                    control={
-                      <Checkbox
-                        checked={checkedTeams[index]}
-                        onChange={(e) => handleChangeCheckTeam(e, index)}
-                      />
-                    }
-                    label={pitch.team_json.name}
-                  />
-                ))}
+                {!loadingTeams &&
+                  teams.map((team, index) => (
+                    <FormControlLabel
+                      key={team.id}
+                      control={
+                        <Checkbox
+                          checked={checkedTeams[index]}
+                          onChange={(e) => handleChangeCheckTeam(e, index)}
+                        />
+                      }
+                      label={team.name}
+                    />
+                  ))}
               </FormGroup>
             </Grid>
             <Grid item md={7} xs={12} sx={{ px: 1 }}>
@@ -261,28 +351,36 @@ function CreateMeetingDialog({ open, handleClose }) {
               </Typography>
               <FormGroup>
                 {criterias.map((criteria, index) => (
-                  <Stack key={criteria.id} direction="row" justifyContent="space-between" mb={1}>
+                  <Stack
+                    key={criteria.id}
+                    direction="row"
+                    justifyContent="space-between"
+                    mb={1}
+                  >
                     <FormControlLabel
                       control={
                         <Checkbox
-                          checked={formCriterias[index].criteria}
+                          checked={
+                            formCriterias[index]?.criteria ? true : false
+                          }
                           onChange={(e) => handleChangeCheckCriteria(e, index)}
                         />
                       }
                       label={criteria.name}
                     />
                     <TextField
-                      disabled={!formCriterias[index].criteria}
+                      disabled={!formCriterias[index]?.criteria}
                       sx={{ width: '30%' }}
                       size="small"
                       label="Weight"
                       name="weight"
-                      value={formCriterias[index].weight}
+                      value={formCriterias[index]?.weight}
                       onChange={(e) => handleWeightChange(e, index)}
-                      onClick={(e) => handleWeightClick(e, index)}
-                      error={formCriterias[index].criteria && isWeightError}
+                      error={formCriterias[index]?.criteria && isWeightError}
                       InputProps={{
-                        endAdornment: <InputAdornment position="end">%</InputAdornment>,
+                        endAdornment: (
+                          <InputAdornment position="end">%</InputAdornment>
+                        ),
                       }}
                     />
                   </Stack>

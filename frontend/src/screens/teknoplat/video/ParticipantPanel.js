@@ -25,20 +25,29 @@ function ParticipantPanel({ meeting }) {
   const [notInMeeting, setNotInMeeting] = useState([]);
 
   useEffect(() => {
-    if (!isRetrieving) {
-      const inMeetingList = [...participants.keys()].map((participant) =>
-        classMembers.find((member) => member.id === participant)
+    if (!isRetrieving && classMembers.length > 0) {
+      const inMeetingList = Array.from(participants.keys()).map(
+        (participant) => ({
+          participantId: participant,
+          ...classMembers.find((member) => member.id == participant),
+        })
       );
       const notInMeetingList = classMembers.filter(
-        (member) => !inMeeting.find((meetingMember) => member.id === meetingMember.id)
+        (member) =>
+          !inMeetingList.find((meetingMember) => member.id == meetingMember.id)
       );
       setInMeeting(inMeetingList);
       setNotInMeeting(notInMeetingList);
     }
-  }, [isRetrieving]);
+  }, [isRetrieving, classMembers]);
 
   return (
-    <Paper sx={{ height: 'calc(100vh - 72px - 48px - 24px)', width: '360px' }}>
+    <Paper
+      sx={{
+        height: 'calc(100vh - 72px - 48px - 24px - 66px - 190px)',
+        width: '360px',
+      }}
+    >
       <List
         sx={{
           py: 0,
@@ -60,7 +69,9 @@ function ParticipantPanel({ meeting }) {
           },
         }}
       >
-        <ListSubheader sx={{ backgroundColor: 'inherit', position: 'relative' }}>
+        <ListSubheader
+          sx={{ backgroundColor: 'inherit', position: 'relative' }}
+        >
           Teachers
         </ListSubheader>
         {inMeeting
@@ -85,9 +96,11 @@ function ParticipantPanel({ meeting }) {
               />
             );
           })}
-        <ListSubheader sx={{ backgroundColor: 'inherit' }}>Students</ListSubheader>
+        <ListSubheader sx={{ backgroundColor: 'inherit' }}>
+          Students
+        </ListSubheader>
         {inMeeting
-          .filter((member) => member.role === 'Student')
+          .filter((member) => member.role === GLOBALS.CLASSMEMBER_ROLE.STUDENT)
           .map((student) => (
             <Participant
               key={student.id}
@@ -96,7 +109,9 @@ function ParticipantPanel({ meeting }) {
               isOwner={classMember.id === meeting.owner_id}
             />
           ))}
-        <ListSubheader sx={{ backgroundColor: 'inherit' }}>Not In Meeting</ListSubheader>
+        <ListSubheader sx={{ backgroundColor: 'inherit' }}>
+          Not In Meeting
+        </ListSubheader>
         {notInMeeting.map((member) => (
           <ListItem key={member.id} disablePadding>
             <ListItemButton
@@ -108,7 +123,9 @@ function ParticipantPanel({ meeting }) {
                 pointerEvents: 'auto',
               }}
             >
-              <ListItemText primary={member.full_name} />
+              <ListItemText
+                primary={`${member.first_name} ${member.last_name}`}
+              />
             </ListItemButton>
           </ListItem>
         ))}
@@ -129,7 +146,8 @@ function Participant({ participant, isNotHost, isOwner }) {
     disableMic: remoteDisableMic,
     webcamOn,
     micOn,
-  } = useParticipant(participant.id);
+    displayName,
+  } = useParticipant(participant.participantId);
   const {
     enableWebcam: localEnableWebcam,
     disableWebcam: localDisableWebcam,
@@ -161,19 +179,19 @@ function Participant({ participant, isNotHost, isOwner }) {
     }
   };
 
-  // const handleToggleParticipantMic = () => {
-  //   if (micOn) {
-  //     remoteDisableMic();
-  //     setTimeout(() => {
-  //       unmuteMic();
-  //     }, 500);
-  //   } else {
-  //     muteMic();
-  //     setTimeout(() => {
-  //       enableMic();
-  //     }, 500);
-  //   }
-  // }
+  const handleToggleParticipantMic = () => {
+    if (micOn) {
+      remoteDisableMic();
+      setTimeout(() => {
+        unmuteMic();
+      }, 500);
+    } else {
+      muteMic();
+      setTimeout(() => {
+        enableMic();
+      }, 500);
+    }
+  };
 
   return (
     <ListItem
@@ -182,8 +200,16 @@ function Participant({ participant, isNotHost, isOwner }) {
         isNotHost &&
         isOwner && (
           <Stack direction="row" spacing={1}>
-            <IconButton aria-label="toggleMic">{micOn ? <Mic /> : <MicOff />}</IconButton>
-            <IconButton aria-label="toggleVideo" onClick={handleToggleParticipantWebCam}>
+            <IconButton
+              aria-label="toggleMic"
+              onClick={handleToggleParticipantMic}
+            >
+              {micOn ? <Mic /> : <MicOff />}
+            </IconButton>
+            <IconButton
+              aria-label="toggleVideo"
+              onClick={handleToggleParticipantWebCam}
+            >
               {webcamOn ? <Videocam /> : <VideocamOff />}
             </IconButton>
           </Stack>
@@ -199,7 +225,9 @@ function Participant({ participant, isNotHost, isOwner }) {
           pointerEvents: 'auto',
         }}
       >
-        <ListItemText primary={participant.full_name} />
+        <ListItemText
+          primary={`${participant.first_name} ${participant.last_name}`}
+        />
       </ListItemButton>
     </ListItem>
   );

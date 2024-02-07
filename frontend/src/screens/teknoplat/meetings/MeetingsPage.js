@@ -4,6 +4,8 @@ import { useOutletContext } from 'react-router-dom';
 import MeetingsPageTable from './MeetingsPageTable';
 import CreateMeetingDialog from './CreateMeetingDialog';
 import GLOBALS from '../../../app_globals';
+import MeetingsPageTeam from '../meeting_details/MeetingsPageTeam';
+import ChatbotPage from '../chatbot/ChatbotPage';
 
 function MeetingsPage() {
   const { user, classId, classRoom, classMember } = useOutletContext();
@@ -12,6 +14,8 @@ function MeetingsPage() {
     { value: 0, name: 'Pending', stringValue: 'pending' },
     { value: 1, name: 'In Progress', stringValue: 'in_progress' },
     { value: 2, name: 'Completed', stringValue: 'completed' },
+    { value: 3, name: 'My Team', stringValue: 'my_team', teacherName: 'Teams' },
+    { value: 4, name: 'Chatbot', stringValue: 'chatbot' },
   ];
 
   const [meetingsPageTabValue, setMeetingsPageTabValue] = useState(
@@ -51,33 +55,48 @@ function MeetingsPage() {
             <Tab
               key={option.value}
               id={`status-option-${option.value}`}
-              label={option.name}
+              label={
+                option.teacherName
+                  ? classMember.role === GLOBALS.CLASSMEMBER_ROLE.TEACHER
+                    ? option.teacherName
+                    : option.name
+                  : option.name
+              }
               aria-controls={`status-tabpanel-${option.value}`}
             />
           ))}
         </Tabs>
-        <Stack direction="row" spacing={2} alignItems="center" ml="auto">
-          {classMember.role === GLOBALS.CLASSMEMBER_ROLE.TEACHER && (
-            <Button size="small" variant="outlined" onClick={handleOpenCreateDialog}>
-              Create
-            </Button>
-          )}
-          <TextField
-            id="searchMeetingName"
-            name="searchMeetingName"
-            value={searchMeeting}
-            label="Search Meetings"
-            onChange={handleSearchInput}
-            autoComplete="off"
-            variant="outlined"
-            size="small"
-          />
-        </Stack>
+        {meetingsPageTabValue >= 0 && meetingsPageTabValue < 3 && (
+          <Stack direction="row" spacing={2} alignItems="center" ml="auto">
+            {classMember.role === GLOBALS.CLASSMEMBER_ROLE.TEACHER && (
+              <Button
+                size="small"
+                variant="outlined"
+                onClick={handleOpenCreateDialog}
+              >
+                Create
+              </Button>
+            )}
+            <TextField
+              id="searchMeetingName"
+              name="searchMeetingName"
+              value={searchMeeting}
+              label="Search Meetings"
+              onChange={handleSearchInput}
+              autoComplete="off"
+              variant="outlined"
+              size="small"
+            />
+          </Stack>
+        )}
         {classMember.role === GLOBALS.CLASSMEMBER_ROLE.TEACHER && (
           <CreateMeetingDialog
             open={openCreateDialog}
             handleClose={handleCloseCreateDialog}
-            status={tabOptions.find((option) => option.value === meetingsPageTabValue).stringValue}
+            status={
+              tabOptions.find((option) => option.value === meetingsPageTabValue)
+                .stringValue
+            }
           />
         )}
       </Stack>
@@ -86,23 +105,34 @@ function MeetingsPage() {
           key={createCounter}
           classroomId={classId}
           search={searchMeeting}
-          status={tabOptions.find((option) => option.value === meetingsPageTabValue).stringValue}
+          status={
+            tabOptions.find((option) => option.value === meetingsPageTabValue)
+              .stringValue
+          }
         />
       )}
       {meetingsPageTabValue === 1 && (
         <MeetingsPageTable
           classroomId={classId}
           search={searchMeeting}
-          status={tabOptions.find((option) => option.value === meetingsPageTabValue).stringValue}
+          status={
+            tabOptions.find((option) => option.value === meetingsPageTabValue)
+              .stringValue
+          }
         />
       )}
       {meetingsPageTabValue === 2 && (
         <MeetingsPageTable
           classroomId={classId}
           search={searchMeeting}
-          status={tabOptions.find((option) => option.value === meetingsPageTabValue).stringValue}
+          status={
+            tabOptions.find((option) => option.value === meetingsPageTabValue)
+              .stringValue
+          }
         />
       )}
+      {meetingsPageTabValue === 3 && <MeetingsPageTeam />}
+      {meetingsPageTabValue === 4 && <ChatbotPage />}
     </Box>
   );
 }
