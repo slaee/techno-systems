@@ -27,7 +27,7 @@ const useMeetings = (classroom, status) => {
           break;
         case 404:
         case 500:
-          navigate('/classes');
+          // navigate('/classes');
           break;
         default:
       }

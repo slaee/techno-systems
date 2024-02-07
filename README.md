@@ -78,6 +78,14 @@ then run the frontend server:
 npm start
 ```
 
+### Eslint and Prettier
+If you are encountering eslint errors, uninstall `Prettier - Code formatter` extension in VSCode so that we will use only the `ESLint` extension. (Note: prettier is already included in our local eslint configuration)
+
+If there is a chance that some files are not being formatted, you can run the following command:
+```
+npm run lint-fix
+```
+
 ## Dev Build with Docker
 
 To build and run the system use command:

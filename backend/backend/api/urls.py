@@ -1,4 +1,4 @@
-from django.urls import path, include
+from django.urls import path, include, re_path
 from .controllers.ActivityController import TeamActivitiesController
 from rest_framework_nested import routers
 from rest_framework_simplejwt.views import (
@@ -33,6 +33,8 @@ teknoplat_router.register('pitches', PitchesController, basename='pitches')
 teknoplat_router.register('ratings', RatingsController, basename='ratings')
 teknoplat_router.register('remarks', RemarksController, basename='remarks')
 teknoplat_router.register('idea_validation', ChatbotsController, basename='idea_validation')
+teknoplat_router.register('criterias', CriteriasController, basename='criterias')
+teknoplat_router.register('meeting_comments', MeetingCommentsController, basename='meeting_comments')
 
 urlpatterns = router.urls
 urlpatterns += classes_router.urls
@@ -48,6 +50,7 @@ urlpatterns += [
     path('spring/class_team_proj', GetAllClassroomTeamAndProjects.as_view()),
     path('spring/class/<int:class_id>/team_proj',GetTeamsAndProjectsByClassId.as_view()),
     path('spring/team/<int:team_id>/projects', GetProjectsByTeamId.as_view()),
+    path('spring/<int:user_id>/projects', UserProjectsView.as_view()),
     path('spring/project', ProjectView.as_view()),
     path('spring/project/<int:project_id>', GetProjectById.as_view()),
     path('spring/project/create', ProjectCreateView.as_view()),
@@ -63,5 +66,5 @@ urlpatterns += [
     path('spring/template/', GetAllTemplate.as_view()),
     path('spring/template/add', CreateTemplate.as_view()),
     path('spring/template/<int:template_id>/update', UpdateTemplate.as_view()),
-    path('spring/template/<int:template_id>/delete', DeleteTemplate.as_view()),
+    path('spring/template/<int:template_id>/delete', DeleteTemplate.as_view())
 ]

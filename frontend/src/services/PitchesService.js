@@ -16,8 +16,8 @@ const PitchesService = {
       "team": "json object"
     }
   */
-  create: (data) => api.post(BASE_URL, data),
-  update: (id, data) => api.put(`${BASE_URL}/${id}`, data),
+  create: (data) => api.post(`${BASE_URL}/create_pitch`, data),
+  update: (id, data) => api.put(`${BASE_URL}/update_pitch?pitchId=${id}`, data),
 
   /// GET /classes/{id}
   get: (id) => api.get(`${BASE_URL}/${id}`),

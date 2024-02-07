@@ -1,4 +1,6 @@
-const SIDENAV_DEFAULT = [{ id: 1, label: 'Classes', className: 'classes', path: '/classes' }];
+const SIDENAV_DEFAULT = [
+  { id: 1, label: 'Classes', className: 'classes', path: '/classes' },
+];
 
 const SIDENAV_MODERATOR = [
   { id: 1, label: 'Classes', className: 'classes', path: '/classes' },
@@ -7,6 +9,12 @@ const SIDENAV_MODERATOR = [
     label: 'Peer Evaluation',
     className: 'peer-eval',
     path: '/peer-eval',
+  },
+  {
+    id: 3,
+    label: 'Project Reference',
+    className: 'allprojects',
+    path: '/allprojects',
   },
 ];
 
@@ -37,13 +45,13 @@ const SIDENAV_TEACHER = (classId) => [
   },
   {
     id: 5,
-    label: 'All Projects',
+    label: 'All Team Projects',
     className: 'allprojects',
-    path: `/classes/${classId}/allprojects`,
+    path: `/classes/${classId}/allteamprojects`,
   },
   {
     id: 6,
-    label: 'Teknoplat',
+    label: 'Pitching & Validation',
     className: 'teknoplat',
     path: `/classes/${classId}/teknoplat`,
   },
@@ -82,16 +90,21 @@ const SIDENAV_CLASSMEMBER = (classId) => [
   },
   {
     id: 6,
-    label: 'All Projects',
+    label: 'Project Reference',
     className: 'allprojects',
     path: `/classes/${classId}/allprojects`,
   },
   {
-    id: 5,
+    id: 7,
     label: 'Teknoplat',
     className: 'teknoplat',
     path: `/classes/${classId}/teknoplat`,
   },
 ];
 
-export { SIDENAV_DEFAULT, SIDENAV_TEACHER, SIDENAV_CLASSMEMBER, SIDENAV_MODERATOR };
+export {
+  SIDENAV_DEFAULT,
+  SIDENAV_TEACHER,
+  SIDENAV_CLASSMEMBER,
+  SIDENAV_MODERATOR,
+};

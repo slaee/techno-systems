@@ -13,9 +13,19 @@ import {
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { MeetingsService, RatingsService, RemarksService } from '../../../services';
+import {
+  MeetingsService,
+  RatingsService,
+  RemarksService,
+} from '../../../services';
 
-function RateDialog({ open, handleClose, criterias, selectedPresentor, classMember }) {
+function RateDialog({
+  open,
+  handleClose,
+  criterias,
+  selectedPresentor,
+  classMember,
+}) {
   const { meetingId } = useParams();
   const initialRateData = {};
   criterias.forEach((criteria) => {
@@ -31,22 +41,32 @@ function RateDialog({ open, handleClose, criterias, selectedPresentor, classMemb
   const [isUpdate, setIsUpdate] = useState(false);
 
   const fillData = async (pitchId) => {
-    const ratingsResponse = await RatingsService.getAccountRatingsForPresentor(meetingId, pitchId);
+    const ratingsResponse = await RatingsService.getAccountRatingsForPresentor(
+      meetingId,
+      pitchId
+    );
     if (ratingsResponse.data.length !== 0) {
       const ratings = ratingsResponse.data;
       const updatedRateData = {};
       const ids = {};
       criterias.forEach((criteria) => {
-        updatedRateData[criteria.name] = Number(
-          ratings.find((rating) => rating.criteria === criteria.criteria).rating
+        updatedRateData[criteria.criteria.name] = Number(
+          ratings.find(
+            (rating) => rating.meeting_criteria_id === criteria.criteria_id
+          ).rating
         );
-        ids[criteria.name] = ratings.find((rating) => rating.criteria === criteria.criteria).id;
+        ids[criteria.criteria.name] = ratings.find(
+          (rating) => rating.meeting_criteria_id === criteria.criteria_id
+        ).id;
       });
       setRatingsData(updatedRateData);
       setRatingsId(ids);
       setIsUpdate(true);
     }
-    const remarkResponse = await RemarksService.getAccountRemarksForPresentor(meetingId, pitchId);
+    const remarkResponse = await RemarksService.getAccountRemarksForPresentor(
+      meetingId,
+      pitchId
+    );
     if (remarkResponse.data.length !== 0) {
       setRemark(remarkResponse.data[0].remark);
       setRemarkId(remarkResponse.data[0].id);
@@ -77,7 +97,7 @@ function RateDialog({ open, handleClose, criterias, selectedPresentor, classMemb
 
   const handleRatingChange = (e, newValue) => {
     const { name } = e.target;
-
+    if (newValue === null) return;
     setRatingsData((previousData) => ({
       ...previousData,
       [name]: newValue,
@@ -94,7 +114,7 @@ function RateDialog({ open, handleClose, criterias, selectedPresentor, classMemb
       rating: ratingsData[criteria.criteria.name],
       classmember_id: classMember.id,
       pitch_id: selectedPresentor.pitch_id,
-      meeting_criteria_id: criteria.id,
+      meeting_criteria_id: criteria.criteria_id,
     }));
 
     const remarkPayload = {
@@ -107,7 +127,12 @@ function RateDialog({ open, handleClose, criterias, selectedPresentor, classMemb
       try {
         if (isUpdate) {
           const id =
-            ratingsId[criterias.find((criteria) => payload.criteria === criteria.criteria).name];
+            ratingsId[
+              criterias.find(
+                (criteria) =>
+                  payload.meeting_criteria_id === criteria.criteria_id
+              ).name
+            ];
           payload.id = id;
           await MeetingsService.updateRatingToPresentor(meetingId, payload);
         } else {
@@ -142,7 +167,11 @@ function RateDialog({ open, handleClose, criterias, selectedPresentor, classMemb
         <Typography variant="h6">Rating</Typography>
         <Stack spacing={2} py={2}>
           {criterias.map((criteria) => (
-            <Stack key={criteria.id} direction="row" justifyContent="space-between">
+            <Stack
+              key={criteria.id}
+              direction="row"
+              justifyContent="space-between"
+            >
               <Typography>{criteria.criteria.name}</Typography>
               <Stack direction="row" spacing={1}>
                 <Rating
@@ -166,6 +195,7 @@ function RateDialog({ open, handleClose, criterias, selectedPresentor, classMemb
           Remarks
         </Typography>
         <TextField
+          value={remark}
           onChange={handleRemarkChange}
           fullWidth
           multiline

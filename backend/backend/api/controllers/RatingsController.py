@@ -25,7 +25,6 @@ class RatingsController(viewsets.GenericViewSet,
     @swagger_auto_schema(
         operation_summary="List all rating of a specific account",
         operation_description="GET /ratings/my_ratings/",
-        request_body=NoneSerializer,
         responses={
             status.HTTP_200_OK: openapi.Response('OK', RatingSerializer),
             status.HTTP_400_BAD_REQUEST: openapi.Response('Bad Request'),
@@ -50,7 +49,8 @@ class RatingsController(viewsets.GenericViewSet,
             if  pitch_param:
                 queryset = queryset.filter(pitch_id=pitch_param)
             
-            return queryset
+            serializer = RatingSerializer(queryset, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         except ClassMember.DoesNotExist:
             return Response({'details': 'Class member not found'}, status=status.HTTP_404_NOT_FOUND)
         

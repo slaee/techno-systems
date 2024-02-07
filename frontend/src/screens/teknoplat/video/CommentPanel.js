@@ -1,16 +1,37 @@
 import { Send } from '@mui/icons-material';
-import { Box, Button, Paper, Stack, TextField, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  Paper,
+  Stack,
+  TextField,
+  Typography,
+} from '@mui/material';
 import PropTypes from 'prop-types';
 import { useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useOutletContext, useParams } from 'react-router-dom';
 import { MeetingsService } from '../../../services';
+import CommentsService from '../../../services/CommentsService';
 
-function CommentPanel({ user, comments, classMember }) {
+function CommentPanel({}) {
+  const { user, classId, classRoom, classMember } = useOutletContext();
   const { meetingId } = useParams();
   const scrollableBoxRef = useRef(null);
 
   const [comment, setComment] = useState('');
-  const [commentList, setCommentList] = useState(comments);
+  const [commentList, setCommentList] = useState([]);
+
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      const res = await CommentsService.all(meetingId);
+      const comments = res.data;
+      setCommentList(comments);
+    }, 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
 
   useEffect(() => {
     scrollableBoxRef.current.scrollTop = scrollableBoxRef.current.scrollHeight;
@@ -22,14 +43,6 @@ function CommentPanel({ user, comments, classMember }) {
   };
 
   const handleCommentClick = async (e) => {
-    setCommentList((previous) => [
-      ...previous,
-      {
-        comment,
-        classmember_id: classMember.id,
-        full_name: `${user.first_name} ${user.last_name}`,
-      },
-    ]);
     await MeetingsService.addMeetingComment(meetingId, {
       comment,
       classmember_id: classMember.id,
@@ -38,12 +51,17 @@ function CommentPanel({ user, comments, classMember }) {
   };
 
   return (
-    <Paper sx={{ height: 'calc(100vh - 72px - 48px - 24px)', width: '360px' }}>
+    <Paper
+      sx={{
+        height: 'calc(100vh - 72px - 48px - 24px - 66px - 190px)',
+        width: '360px',
+      }}
+    >
       <Box
         ref={scrollableBoxRef}
         sx={{
-          height: 'calc(100vh - 72px - 72px - 48px - 24px)',
-          maxHeight: 'calc(100vh - 72px - 72px - 48px - 24px)',
+          height: 'calc(100vh - 72px - 72px - 48px - 24px - 66px - 190px)',
+          maxHeight: 'calc(100vh - 72px - 72px - 48px - 24px - 66px - 190px)',
           width: '360px',
           px: 1,
           py: 2,
@@ -69,18 +87,26 @@ function CommentPanel({ user, comments, classMember }) {
             <Paper
               key={commentData.id}
               sx={{
-                backgroundColor: 'black',
+                backgroundColor: '#f3f3f3',
                 width: 'fit-content',
                 maxWidth: '80%',
                 p: 1,
-                marginLeft: classMember.id === commentData.classmember_id ? 'auto !important' : '',
+                marginLeft:
+                  classMember.id === commentData.classmember_id
+                    ? 'auto !important'
+                    : '',
               }}
             >
               <Stack direction="row" spacing={1}>
                 <img
-                  src="/sample/default_avatar.png"
+                  src="/assets/default_avatar.png"
                   alt="AccountProfile"
-                  style={{ width: '20px', height: '20px', marginRight: '5px', borderRadius: '5px' }}
+                  style={{
+                    width: '20px',
+                    height: '20px',
+                    marginRight: '5px',
+                    borderRadius: '5px',
+                  }}
                 />
                 <Stack spacing={0}>
                   <Typography variant="body1" fontSize={14} color="grey">
@@ -115,10 +141,6 @@ function CommentPanel({ user, comments, classMember }) {
   );
 }
 
-CommentPanel.propTypes = {
-  user: PropTypes.object.isRequired,
-  comments: PropTypes.array.isRequired,
-  classMember: PropTypes.object.isRequired,
-};
+CommentPanel.propTypes = {};
 
 export default CommentPanel;

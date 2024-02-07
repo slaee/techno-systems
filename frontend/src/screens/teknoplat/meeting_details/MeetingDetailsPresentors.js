@@ -1,21 +1,45 @@
 import { ExpandMore } from '@mui/icons-material';
-import { Accordion, AccordionDetails, AccordionSummary, Box, Typography } from '@mui/material';
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Box,
+  Typography,
+} from '@mui/material';
 import PropTypes from 'prop-types';
+import { useTeam } from '../../../hooks';
+import { useEffect, useState } from 'react';
+import { ClassRoomsService } from '../../../services';
+import { useOutletContext } from 'react-router-dom';
 
 function MeetingDetailsPresentors({ presentors }) {
+  const { classId } = useOutletContext();
+  const [teams, setTeams] = useState([]);
+  useEffect(() => {
+    (async () => {
+      presentors.forEach(async (presentor) => {
+        const res = await ClassRoomsService.team(classId, presentor.team_id);
+        const team = res.data;
+        setTeams((prevTeam) => [...prevTeam, team]);
+      });
+    })();
+  }, [presentors]);
+
   return (
     <Box p={3}>
-      {presentors.map((presentor) => (
-        <Accordion key={presentor.id}>
+      {teams.map((team, idx) => (
+        <Accordion key={team.id}>
           <AccordionSummary
             expandIcon={<ExpandMore />}
-            aria-controls={`${presentor.name}-content`}
-            id={`${presentor.name}-header`}
+            aria-controls={`${team.name}-content`}
+            id={`${team.name}-header`}
           >
-            <Typography>{`${presentor.team.name} - ${presentor.name}`}</Typography>
+            <Typography>{`${team.name} ${presentors[idx]?.pitch?.name && `- ${presentors[idx].pitch.name}`}`}</Typography>
           </AccordionSummary>
           <AccordionDetails>
-            <Typography sx={{ mb: 2 }}>{presentor.description}</Typography>
+            {presentors[idx]?.pitch?.description && (
+              <Typography>{presentors[idx].pitch.description}</Typography>
+            )}
           </AccordionDetails>
         </Accordion>
       ))}

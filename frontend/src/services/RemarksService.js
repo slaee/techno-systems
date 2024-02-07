@@ -24,7 +24,7 @@ const RemarksService = {
   get: (id) => api.get(`${BASE_URL}/${id}`),
 
   getAccountRemarksForPresentor: (meetingId, pitchId) =>
-    api.get(`${BASE_URL}/my_remarks/?meeting=${meetingId}&pitch=${pitchId}`),
+    api.get(`${BASE_URL}/my_remarks?meeting=${meetingId}&pitch=${pitchId}`),
 };
 
 export default RemarksService;

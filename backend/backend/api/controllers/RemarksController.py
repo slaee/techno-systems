@@ -26,7 +26,6 @@ class RemarksController(viewsets.GenericViewSet,
     @swagger_auto_schema(
         operation_summary="List all remark of a specific account",
         operation_description="GET /remarks/my_remarks/",
-        request_body=NoneSerializer,
         responses={
             status.HTTP_200_OK: openapi.Response('OK', RemarkSerializer),
             status.HTTP_400_BAD_REQUEST: openapi.Response('Bad Request'),
@@ -50,8 +49,9 @@ class RemarksController(viewsets.GenericViewSet,
             
             if  pitch_param:
                 queryset = queryset.filter(pitch_id=pitch_param)
-            
-            return queryset
+
+            serializer = RemarkSerializer(queryset, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         except ClassMember.DoesNotExist:
             return Response({'details': 'Class member not found'}, status=status.HTTP_404_NOT_FOUND)
         

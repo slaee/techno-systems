@@ -11,26 +11,38 @@ import {
   TableRow,
 } from '@mui/material';
 import PropTypes from 'prop-types';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useOutletContext } from 'react-router-dom';
 import { useMeetings } from '../../../hooks';
+import GLOBALS from '../../../app_globals';
 
 function MeetingsPageTable({ classroomId, status, search }) {
   const navigate = useNavigate();
+  const { user, classId, classRoom, classMember } = useOutletContext();
   const { isLoading, meetings } = useMeetings(classroomId, status);
 
   const handleMeetingClick = (meeting) => {
     localStorage.setItem('meeting', meeting.id);
     localStorage.setItem('meeting_link_name', meeting.name);
     localStorage.setItem('videoId', meeting.video);
-    // navigate(`/courses/${courseId}/meetings/${meeting.id}`);
+    navigate(`/classes/${classroomId}/teknoplat/meetings/${meeting.id}`);
   };
+
+  let renderedMeetings = meetings;
+
+  if (classMember.role === GLOBALS.CLASSMEMBER_ROLE.STUDENT) {
+    renderedMeetings = meetings.filter((meeting) => {
+      return meeting.presentors.some((presentor) => {
+        return presentor.members.some((member) => member.id === user.user_id);
+      });
+    });
+  }
 
   return (
     <Box p={5}>
       <Paper>
         <TableContainer
           sx={{
-            height: 'calc(100vh - 64px - 48px - 49px - 80px - 52px - 1px)',
+            height: 'calc(100vh - 64px - 48px - 49px - 80px - 52px - 107px)',
             overflowY: 'hidden',
             ':hover': {
               overflowY: 'auto',
@@ -78,8 +90,10 @@ function MeetingsPageTable({ classroomId, status, search }) {
                   </TableCell>
                 </TableRow>
               ) : (
-                meetings
-                  .filter((meeting) => meeting.name.includes(search))
+                renderedMeetings
+                  .filter((meeting) =>
+                    meeting.name.toLowerCase().includes(search.toLowerCase())
+                  )
                   .map((meeting) => (
                     <TableRow key={meeting.id}>
                       <TableCell>
@@ -105,10 +119,10 @@ function MeetingsPageTable({ classroomId, status, search }) {
   );
 }
 
-MeetingsPageTable.propTypes = {
-  classroomId: PropTypes.number.isRequired,
-  status: PropTypes.string.isRequired,
-  search: PropTypes.string.isRequired,
-};
+// MeetingsPageTable.propTypes = {
+//   classroomId: PropTypes.number.isRequired,
+//   status: PropTypes.string.isRequired,
+//   search: PropTypes.string.isRequired,
+// };
 
 export default MeetingsPageTable;

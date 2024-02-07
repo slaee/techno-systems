@@ -1,6 +1,12 @@
 import React from 'react';
 import { ExpandMore } from '@mui/icons-material';
-import { Accordion, AccordionDetails, AccordionSummary, Box, Typography } from '@mui/material';
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Box,
+  Typography,
+} from '@mui/material';
 import PropTypes from 'prop-types';
 
 function MeetingDetailsCriterias({ criterias }) {
@@ -17,7 +23,9 @@ function MeetingDetailsCriterias({ criterias }) {
             <Typography>{`${criteria.criteria.name} - ${criteria.weight * 100}%`}</Typography>
           </AccordionSummary>
           <AccordionDetails>
-            <Typography sx={{ mb: 2 }}>{criteria.description}</Typography>
+            <Typography sx={{ mb: 2 }}>
+              {criteria.criteria.description}
+            </Typography>
           </AccordionDetails>
         </Accordion>
       ))}

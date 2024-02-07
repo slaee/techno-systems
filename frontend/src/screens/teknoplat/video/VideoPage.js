@@ -12,8 +12,8 @@ function VideoPage() {
   const { isLoading, meeting } = useMeeting(meetingId);
   const videoAccessToken = '';
   useEffect(() => {
-    if (!isLoading && !meeting.video)
-      navigate(`/classes/${classId}/teknoplat/meetings/${meetingId}`);
+    // if (!isLoading && !meeting.video)
+    //   navigate(`/classes/${classId}/teknoplat/meetings/${meetingId}`);
   }, [isLoading]);
 
   if (isLoading) {
@@ -21,18 +21,18 @@ function VideoPage() {
   }
 
   return (
-    <Box height="100vh">
+    <Box height="calc( 100vh - 66px - 190px )">
       <MeetingProvider
         config={{
           meetingId: meeting.video,
           micEnabled: meeting.owner_id === classMember.id,
           webcamEnabled: meeting.owner_id === classMember.id,
-          name: user.full_name,
+          name: `${user.first_name} ${user.last_name}`,
           participantId: classMember.id,
         }}
         token={meeting.token}
       >
-        <VideoView meeting={meeting} />
+        <VideoView meeting={meeting} classMember={classMember} />
       </MeetingProvider>
     </Box>
   );

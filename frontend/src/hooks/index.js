@@ -22,3 +22,13 @@ export { default as usePitches } from './usePitches';
 export { default as useCriterias } from './useCriterias';
 export { default as useUserTeam } from './useUserTeam';
 export { default as usePitch } from './usePitch';
+export { default as useActivities } from './useActivities';
+export { default as useActivity } from './useActivity';
+export { default as useActivityComments } from './useActivityComments';
+export { default as useActivityComment } from './useActivityComment';
+export { default as useActivityTemplates } from './useActivityTemplates';
+export { default as useActivityTemplate } from './useActivityTemplate';
+export { default as useWorks } from './useWorks';
+
+export { default as useProjects } from './useProjects';
+export { default as useBoardTemplate } from './useBoardTemplate';

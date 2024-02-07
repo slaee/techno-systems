@@ -12,6 +12,5 @@ class MeetingCommentSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def get_full_name(self, obj):
-        classmember = ClassMember.objects.get(id=obj.classmember_id)
-        return User.objects.get(id=classmember.user_id).get_full_name()
+        return obj.classmember_id.user_id.get_full_name()
         

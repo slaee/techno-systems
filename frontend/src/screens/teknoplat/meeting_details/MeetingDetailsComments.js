@@ -1,7 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Send } from '@mui/icons-material';
-import { Box, Button, Paper, Stack, TextField, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  Paper,
+  Stack,
+  TextField,
+  Typography,
+} from '@mui/material';
 import PropTypes from 'prop-types';
 import { MeetingsService } from '../../../services';
 
@@ -12,6 +19,19 @@ function MeetingDetailsComments({ user, classMember, comments }) {
 
   const [comment, setComment] = useState('');
   const [commentList, setCommentList] = useState(comments);
+
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      if (!meetingId) return;
+      const res = await MeetingsService.get(meetingId);
+      const meeting = res.data;
+      setCommentList(meeting.comments);
+    }, 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [meetingId]);
 
   useEffect(() => {
     scrollableBoxRef.current.scrollTop = scrollableBoxRef.current.scrollHeight;
@@ -42,7 +62,7 @@ function MeetingDetailsComments({ user, classMember, comments }) {
     <Box pt={3} pl={3} pr={3}>
       <Paper
         sx={{
-          height: 'calc(100vh - 64px - 48px - 124.5px - 24px - 48px - 24px - 1px)',
+          height: 'calc(100vh - 64px - 48px - 124.5px - 24px - 48px - 147px)',
           p: 1,
           position: 'relative',
           minHeight: '500px',
@@ -52,7 +72,7 @@ function MeetingDetailsComments({ user, classMember, comments }) {
           ref={scrollableBoxRef}
           sx={{
             maxHeight:
-              'calc(100vh - 64px - 48px - 124.5px - 24px - 48px - 24px - 72px - 16px - 1px)',
+              'calc(100vh - 64px - 48px - 124.5px - 24px - 48px - 24px - 72px - 147px)',
             minHeight: 'calc(500px - 72px)',
             px: 1,
             overflowY: 'hidden',
@@ -77,17 +97,19 @@ function MeetingDetailsComments({ user, classMember, comments }) {
               <Paper
                 key={commentData.id}
                 sx={{
-                  backgroundColor: 'black',
+                  backgroundColor: '#f3f3f3',
                   width: 'fit-content',
                   maxWidth: '80%',
                   p: 1,
                   marginLeft:
-                    classMember.id === commentData.classmember_id ? 'auto !important' : '',
+                    classMember.id === commentData.classmember_id
+                      ? 'auto !important'
+                      : '',
                 }}
               >
                 <Stack direction="row" spacing={1}>
                   <img
-                    src="/sample/default_avatar.png"
+                    src="/assets/default_avatar.png"
                     alt="AccountProfile"
                     style={{
                       width: '20px',
@@ -127,7 +149,11 @@ function MeetingDetailsComments({ user, classMember, comments }) {
               size="small"
               label="Write a comment..."
             />
-            <Button size="small" variant="contained" onClick={handleCommentClick}>
+            <Button
+              size="small"
+              variant="contained"
+              onClick={handleCommentClick}
+            >
               <Send />
             </Button>
           </Stack>
