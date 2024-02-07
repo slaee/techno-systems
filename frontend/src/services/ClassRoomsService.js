@@ -18,6 +18,20 @@ const ClassRoomsService = {
   */
   create: (data) => api.post(BASE_URL, data),
 
+  /// PUT /classes/{id}
+  /*
+    data: {
+      "course_name": "string",
+      "sections": "string",
+      "schedule": "string",
+      "max_teams_members": 5
+    }
+  */
+  updateClass: (id, data) => api.put(`${BASE_URL}/${id}`, data),
+
+  /// DELETE /classes/{id}
+  deleteClass: (id) => api.delete(`${BASE_URL}/${id}`),
+
   /// POST /classes/join
   /*
     data: {
