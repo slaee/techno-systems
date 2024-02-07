@@ -183,6 +183,24 @@ class TeamsController(viewsets.GenericViewSet,
         team_members = TeamMember.objects.filter(team_id=response.data['id'])
         response.data['team_members'] = TeamMemberSerializer(team_members, many=True).data
         return response
+
+    @swagger_auto_schema(
+        operation_summary="Gets a team",
+        operation_description="GET /teams/my_team",
+        responses={
+            status.HTTP_200_OK: openapi.Response('OK', TeamSerializer),
+            status.HTTP_400_BAD_REQUEST: openapi.Response('Bad Request'),
+            status.HTTP_401_UNAUTHORIZED: openapi.Response('Unauthorized'),
+            status.HTTP_404_NOT_FOUND: openapi.Response('Not Found'),
+            status.HTTP_500_INTERNAL_SERVER_ERROR: openapi.Response('Internal Server Error'),
+        }
+    )
+    @action(detail=False, methods=['get'])
+    def my_team(self, request):
+        classMember = ClassMember.objects.get(id=request.user)
+        team_member = TeamMember.objects.get(class_member_id=classMember.id)
+        team = Team.objects.get(id=team_member)
+        return Response(TeamSerializer(team).data, status=status.HTTP_200_OK)
     
     @swagger_auto_schema(
         operation_summary="Updates a team partially",

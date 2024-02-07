@@ -45,6 +45,12 @@ import {
 
 // Style Imports
 import './App.css';
+import MeetingsPage from './screens/teknoplat/meetings/MeetingsPage';
+import MeetingDetailsPage from './screens/teknoplat/meeting_details/MeetingDetailsPage';
+import VideoPage from './screens/teknoplat/video/VideoPage';
+import PitchPage from './screens/teknoplat/pitches/PitchPage';
+import ChatbotPage from './screens/teknoplat/chatbot/ChatbotPage';
+import { Redirects } from './screens/teknoplat/redirects/Redirects';
 
 function App() {
   return (
@@ -227,7 +233,64 @@ function App() {
                   <TeknoPlat />
                 </PrivateRoute>
               }
-            />
+            >
+              <Route
+                index
+                element={
+                  <PrivateRoute>
+                    <MeetingsPage />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="meetings"
+                element={
+                  <PrivateRoute>
+                    <MeetingsPage />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="pitches"
+                element={
+                  <PrivateRoute>
+                    <PitchPage />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="meetings/:meetingId"
+                element={
+                  <PrivateRoute>
+                    <MeetingDetailsPage />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="live/:meetingId"
+                element={
+                  <PrivateRoute>
+                    <VideoPage />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="chatbot"
+                element={
+                  <PrivateRoute>
+                    <ChatbotPage />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="live/:meetingId/leave"
+                element={
+                  <PrivateRoute>
+                    <Redirects />
+                  </PrivateRoute>
+                }
+              />
+            </Route>
           </Route>
         </Route>
 

@@ -77,7 +77,7 @@ const ClassRoomsService = {
 
   /// GET /classes/{class_pk}/teams
   teams: (classPK) => api.get(`${BASE_URL}/${classPK}/teams`),
-
+  myTeam: () => api.get(`${BASE_URL}/my_team`),
   /// POST /classes/{class_pk}/teams
   /*
     data: {

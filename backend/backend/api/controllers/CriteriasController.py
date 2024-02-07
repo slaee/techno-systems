@@ -30,3 +30,9 @@ class CriteriasController(viewsets.GenericViewSet,
 
         return super().get_permissions()
     
+    @action(detail=False, methods=['get'])
+    def criterias(self, request):
+        queryset = Criteria.objects.all()
+        serializer = CriteriaSerializer(queryset, many=True)
+        return Response(serializer.data)
+    
