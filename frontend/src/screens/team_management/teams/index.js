@@ -362,7 +362,6 @@ function Teams() {
                     className="btn btn-sm fw-bold text-success"
                     onClick={() => {
                       acceptTeamMember(team.id, tmId);
-                      window.location.reload();
                     }}
                   >
                     ACCEPT

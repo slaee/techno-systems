@@ -52,8 +52,9 @@ function CreateTeam({ visible, handleModal }) {
               const createTeamCallbacks = {
                 created: async ({ retrievedTeam }) => {
                   if (retrievedTeam) {
-                    Swal.fire('Team Created Successfully.');
-                    window.location.reload();
+                    Swal.fire('Team Created Successfully.').then(() => {
+                      window.location.reload();
+                    });
                   }
                 },
                 invalidFields: () => {
