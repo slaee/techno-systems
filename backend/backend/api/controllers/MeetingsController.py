@@ -44,7 +44,6 @@ class MeetingsController(viewsets.GenericViewSet,
     @swagger_auto_schema(
         operation_summary="List all meetings under a classroom.",
         operation_description="GET /meetings",
-        request_body=NoneSerializer,
         responses={
             status.HTTP_201_CREATED: openapi.Response('Created', MeetingSerializer),
             status.HTTP_400_BAD_REQUEST: openapi.Response('Bad Request'),
