@@ -62,8 +62,7 @@ class PitchesController(viewsets.GenericViewSet,
 
     @swagger_auto_schema(
         operation_summary="List all meetings under a classroom.",
-        operation_description="POST /meetings/?classroom=classroom&status=status",
-        request_body=NoneSerializer,
+        operation_description="GET /meetings/?classroom=classroom&status=status",
         responses={
             status.HTTP_201_CREATED: openapi.Response('Created', PitchSerializer),
             status.HTTP_400_BAD_REQUEST: openapi.Response('Bad Request'),
