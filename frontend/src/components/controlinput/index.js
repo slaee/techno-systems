@@ -31,7 +31,7 @@ ControlInput.defaultProps = {
 ControlInput.propTypes = {
   name: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
-  type: PropTypes.string,
+  type: PropTypes.any,
   value: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   error: PropTypes.string,

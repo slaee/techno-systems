@@ -8,7 +8,9 @@ import { useAssignedPeerEval } from '../../../hooks';
 
 import Table from '../../../components/table';
 
+import { copyToClipBoard } from '../../../utils/copyToClipBoard';
 import GLOBALS from '../../../app_globals';
+
 
 import './index.scss';
 
@@ -77,7 +79,11 @@ function StudentPeerEval() {
   }, [assignedPeerEvals]);
 
   const handleCopyCode = () => {
-    navigator.clipboard.writeText(classRoom?.class_code);
+    try {
+      copyToClipBoard(classRoom?.class_code);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (

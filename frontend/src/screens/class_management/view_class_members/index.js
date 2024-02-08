@@ -6,6 +6,7 @@ import { useClassMembers } from '../../../hooks';
 import Search from '../../../components/search';
 import Table from '../../../components/table';
 
+import { copyToClipBoard } from '../../../utils/copyToClipBoard';
 import GLOBALS from '../../../app_globals';
 
 import 'primeicons/primeicons.css';
@@ -109,7 +110,11 @@ function ViewClassMembers() {
   }, [searchQuery, tableData, classMembers]);
 
   const handleCopyCode = () => {
-    navigator.clipboard.writeText(classRoom?.class_code);
+    try{ 
+      copyToClipBoard(classRoom?.class_code);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const renderSubheader = () => (

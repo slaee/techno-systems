@@ -15,6 +15,7 @@ import ApplyTeam from '../../../components/modals/apply_team';
 import './index.scss';
 import AssignNewLeader from '../../../components/modals/assign_new_leader';
 import UpdateTeam from '../../../components/modals/update_team';
+import { copyToClipBoard } from '../../../utils/copyToClipBoard';
 
 function Teams() {
   const { user, classId, classMember, classRoom } = useOutletContext();
@@ -145,7 +146,11 @@ function Teams() {
   };
 
   const handleCopyCode = () => {
-    navigator.clipboard.writeText(classRoom?.class_code);
+    try {
+      copyToClipBoard(classRoom?.class_code);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const handleOnChangeTeamStatus = (event, teamId) => {

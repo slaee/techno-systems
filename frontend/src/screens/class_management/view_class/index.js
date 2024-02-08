@@ -6,6 +6,7 @@ import Swal from 'sweetalert2';
 import GLOBALS from '../../../app_globals';
 import UpdateClass from '../../../components/modals/update_class';
 import { useClasses } from '../../../hooks';
+import { copyToClipBoard } from '../../../utils/copyToClipBoard';
 
 function ViewClass() {
   const { user, classRoom } = useOutletContext();
@@ -23,7 +24,11 @@ function ViewClass() {
   }, [classRoom?.number_of_students, classRoom?.number_of_teams]);
 
   const handleCopyCode = () => {
-    navigator.clipboard.writeText(classRoom?.class_code);
+    try {
+      copyToClipBoard(classRoom?.class_code);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const handleDeleteClass = () => {
