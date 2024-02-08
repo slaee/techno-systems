@@ -525,7 +525,7 @@ function Teams() {
   };
 
   const handleDeclineLeader = () => {
-    removeLeader(user?.user_id);
+    removeLeader(classMember?.id);
     window.location.reload();
   };
 
