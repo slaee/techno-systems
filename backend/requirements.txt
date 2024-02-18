@@ -10,3 +10,5 @@ cryptography
 drf_yasg
 python-dotenv
 drf-nested-routers
+openai
+channels==4.0.0

@@ -28,18 +28,18 @@ class PeerEvalsController (viewsets.GenericViewSet,
     serializer_class = PeerEvalSerializer
     authentication_classes = [JWTAuthentication]
 
-    # def get_permissions(self):
-    #     """
-    #     Instantiates and returns the list of permissions that this view requires.
-    #     If the action is 'destroy', only allow admin users to access.
-    #     If the action is 'list', only allow authenticated users to access.
-    #     otherwise, return 403 Forbidden.
-    #     """
-    #     if self.action in ['create', 'destroy', 'assign']:
-    #         return [permissions.IsAuthenticated(), IsModerator()]
-    #     elif self.action in ['list', 'retrieve']:
-    #         return [permissions.IsAuthenticated()]
-    #     return super().get_permissions()
+    def get_permissions(self):
+        """
+        Instantiates and returns the list of permissions that this view requires.
+        If the action is 'destroy', only allow admin users to access.
+        If the action is 'list', only allow authenticated users to access.
+        otherwise, return 403 Forbidden.
+        """
+        if self.action in ['create', 'destroy', 'assign']:
+            return [permissions.IsAuthenticated(), IsModerator()]
+        elif self.action in ['list', 'retrieve']:
+            return [permissions.IsAuthenticated()]
+        return super().get_permissions()
     
     @swagger_auto_schema(
         operation_summary="Lists all peer evals",

@@ -19,13 +19,13 @@ const validate = (values) => {
 
   if (!values.forms_link) {
     errors.forms_link = 'This field is required.';
-  } else if (values.forms_link.length > 256) {
-    errors.forms_link = 'The maximum length of this field is 50 characters.';
+  } else if (values.forms_link.length > 500) {
+    errors.forms_link = 'The maximum length of this field is 500 characters.';
   }
 
   if (!values.sheet_link) {
     errors.sheet_link = 'This field is required.';
-  } else if (values.sheet_link.length > 256) {
+  } else if (values.sheet_link.length > 500) {
     errors.sheet_link = 'The maximum length of this field is 50 characters.';
   }
 
@@ -38,7 +38,7 @@ function UpdatePeerEvalForm({ initValues, visible, handleModal }) {
   return (
     <Dialog className="create-modal p-5" visible={visible} onHide={handleModal} showHeader={false}>
       <div className="d-flex flex-column">
-        <div className="fw-bold text-center fs-5">Create PeerEval</div>
+        <div className="fw-bold text-center fs-5">Update PeerEval</div>
         <Formik
           initialValues={{
             name: initValues.name,
@@ -95,7 +95,7 @@ function UpdatePeerEvalForm({ initValues, visible, handleModal }) {
               />
               <ControlInput
                 name="sheet_link"
-                label="Google forms link"
+                label="Google sheet link"
                 className="yellow-on-focus"
                 value={values.sheet_link}
                 onChange={(e) => setFieldValue('sheet_link', e.target.value)}

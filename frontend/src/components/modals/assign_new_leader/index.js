@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 
 import './index.scss';
 import GLOBALS from '../../../app_globals';
+import Swal from 'sweetalert2';
 
 function AssignNewLeader({
   visible,
@@ -60,8 +61,13 @@ function AssignNewLeader({
               className="btn btn-yellow-primary btn-create-team-modal mx-auto fw-semibold"
               onClick={() => {
                 setLeader(selectedOption);
-                leaveTeam(teamId, leaderId);
-                handleModal();
+
+                if (selectedOption !== '') {
+                  leaveTeam(teamId, leaderId);
+                  handleModal();
+                } else {
+                  Swal.fire('Error', 'Please select a new leader', 'error')
+                }
               }}
             >
               Submit

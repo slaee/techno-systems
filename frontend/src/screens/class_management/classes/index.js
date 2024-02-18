@@ -57,14 +57,24 @@ function Classes() {
     setSearchQuery(e.target.value);
   };
 
+  const searchClasses = (query) => {
+    const lowerCaseQuery = query?.toLowerCase();
+    if (lowerCaseQuery.length === 0) {
+      setFilteredClasses(classes);
+    } else {
+      const filtered = classes?.filter(
+        (Class) =>
+          (Class.course_name && Class.course_name.toLowerCase().includes(lowerCaseQuery)) ||
+          (Class.class_code && Class.class_code.toLowerCase().includes(lowerCaseQuery)) ||
+          (Class.sections && Class.sections.toLowerCase().includes(lowerCaseQuery)) ||
+          (Class.schedule && Class.schedule.toLowerCase().includes(lowerCaseQuery))
+      );
+      setFilteredClasses(filtered);
+    }
+  };
+
   useEffect(() => {
-    const lowerCaseQuery = searchQuery.toLowerCase();
-    const filtered = classes.filter((Class) => {
-      const classInfo =
-        `${Class.name} ${Class.class_code} ${Class.sections} ${Class.schedule}`.toLowerCase();
-      return classInfo.includes(lowerCaseQuery);
-    });
-    setFilteredClasses(filtered);
+    searchClasses(searchQuery);
   }, [searchQuery, classes]);
 
   return (

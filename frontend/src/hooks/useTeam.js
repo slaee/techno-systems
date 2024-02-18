@@ -6,6 +6,7 @@ const useTeam = (classId, teamId) => {
   const navigate = useNavigate();
   const [isRetrieving, setIsRetrieving] = useState(true);
   const [team, setTeam] = useState(null);
+  const [teamMembers, setTeamMembers] = useState([]);
 
   useEffect(() => {
     const get = async () => {
@@ -33,14 +34,40 @@ const useTeam = (classId, teamId) => {
           break;
         default:
       }
+    };
 
-      setIsRetrieving(false);
+    const getTeamMembers = async () => {
+      let responseCode;
+      let retrievedMembers;
+
+      try {
+        const res = await ClassRoomsService.teamMembers(classId, teamId);
+        responseCode = res?.status;
+        retrievedMembers = res?.data;
+      } catch (error) {
+        responseCode = error?.response?.status;
+      }
+
+      switch (responseCode) {
+        case 200:
+          setTeamMembers(retrievedMembers);
+          break;
+        case 404:
+          navigate(`/classes/${classId}/teams`);
+          break;
+        case 500:
+          navigate('/classes');
+          break;
+        default:
+      }
     };
 
     get();
+    getTeamMembers();
+    setIsRetrieving(false);
   }, []);
 
-  return { isRetrieving, team };
+  return { isRetrieving, team, teamMembers };
 };
 
 export default useTeam;

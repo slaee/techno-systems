@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 import { ClassRoomsService } from '../services';
 
 const useTeams = (classId) => {
@@ -10,6 +11,7 @@ const useTeams = (classId) => {
   const [isRetrievingLeaders, setIsRetrievingLeaders] = useState(true);
   const [isSettingLeader, setIsSettingLeader] = useState(true);
   const [isCreatingTeam, setIsCreatingTeam] = useState(true);
+  const [isUpdatingTeam, setIsUpdatingTeam] = useState(true);
   const [isJoiningTeam, setIsJoiningTeam] = useState(true);
 
   // leaders
@@ -125,18 +127,27 @@ const useTeams = (classId) => {
     setIsCreatingTeam(false);
   };
 
-  const updateTeam = async (teamID, data) => {
+  const updateTeam = async (teamID, { name, description, callbacks }) => {
+    setIsUpdatingTeam(true);
+
     let responseCode;
+    let retrievedTeam;
 
     try {
-      const res = await ClassRoomsService.updateTeam(classId, teamID, data);
+      const res = await ClassRoomsService.updateTeam(classId, teamID, {
+        name,
+        description,
+      });
+
       responseCode = res?.status;
+      retrievedTeam = res?.data;
     } catch (error) {
       responseCode = error?.response?.status;
     }
 
     switch (responseCode) {
       case 200:
+        await callbacks.updated({ retrievedTeam });
         break;
       case 404:
         navigate(`/classes/${classId}/teams`);
@@ -160,7 +171,13 @@ const useTeams = (classId) => {
 
     switch (responseCode) {
       case 204:
-        setTeams((prevTeams) => prevTeams.filter((team) => team.id !== teamID));
+        // setTeams((prevTeams) => prevTeams.filter((team) => team.id !== teamID));
+        Swal.fire({
+          title: 'Team Successfully Deleted',
+          icon: 'success',
+        }).then(() => {
+          navigate(`/classes/${classId}/teams`);
+        });
         break;
       case 404:
         navigate(`/classes/${classId}/teams`);
@@ -283,6 +300,8 @@ const useTeams = (classId) => {
     }
     switch (responseCode) {
       case 200:
+      case 201:
+        window.location.reload();
         break;
       case 404:
         navigate(`/classes/${classId}/teams`);

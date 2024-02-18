@@ -1,9 +1,9 @@
 # This is the docker compose file for the project
 
-version: "3.8"
+version: '3.8'
 services:
   mysql:
-    build: 
+    build:
       context: ./backend/mysql
       dockerfile: Dockerfile
     image: mysql
@@ -15,7 +15,7 @@ services:
     networks:
       - techno
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
       interval: 1s
       timeout: 5s
       retries: 15
@@ -33,12 +33,12 @@ services:
         condition: service_healthy
     restart: unless-stopped
     ports:
-      - "8088:80"
+      - '8088:80'
     networks:
       - techno
 
   backend:
-    build: 
+    build:
       context: ./backend
       dockerfile: Dockerfile
     image: backend
@@ -56,9 +56,9 @@ services:
       - ./backend/backend:/app
     networks:
       - techno
-    
+
   frontend:
-    build: 
+    build:
       context: ./frontend
       dockerfile: Dockerfile
     image: frontend

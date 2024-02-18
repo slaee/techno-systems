@@ -1,5 +1,5 @@
 import React from 'react';
-
+import Swal from 'sweetalert2';
 import PropTypes from 'prop-types';
 import { Dialog } from 'primereact/dialog';
 import Table from '../../table';
@@ -48,7 +48,7 @@ function ApplyTeam({ visible, handleModal, teamData, applyToTeam, isViewOnly }) 
             disabled={isFull}
             onClick={() => {
               applyToTeam(teamData.id);
-              alert('Please wait for the Leader to accept your request');
+              Swal.fire('Please wait for the Leader to accept your request');
               handleModal();
             }}
           >

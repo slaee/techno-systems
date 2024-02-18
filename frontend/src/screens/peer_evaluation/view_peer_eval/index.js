@@ -22,24 +22,24 @@ function PeerEval() {
   const { accessToken } = useAuth();
   const user = jwtDecode(accessToken);
 
-  const {
-    peerEvals,
-    isProcessing,
-    createPeerEval,
-    updatePeerEval,
-    deletePeerEval,
-    assignClassRoomEval,
-  } = usePeerEvals();
+  const { peerEvals, deletePeerEval, assignClassRoomEval } = usePeerEvals();
 
   const { classes } = useClassRooms();
 
-  const [peerEvalModal, setPeerEvalModal] = useState(false);
+  const [peerCreateEvalModal, setCreatePeerEvalModal] = useState(false);
+  const [peerUpdateEvalModal, setUpdatePeerEvalModal] = useState(false);
   const [assignClassModal, setAssignClassModal] = useState(false);
 
   const [peerEvalsTableData, setPeerEvalsTableData] = useState([]);
   const [classRoomsTabledata, setClassRoomsTableData] = useState([]);
 
   const [selectedPeerEval, setSelectedPeerEval] = useState({});
+
+  const [searchPEQuery, setSearchPEQuery] = useState('');
+  const [filteredPeerEvals, setFilteredPeerEvals] = useState([]);
+
+  const [searchClassQuery, setSearchClassQuery] = useState('');
+  const [filteredClasses, setFilteredClasses] = useState([]);
 
   let buttons;
   if (user?.role === GLOBALS.USER_ROLE.MODERATOR) {
@@ -52,11 +52,11 @@ function PeerEval() {
   const classesHeaders = ['id', 'name', 'actions'];
 
   const handlCreatePeerEvalModal = () => {
-    setPeerEvalModal(true);
+    setCreatePeerEvalModal(true);
   };
 
   const handleCloseCreatePeerEvalModal = () => {
-    setPeerEvalModal(false);
+    setCreatePeerEvalModal(false);
   };
 
   const openAssignTeamModal = () => {
@@ -68,12 +68,49 @@ function PeerEval() {
   };
 
   const handleUpdatePeerEvalModal = () => {
-    setPeerEvalModal(true);
+    setUpdatePeerEvalModal(true);
   };
 
   const handleCloseUpdatePeerEvalModal = () => {
-    setPeerEvalModal(false);
+    setUpdatePeerEvalModal(false);
   };
+
+  const handleSearchPEChange = (e) => {
+    setSearchPEQuery(e.target.value);
+  };
+
+  const handleSearchClassChange = (e) => {
+    setSearchClassQuery(e.target.value);
+  };
+
+  const searchClasses = (query) => {
+    const lowerCaseQuery = query?.toLowerCase();
+    if (lowerCaseQuery.length === 0) {
+      setFilteredClasses(classRoomsTabledata);
+    } else {
+      const filtered = classRoomsTabledata?.filter(
+        (classRoom) => classRoom && classRoom.name.toLowerCase().includes(lowerCaseQuery)
+      );
+      setFilteredClasses(filtered);
+    }
+  };
+
+  const searchPeerEvals = (query) => {
+    const lowerCaseQuery = query?.toLowerCase();
+    if (lowerCaseQuery.length === 0) {
+      setFilteredPeerEvals(peerEvalsTableData);
+    } else {
+      const filtered = peerEvalsTableData?.filter(
+        (peerEval) => peerEval && peerEval.name.toLowerCase().includes(lowerCaseQuery)
+      );
+      setFilteredPeerEvals(filtered);
+    }
+  };
+
+  useEffect(() => {
+    searchPeerEvals(searchPEQuery);
+    searchClasses(searchClassQuery);
+  }, [searchPEQuery, peerEvalsTableData, searchClassQuery, classRoomsTabledata]);
 
   const actionButtons = (data) => (
     <div>
@@ -189,9 +226,9 @@ function PeerEval() {
         <div className="d-grid gap-3">
           <div className="text-left fs-5 fw-semibold">List of Classes</div>
           <div className="ms-auto">
-            <Search />
+            <Search value={searchClassQuery} onChange={handleSearchClassChange} />
           </div>
-          <Table headers={classesHeaders} data={classRoomsTabledata} className="mt-3" />
+          <Table headers={classesHeaders} data={filteredClasses} className="mt-3" />
           <div className="position-fixed bottom-0 start-50 translate-middle-x pb-5">
             <button
               type="btn"
@@ -208,13 +245,13 @@ function PeerEval() {
 
   // Create Peer Eval
   const renderPeerEvalModal = () => (
-    <CreatePeerEval visible={peerEvalModal} handleModal={handleCloseCreatePeerEvalModal} />
+    <CreatePeerEval visible={peerCreateEvalModal} handleModal={handleCloseCreatePeerEvalModal} />
   );
 
   const renderUpdatePeerEvalModal = () => (
     <UpdatePeerEvalForm
       initValues={selectedPeerEval}
-      visible={peerEvalModal}
+      visible={peerUpdateEvalModal}
       handleModal={handleCloseUpdatePeerEvalModal}
     />
   );
@@ -226,7 +263,7 @@ function PeerEval() {
         <Header />
         <div className="d-flex pt-2 pb-2">
           <div className="py-2 mx-5">
-            <Search />
+            <Search value={searchPEQuery} onChange={handleSearchPEChange} />
           </div>
           <div className="d-flex align-items-center ms-auto mx-5">
             <button
@@ -241,11 +278,15 @@ function PeerEval() {
         <div className="d-flex flex-column">
           <div className="brown-text fw-bold fs-5 py-2 px-5">PEER EVALUATION</div>
           <div className="px-5">
-            <Table headers={peerEvalHeaders} data={peerEvalsTableData} className="mt-3" />
+            <Table headers={peerEvalHeaders} data={filteredPeerEvals} className="mt-3" />
           </div>
-
-          {peerEvalModal && renderPeerEvalModal()}
-          {peerEvalModal && renderUpdatePeerEvalModal()}
+          {peerEvalsTableData && filteredPeerEvals.length === 0 ? (
+            <div className="d-flex justify-content-center align-items-center">
+              <div className="brown-text fw-bold fs-5 py-2 mx-5">No peer evaluations found</div>
+            </div>
+          ) : null}
+          {peerCreateEvalModal && renderPeerEvalModal()}
+          {peerUpdateEvalModal && renderUpdatePeerEvalModal()}
           {assignClassModal && renderAssignTeamModal()}
         </div>
       </div>

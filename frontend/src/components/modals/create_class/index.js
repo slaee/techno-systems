@@ -4,6 +4,7 @@ import { Formik } from 'formik';
 import { Dialog } from 'primereact/dialog';
 import ControlInput from '../../controlinput';
 import { isObjectEmpty } from '../../../utils/object';
+import { copyToClipBoard } from '../../../utils/copyToClipBoard';
 import { useCreateClass } from '../../../hooks';
 import './index.scss';
 
@@ -55,14 +56,15 @@ function CreateClass({ visible, handleModal }) {
   };
 
   const handleCopyCode = (code) => {
-    navigator.clipboard.writeText(code).then(() => {
-      // Wait for the clipboard to be updated before reloading
-      setTimeout(() => {
-        window.location.reload();
-      }, 500); // not sure if this delay is enough
-    });
+    try {
+      copyToClipBoard(code);
+    } catch (error) {
+      console.error(error);
+    }
+
     setShowCode(false);
     handleModal();
+    window.location.reload();
   };
 
   const renderShowCode = (code) => (
@@ -77,7 +79,7 @@ function CreateClass({ visible, handleModal }) {
         <div className="code-content text-center p-2">{code}</div>
         <button
           className="btn btn-yellow-primary btn-lg fw-semibold ms-4"
-          onClick={() => handleCopyCode(classCode)}
+          onClick={() => handleCopyCode(code)}
         >
           Copy
         </button>
@@ -167,11 +169,13 @@ function CreateClass({ visible, handleModal }) {
                   <div className="format-instructions">Sample Format: 1:00PM - 2:00PM</div>
                   <ControlInput
                     name="max_teams_members"
-                    label="Max team members"
+                    label="Max Team Members"
                     className="yellow-on-focus"
                     value={values.max_teams_members}
                     type="number"
-                    onChange={(e) => setFieldValue('max_teams_members', e.target.value)}
+                    onChange={(e) =>
+                      setFieldValue('max_teams_members', parseInt(e.target.value, 10))
+                    }
                     error={errors.max_teams_members}
                   />
                 </div>
