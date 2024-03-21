@@ -45,7 +45,7 @@
     "js-cookie": "^3.0.5",
     "jwt-decode": "^3.1.2",
     "notistack": "^3.0.1",
-    "openai": "^4.20.1",
+    "openai": "^4.28.4",
     "primeicons": "^6.0.1",
     "primereact": "^9.6.2",
     "prop-types": "^15.8.1",
