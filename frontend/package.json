@@ -41,7 +41,7 @@
     "chart.js": "^4.4.1",
     "formik": "^2.4.5",
     "fuse.js": "^7.0.0",
-    "html-react-parser": "^5.1.1",
+    "html-react-parser": "^5.1.8",
     "js-cookie": "^3.0.5",
     "jwt-decode": "^3.1.2",
     "notistack": "^3.0.1",
