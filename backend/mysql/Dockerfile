@@ -1,4 +1,4 @@
-FROM mysql:latest
+FROM mysql:9.2.0-oraclelinux9
 
 # Set the root password for MySQL
 ENV MYSQL_ROOT_PASSWORD 1234
